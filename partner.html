@@ -358,7 +358,7 @@
     const createBtn = el("createBtn");
     const shareBtn = el("shareBtn");
     let currentVoucher = null;
-    let currentPartnerName = "";
+    let currentPartnerName = "Partner";
 
     const OUTLETS = {
       MINES: {
@@ -499,7 +499,18 @@
 
       const p = data.partners;
 
+      if (String(p.status || "").toLowerCase() !== "active") {
+        await supabaseClient.auth.signOut();
+        showLogin();
+        showMsg(
+          el("loginMsg"),
+          "This Partner account is currently suspended. Please contact Evolution Optical."
+        );
+        return;
+      }
+
       currentPartnerName = p.partner_name || "Partner";
+
       el("partnerName").textContent = currentPartnerName;
       el("partnerCode").textContent = `${p.partner_code} • Partner Portal`;
       el("roleText").textContent = data.role;
@@ -544,6 +555,40 @@
         showMsg(
           el("createMsg"),
           "Please select at least one valid branch, or choose All Branches."
+        );
+        return;
+      }
+
+      const { data: authData } = await supabaseClient.auth.getUser();
+      const currentUser = authData?.user;
+
+      if (!currentUser) {
+        showMsg(el("createMsg"), "Your session has expired. Please sign in again.");
+        return;
+      }
+
+      const { data: currentProfile, error: statusError } = await supabaseClient
+        .from("partner_users")
+        .select(`
+          partner_id,
+          status,
+          partners (
+            status
+          )
+        `)
+        .eq("user_id", currentUser.id)
+        .eq("status", "active")
+        .single();
+
+      if (
+        statusError ||
+        !currentProfile ||
+        !currentProfile.partners ||
+        String(currentProfile.partners.status || "").toLowerCase() !== "active"
+      ) {
+        showMsg(
+          el("createMsg"),
+          "This Partner account is suspended and cannot issue vouchers."
         );
         return;
       }
@@ -607,7 +652,7 @@
       qrBox.innerHTML = "";
 
       new QRCode(qrBox, {
-        text: result.voucher_id,
+        text: result.voucher_code,
         width: 260,
         height: 260,
         colorDark: "#000000",
