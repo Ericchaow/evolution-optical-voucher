@@ -112,10 +112,51 @@ function msg(node,text,ok=false){node.innerHTML=text?`<div class="msg ${ok?'ok':
 function showLogin(){$("loginCard").classList.remove("hidden");$("dashboard").classList.add("hidden");$("logoutBtn").classList.add("hidden")}
 function showDash(){$("loginCard").classList.add("hidden");$("dashboard").classList.remove("hidden");$("logoutBtn").classList.remove("hidden")}
 async function login(){msg($("loginMsg"),"");$("loginBtn").disabled=true;const{error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});$("loginBtn").disabled=false;if(error){msg($("loginMsg"),error.message);return}await authorizeStaff()}
-async function authorizeStaff(){const{data:{user}}=await db.auth.getUser();if(!user){showLogin();return}
-  const{data,error}=await db.from("staff_users").select("user_id,staff_name,branch_id,role,status,branches(branch_code,branch_name)").eq("user_id",user.id).maybeSingle();
-  if(error||!data||String(data.status).toLowerCase()!=="active"){await db.auth.signOut();showLogin();msg($("loginMsg"),"This account is not authorised as an active Staff user.");return}
-  $("staffName").textContent=data.staff_name||"Staff";$("staffRole").textContent=(data.role||"staff").toUpperCase();$("staffStatus").textContent=(data.status||"active").toUpperCase();const currentBranch=data.branches?.branch_name||data.branches?.branch_code||"Assigned branch";$("branchName").textContent=currentBranch;$("newStaffBranch").value=currentBranch;if(String(data.role||"").toLowerCase()==="manager")$("managerSection").classList.remove("hidden");else $("managerSection").classList.add("hidden");showDash();await loadRedemptionHistory()}
+async function authorizeStaff(){
+  const {data:{user}}=await db.auth.getUser();
+  if(!user){showLogin();return}
+
+  const {data,error}=await db
+    .from("staff_users")
+    .select("id,user_id,staff_name,branch_id,role,status")
+    .eq("user_id",user.id)
+    .maybeSingle();
+
+  if(error || !data || String(data.status).toLowerCase()!=="active"){
+    await db.auth.signOut();
+    showLogin();
+    msg($("loginMsg"),"This account is not authorised as an active Staff user.");
+    return;
+  }
+
+  let currentBranch="Assigned branch";
+  if(data.branch_id){
+    const {data:branch}=await db
+      .from("branches")
+      .select("branch_code,branch_name")
+      .eq("id",data.branch_id)
+      .maybeSingle();
+
+    if(branch){
+      currentBranch=branch.branch_name || branch.branch_code || currentBranch;
+    }
+  }
+
+  $("staffName").textContent=data.staff_name||"Staff";
+  $("staffRole").textContent=(data.role||"staff").toUpperCase();
+  $("staffStatus").textContent=(data.status||"active").toUpperCase();
+  $("branchName").textContent=currentBranch;
+  $("newStaffBranch").value=currentBranch;
+
+  if(String(data.role||"").toLowerCase()==="manager"){
+    $("managerSection").classList.remove("hidden");
+  }else{
+    $("managerSection").classList.add("hidden");
+  }
+
+  showDash();
+  await loadRedemptionHistory();
+}
 function statusClass(v){const s=String(v.status||"").toLowerCase();if(s==="redeemed")return"redeemed";if(v.expired)return"expired";if(s==="valid"&&v.branch_allowed)return"valid";return"blocked"}
 function renderVoucher(v){currentVoucher=v;$("voucherCard").classList.remove("hidden");$("vCode").textContent=v.voucher_code||"";$("vType").textContent=v.voucher_type||"";$("vCustomer").textContent=v.customer_name||"—";$("vPhone").textContent=v.customer_phone||"—";$("vExpiry").textContent=v.expiry_date||"—";$("vBranch").textContent=v.branch_name||"—";$("vStatus").textContent=String(v.status||"").toUpperCase();$("vStatus").className="badge "+statusClass(v);
   const n=$("redeemNotice");if(v.can_redeem){n.textContent="VALID FOR REDEMPTION AT THIS BRANCH";n.className="notice good"}else{let r="Voucher cannot be redeemed.";if(String(v.status||"").toLowerCase()!=="valid")r=`Voucher status is ${String(v.status||"").toUpperCase()}.`;else if(v.expired)r="Voucher has expired.";else if(!v.branch_allowed)r="Voucher is not valid for this branch.";n.textContent=r;n.className="notice bad"}$("redeemBtn").disabled=!v.can_redeem;msg($("redeemMsg"),"")}
