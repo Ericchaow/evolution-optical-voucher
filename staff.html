@@ -26,7 +26,7 @@
   </style>
 </head>
 <body>
-<header class="top"><div class="topin"><div class="brand"><h1>EVOLUTION OPTICAL</h1><p>Staff Voucher Portal <span style="opacity:.7">v6</span></p></div><button id="logoutBtn" class="btn ghost hidden">Logout</button></div></header>
+<header class="top"><div class="topin"><div class="brand"><h1>EVOLUTION OPTICAL</h1><p>Staff Voucher Portal <span style="opacity:.7">v7</span></p></div><button id="logoutBtn" class="btn ghost hidden">Logout</button></div></header>
 <main class="wrap">
   <section id="loginCard" class="card">
     <h2>Staff Login</h2><p class="sub">Sign in with your authorised Evolution Optical staff account.</p>
@@ -46,7 +46,7 @@
 
 
     <section id="managerSection" class="card manager-card hidden">
-      <div class="manager-badge">STAFF MANAGEMENT • ALL BRANCH READY</div>
+      <div class="manager-badge">STAFF MANAGEMENT • ROLE & BRANCH ASSIGNMENT</div>
       <h3>Staff Management</h3>
       <p class="sub">Create a new Staff account and assign the Staff to any active branch.</p>
 
@@ -66,6 +66,13 @@
         <div>
           <label for="newStaffBranch">Assigned Branch</label>
           <select id="newStaffBranch"></select>
+        </div>
+        <div>
+          <label for="newStaffRole">Role</label>
+          <select id="newStaffRole">
+            <option value="staff">Staff</option>
+            <option value="manager">Manager</option>
+          </select>
         </div>
         <div class="fullrow">
           <button id="addStaffBtn" class="btn green full">ADD STAFF</button>
@@ -232,9 +239,13 @@ async function loadRedemptionHistory(){
 
 async function loadBranchOptions(role, ownBranchId){
   const sel=$("newStaffBranch");
+  const roleSel=$("newStaffRole");
   sel.innerHTML="";
+  roleSel.innerHTML="";
 
   if(role==="all_branch_manager"){
+    roleSel.disabled=false;
+    roleSel.innerHTML='<option value="staff">Staff</option><option value="manager">Manager</option>';
     const {data,error}=await db
       .from("branches")
       .select("id,branch_code,branch_name,status")
@@ -255,6 +266,8 @@ async function loadBranchOptions(role, ownBranchId){
       sel.value=ownBranchId;
     }
   }else{
+    roleSel.disabled=true;
+    roleSel.innerHTML='<option value="staff">Staff</option>';
     const {data:branch}=await db
       .from("branches")
       .select("id,branch_code,branch_name")
@@ -272,8 +285,9 @@ async function createStaff(){
   const email=$("newStaffEmail").value.trim();
   const password=$("newStaffPassword").value;
   const branch_id=$("newStaffBranch").value;
+  const role=$("newStaffRole").value;
 
-  if(!staff_name || !email || !password || !branch_id){
+  if(!staff_name || !email || !password || !branch_id || !role){
     msg($("addStaffMsg"),"Please complete Staff Name, Email, Temporary Password and Branch.");
     return;
   }
@@ -289,7 +303,7 @@ async function createStaff(){
       email,
       password,
       branch_id,
-      role:"staff"
+      role
     }
   });
   $("addStaffBtn").disabled=false;
@@ -312,7 +326,8 @@ async function createStaff(){
   }
 
   const branchText=$("newStaffBranch").selectedOptions[0]?.textContent||"selected branch";
-  msg($("addStaffMsg"),`Staff ${staff_name} created successfully and assigned to ${branchText}.`,true);
+  const roleText=$("newStaffRole").selectedOptions[0]?.textContent||role;
+  msg($("addStaffMsg"),`${staff_name} created successfully as ${roleText} and assigned to ${branchText}.`,true);
   $("newStaffName").value="";
   $("newStaffEmail").value="";
   $("newStaffPassword").value="";
