@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Evolution Optical Partner Voucher Platform</title>
+  <style>
+    :root{--bg:#f4f6f8;--card:#fff;--ink:#111827;--muted:#6b7280;--navy:#0f172a;--line:#e5e7eb;--soft:#eef2f7;--green:#166534;--green-bg:#ecfdf3;--radius:24px}
+    *{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}body{min-height:100vh}
+    .top{background:var(--navy);color:#fff;padding:calc(28px + env(safe-area-inset-top)) 22px 30px}.brand{max-width:760px;margin:0 auto}.brand h1{margin:0;font-size:clamp(28px,6vw,42px);letter-spacing:.5px;font-weight:800}.brand p{margin:8px 0 0;font-size:17px;color:#dbe2ee}
+    .wrap{width:min(760px,calc(100% - 28px));margin:22px auto 40px}.welcome{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 8px 30px rgba(15,23,42,.06)}.welcome h2{margin:0 0 8px;font-size:24px}.welcome p{margin:0;color:var(--muted);line-height:1.55}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:16px}.portal{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;transition:.18s ease;box-shadow:0 6px 22px rgba(15,23,42,.05)}.portal:active{transform:scale(.99)}.portal-row{display:flex;gap:14px;align-items:center}.icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:var(--soft);flex:0 0 52px;font-size:24px}.portal h3{margin:0 0 4px;font-size:20px}.portal p{margin:0;color:var(--muted);line-height:1.4;font-size:15px}.arrow{margin-left:auto;font-size:26px;color:#9ca3af}.status{margin-top:18px;border-radius:18px;padding:14px 16px;background:var(--green-bg);color:var(--green);font-size:14px;font-weight:700;text-align:center}.footer{text-align:center;color:#9ca3af;font-size:13px;margin-top:20px;padding-bottom:env(safe-area-inset-bottom)}
+    @media(min-width:700px){.grid{grid-template-columns:repeat(3,1fr)}.portal{min-height:190px}.portal-row{align-items:flex-start;flex-direction:column}.arrow{display:none}}
+  </style>
+</head>
+<body>
+  <header class="top"><div class="brand"><h1>EVOLUTION OPTICAL</h1><p>Partner Voucher Platform</p></div></header>
+  <main class="wrap">
+    <section class="welcome"><h2>Welcome</h2><p>Select your portal below. Access will be based on your assigned account role.</p></section>
+    <section class="grid">
+      <a class="portal" href="admin.html"><div class="portal-row"><div class="icon">⚙️</div><div><h3>Admin</h3><p>Manage partners, branches, staff, vouchers and reports.</p></div><div class="arrow">›</div></div></a>
+      <a class="portal" href="partner.html"><div class="portal-row"><div class="icon">🤝</div><div><h3>Partner</h3><p>Create QR vouchers, manage allocations and view issued vouchers.</p></div><div class="arrow">›</div></div></a>
+      <a class="portal" href="staff.html"><div class="portal-row"><div class="icon">📷</div><div><h3>Staff</h3><p>Scan, verify and redeem customer vouchers at Evolution Optical branches.</p></div><div class="arrow">›</div></div></a>
+    </section>
+    <div class="status">Secure access • Voucher verification • Branch-controlled redemption</div>
+    <div class="footer">Evolution Optical • Partner Voucher Platform</div>
+  </main>
+</body>
+</html>
