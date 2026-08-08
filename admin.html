@@ -17,8 +17,8 @@
 .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.num{background:#f8fafc;border-radius:12px;padding:9px}.num span{font-size:11px;color:var(--muted);display:block}.num b{font-size:17px}.actions{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-top:12px}.actions input{min-height:42px;padding:9px}.note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45}
 @media(max-width:620px){.stats{grid-template-columns:1fr 1fr 1fr}.stat{padding:10px}.stat strong{font-size:20px}.actions{grid-template-columns:1fr 1fr}.actions input{grid-column:1/-1}.btn.small{width:100%}}
 
-.vfilters{display:grid;grid-template-columns:1fr 160px auto;gap:8px;margin:13px 0}
-.vfilters select{border:1px solid #d1d5db;border-radius:14px;padding:11px;background:#fff;min-height:49px}
+.vfilters{display:grid;grid-template-columns:1.4fr 150px 170px 150px 150px auto;gap:8px;margin:13px 0}
+.vfilters select,.vfilters input[type="date"]{border:1px solid #d1d5db;border-radius:14px;padding:11px;background:#fff;min-height:49px;width:100%}
 .vstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
 .vstat{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:10px}
 .vstat span{display:block;color:var(--muted);font-size:11px}.vstat b{font-size:20px}
@@ -26,7 +26,7 @@
 .vtop{display:flex;gap:10px;align-items:flex-start}.vcode{font-weight:900;font-size:15px;word-break:break-all}.vmeta{font-size:13px;color:var(--muted);line-height:1.55;margin-top:8px}
 .vstatus{font-size:11px;font-weight:900;border-radius:999px;padding:5px 8px;background:var(--greenbg);color:var(--green);white-space:nowrap}
 .vstatus.redeemed{background:#eef2ff;color:#3730a3}.vstatus.expired{background:var(--redbg);color:var(--red)}
-@media(max-width:620px){.vfilters{grid-template-columns:1fr}.vfilters select,.vfilters .btn{width:100%}.vstats{grid-template-columns:1fr 1fr}}
+@media(max-width:820px){.vfilters{grid-template-columns:1fr 1fr}.vfilters input:first-child{grid-column:1/-1}}@media(max-width:620px){.vfilters{grid-template-columns:1fr}.vfilters input:first-child{grid-column:auto}.vfilters select,.vfilters .btn,.vfilters input[type="date"]{width:100%}.vstats{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -53,8 +53,20 @@
 <p class="sub">View vouchers issued by Partners and filter by current status.</p>
 <div class="vfilters">
 <input id="voucherSearch" placeholder="Voucher code, customer, phone or Partner">
-<select id="voucherStatus"><option value="ALL">All Status</option><option value="VALID">VALID</option><option value="REDEEMED">REDEEMED</option><option value="EXPIRED">EXPIRED</option></select>
+<select id="voucherStatus">
+  <option value="ALL">All Status</option>
+  <option value="VALID">VALID</option>
+  <option value="REDEEMED">REDEEMED</option>
+  <option value="EXPIRED">EXPIRED</option>
+</select>
+<select id="voucherPartner"><option value="ALL">All Partners</option></select>
+<input id="voucherDateFrom" type="date" title="Issued from">
+<input id="voucherDateTo" type="date" title="Issued to">
 <button id="voucherRefresh" class="btn small">Refresh</button>
+</div>
+<div class="toolbar">
+  <button id="clearVoucherFilters" class="btn small blue">Clear Filters</button>
+  <button id="exportVoucherCsv" class="btn small green">Export CSV</button>
 </div>
 <div id="voucherMsg"></div>
 <div class="vstats">
@@ -102,7 +114,14 @@ async function loadPartners(){
  msg($("partnerMsg"),"");
  const {data,error}=await db.from("partners").select("id,partner_code,partner_name,voucher_limit,vouchers_issued,status").order("partner_name");
  if(error){msg($("partnerMsg"),"Unable to load Partners: "+error.message);return}
- partners=(data||[]).filter(p=>String(p.partner_code).toUpperCase()!=="ADMIN");render();updateStats();
+ partners=(data||[]).filter(p=>String(p.partner_code).toUpperCase()!=="ADMIN");
+ const vp=$("voucherPartner");
+ if(vp){
+   const current=vp.value||"ALL";
+   vp.innerHTML='<option value="ALL">All Partners</option>'+partners.map(p=>`<option value="${esc(p.id)}">${esc(p.partner_name)}</option>`).join("");
+   vp.value=[...vp.options].some(o=>o.value===current)?current:"ALL";
+ }
+ render();updateStats();
 }
 
 function updateStats(){
@@ -210,14 +229,26 @@ function updateVoucherStats(){
  $("vExpired").textContent=counts.EXPIRED;
 }
 
-function renderVouchers(){
+function filteredVouchers(){
  const q=($("voucherSearch")?.value||"").trim().toLowerCase();
  const sf=$("voucherStatus")?.value||"ALL";
- const list=vouchers.filter(v=>{
+ const pf=$("voucherPartner")?.value||"ALL";
+ const df=$("voucherDateFrom")?.value||"";
+ const dt=$("voucherDateTo")?.value||"";
+ return vouchers.filter(v=>{
    const st=voucherEffectiveStatus(v);
-   const hay=[v.voucher_code,v.customer_name,v.customer_phone,partnerNameFor(v),v.voucher_type].join(" ").toLowerCase();
-   return (!q||hay.includes(q))&&(sf==="ALL"||st===sf);
+   const hay=[v.voucher_code,v.customer_name,v.customer_phone,partnerNameFor(v),v.voucher_type,branchLabel(v)].join(" ").toLowerCase();
+   const issued=v.issued_at ? new Date(v.issued_at) : null;
+   const fromOk=!df || (issued && issued >= new Date(df+"T00:00:00"));
+   const toOk=!dt || (issued && issued <= new Date(dt+"T23:59:59"));
+   return (!q||hay.includes(q))
+     && (sf==="ALL"||st===sf)
+     && (pf==="ALL"||String(v.partner_id)===pf)
+     && fromOk && toOk;
  });
+}
+function renderVouchers(){
+ const list=filteredVouchers();
  $("voucherRecords").innerHTML=list.length?list.map(v=>{
    const st=voucherEffectiveStatus(v);
    const redeemedBranch=redeemedBranchLabel(v);
@@ -229,6 +260,50 @@ function renderVouchers(){
    <b>Redeem at:</b> ${esc(branchLabel(v))}<br>
    <b>Issued:</b> ${fmtDate(v.issued_at)}${st==="REDEEMED"?`<br><b>Redeemed:</b> ${fmtDate(v.redeemed_at)}<br><b>Redeemed Branch:</b> ${esc(redeemedBranch)}`:""}</div></div>`;
  }).join(""):`<p class="sub">No voucher records found.</p>`;
+}
+
+
+function csvCell(v){
+ const str=String(v??"");
+ return `"${str.replace(/"/g,'""')}"`;
+}
+function exportVoucherCsv(){
+ const list=filteredVouchers();
+ if(!list.length){msg($("voucherMsg"),"No voucher records to export.");return;}
+ const rows=[
+   ["Voucher Code","Status","Customer","Phone","Partner","Voucher Type","Valid Until","Redeem At","Issued At","Redeemed At","Redeemed Branch"]
+ ];
+ list.forEach(v=>{
+   const st=voucherEffectiveStatus(v);
+   rows.push([
+     v.voucher_code||"",
+     st,
+     v.customer_name||"",
+     v.customer_phone||"",
+     partnerNameFor(v),
+     v.voucher_type||"",
+     v.expiry_date||"",
+     branchLabel(v),
+     v.issued_at||"",
+     v.redeemed_at||"",
+     st==="REDEEMED"?redeemedBranchLabel(v):""
+   ]);
+ });
+ const csv=rows.map(r=>r.map(csvCell).join(",")).join("\r\n");
+ const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;
+ a.download=`evolution-vouchers-${new Date().toISOString().slice(0,10)}.csv`;
+ document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+function clearVoucherFilters(){
+ $("voucherSearch").value="";
+ $("voucherStatus").value="ALL";
+ $("voucherPartner").value="ALL";
+ $("voucherDateFrom").value="";
+ $("voucherDateTo").value="";
+ renderVouchers();
 }
 
 async function setLimit(id){
@@ -255,7 +330,14 @@ async function updateLimit(p,n){
 $("login").onclick=signIn;$("password").addEventListener("keydown",e=>{if(e.key==="Enter")signIn()});
 $("logout").onclick=async()=>{await db.auth.signOut();showLogin()};
 $("refresh").onclick=loadPartners;$("search").addEventListener("input",render);
-$("voucherRefresh").onclick=loadVouchers;$("voucherSearch").addEventListener("input",renderVouchers);$("voucherStatus").addEventListener("change",renderVouchers);
+$("voucherRefresh").onclick=loadVouchers;
+$("voucherSearch").addEventListener("input",renderVouchers);
+$("voucherStatus").addEventListener("change",renderVouchers);
+$("voucherPartner").addEventListener("change",renderVouchers);
+$("voucherDateFrom").addEventListener("change",renderVouchers);
+$("voucherDateTo").addEventListener("change",renderVouchers);
+$("clearVoucherFilters").onclick=clearVoucherFilters;
+$("exportVoucherCsv").onclick=exportVoucherCsv;
 (async()=>{const {data}=await db.auth.getSession();if(data.session)await authorize();})();
 </script>
 </body></html>
