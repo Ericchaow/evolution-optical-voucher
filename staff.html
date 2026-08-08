@@ -12,7 +12,7 @@
     .brand h1{margin:0;font-size:26px}.brand p{margin:5px 0 0;color:#cbd5e1}.wrap{max-width:760px;margin:0 auto;padding:20px 14px 40px}
     .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 7px 28px rgba(15,23,42,.06);margin-bottom:16px}.hidden{display:none!important}
     h2,h3{margin:0 0 8px}.sub{color:var(--muted);margin:0 0 16px;line-height:1.5}label{display:block;font-weight:700;font-size:14px;margin:12px 0 7px}
-    input,textarea{width:100%;border:1px solid #cfd6df;border-radius:13px;padding:13px 14px;font-size:16px;background:white;color:var(--text)}
+    input,textarea,select{width:100%;border:1px solid #cfd6df;border-radius:13px;padding:13px 14px;font-size:16px;background:white;color:var(--text)}
     .btn{border:0;border-radius:13px;padding:13px 16px;font-size:15px;font-weight:800;cursor:pointer;background:var(--navy);color:white}.btn:disabled{opacity:.5}.btn.full{width:100%;margin-top:14px}
     .btn.green{background:var(--green)}.btn.blue{background:var(--blue)}.btn.ghost{background:white;color:var(--navy);border:1px solid #60708c}.btn.red{background:var(--red)}
     .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row .grow{flex:1 1 220px}.profile{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -58,7 +58,7 @@
     </section>
 
     <section id="managerSection" class="card manager-card hidden">
-      <div class="manager-badge">MANAGER ONLY</div>
+      <div class="manager-badge">STAFF MANAGEMENT</div>
       <h3>Staff Management</h3>
       <p class="sub">Create a new Staff account. New Staff will be assigned to your current branch.</p>
 
@@ -77,7 +77,7 @@
         </div>
         <div>
           <label for="newStaffBranch">Assigned Branch</label>
-          <input id="newStaffBranch" class="readonly" readonly>
+          <select id="newStaffBranch"></select>
         </div>
         <div class="fullrow">
           <button id="addStaffBtn" class="btn green full">ADD STAFF</button>
@@ -136,20 +136,19 @@ async function authorizeStaff(){
       .select("branch_code,branch_name")
       .eq("id",data.branch_id)
       .maybeSingle();
-
-    if(branch){
-      currentBranch=branch.branch_name || branch.branch_code || currentBranch;
-    }
+    if(branch) currentBranch=branch.branch_name || branch.branch_code || currentBranch;
   }
 
+  const role=String(data.role||"staff").toLowerCase();
+
   $("staffName").textContent=data.staff_name||"Staff";
-  $("staffRole").textContent=(data.role||"staff").toUpperCase();
+  $("staffRole").textContent=role.toUpperCase();
   $("staffStatus").textContent=(data.status||"active").toUpperCase();
   $("branchName").textContent=currentBranch;
-  $("newStaffBranch").value=currentBranch;
 
-  if(String(data.role||"").toLowerCase()==="manager"){
+  if(role==="manager" || role==="all_branch_manager"){
     $("managerSection").classList.remove("hidden");
+    await loadBranchOptions(role, data.branch_id);
   }else{
     $("managerSection").classList.add("hidden");
   }
@@ -228,14 +227,52 @@ async function loadRedemptionHistory(){
 }
 
 
+
+async function loadBranchOptions(role, ownBranchId){
+  const sel=$("newStaffBranch");
+  sel.innerHTML="";
+
+  if(role==="all_branch_manager"){
+    const {data,error}=await db
+      .from("branches")
+      .select("id,branch_code,branch_name,status")
+      .eq("status","active")
+      .order("branch_name");
+
+    if(error){
+      msg($("addStaffMsg"),"Unable to load branches: "+error.message);
+      return;
+    }
+
+    sel.disabled=false;
+    sel.innerHTML=(data||[]).map(b =>
+      `<option value="${esc(b.id)}">${esc(b.branch_name||b.branch_code)}</option>`
+    ).join("");
+
+    if(ownBranchId && [...sel.options].some(o=>o.value===ownBranchId)){
+      sel.value=ownBranchId;
+    }
+  }else{
+    const {data:branch}=await db
+      .from("branches")
+      .select("id,branch_code,branch_name")
+      .eq("id",ownBranchId)
+      .maybeSingle();
+
+    sel.innerHTML=`<option value="${esc(ownBranchId||"")}">${esc(branch?.branch_name||branch?.branch_code||"Assigned branch")}</option>`;
+    sel.disabled=true;
+  }
+}
+
 async function createStaff(){
   msg($("addStaffMsg"),"");
   const staff_name=$("newStaffName").value.trim();
   const email=$("newStaffEmail").value.trim();
   const password=$("newStaffPassword").value;
+  const branch_id=$("newStaffBranch").value;
 
-  if(!staff_name || !email || !password){
-    msg($("addStaffMsg"),"Please complete Staff Name, Email and Temporary Password.");
+  if(!staff_name || !email || !password || !branch_id){
+    msg($("addStaffMsg"),"Please complete Staff Name, Email, Temporary Password and Branch.");
     return;
   }
   if(password.length<6){
@@ -249,21 +286,31 @@ async function createStaff(){
       staff_name,
       email,
       password,
+      branch_id,
       role:"staff"
     }
   });
   $("addStaffBtn").disabled=false;
 
   if(error){
-    msg($("addStaffMsg"),"Unable to create Staff: "+error.message);
+    let text=error.message||"Unable to create Staff.";
+    try{
+      if(error.context && typeof error.context.json==="function"){
+        const body=await error.context.json();
+        if(body?.error) text=body.error+(body?.details?": "+body.details:"");
+      }
+    }catch(_){}
+    msg($("addStaffMsg"),text);
     return;
   }
+
   if(!data?.success){
     msg($("addStaffMsg"),data?.error || data?.details || "Unable to create Staff.");
     return;
   }
 
-  msg($("addStaffMsg"),`Staff ${staff_name} created successfully and assigned to ${$("newStaffBranch").value}.`,true);
+  const branchText=$("newStaffBranch").selectedOptions[0]?.textContent||"selected branch";
+  msg($("addStaffMsg"),`Staff ${staff_name} created successfully and assigned to ${branchText}.`,true);
   $("newStaffName").value="";
   $("newStaffEmail").value="";
   $("newStaffPassword").value="";
