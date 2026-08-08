@@ -144,9 +144,9 @@ function fmtDate(x){
 async function loadVouchers(){
  msg($("voucherMsg"),"");
  // The current project has used "vouchers" for created voucher records.
- const {data,error}=await db.from("vouchers").select("*").order("created_at",{ascending:false}).limit(300);
+ const {data,error}=await db.from("vouchers").select("*").order("issued_at",{ascending:false}).limit(300);
  if(error){
-   msg($("voucherMsg"),"Voucher Records need Admin read permission for the vouchers table: "+error.message);
+   msg($("voucherMsg"),"Unable to load Voucher Records: "+error.message);
    vouchers=[]; renderVouchers(); return;
  }
  vouchers=data||[]; updateVoucherStats(); renderVouchers();
@@ -159,8 +159,7 @@ function partnerNameFor(v){
 
 function branchLabel(v){
  if(v.all_branches===true) return "All Evolution Optical branches";
- if(Array.isArray(v.branch_codes) && v.branch_codes.length) return v.branch_codes.join(", ");
- return v.redeem_at||v.valid_branch||v.branch_name||"—";
+ return "Specific Evolution Optical branch(es)";
 }
 function updateVoucherStats(){
  const counts={VALID:0,REDEEMED:0,EXPIRED:0};
@@ -181,14 +180,14 @@ function renderVouchers(){
  });
  $("voucherRecords").innerHTML=list.length?list.map(v=>{
    const st=voucherEffectiveStatus(v);
-   const redeemedBranch=v.redeemed_branch_name||v.redeemed_branch||v.branch_name||"—";
+   const redeemedBranch="—";
    return `<div class="vrecord"><div class="vtop"><div style="flex:1"><div class="vcode">${esc(v.voucher_code||v.id||"Voucher")}</div><div class="pcode">${esc(v.voucher_type||"RM60 Free Glasses")}</div></div><span class="vstatus ${st.toLowerCase()}">${st}</span></div>
    <div class="vmeta"><b>Customer:</b> ${esc(v.customer_name||"—")} ${v.customer_phone?`• ${esc(v.customer_phone)}`:""}<br>
    <b>Issued by:</b> ${esc(partnerNameFor(v))}<br>
    <b>Voucher Type:</b> ${esc(v.voucher_type||"RM60 Free Glasses")}<br>
    <b>Valid Until:</b> ${esc(v.expiry_date||"—")}<br>
    <b>Redeem at:</b> ${esc(branchLabel(v))}<br>
-   <b>Created:</b> ${fmtDate(v.created_at)}${st==="REDEEMED"?`<br><b>Redeemed:</b> ${fmtDate(v.redeemed_at)}<br><b>Redeemed Branch:</b> ${esc(redeemedBranch)}`:""}</div></div>`;
+   <b>Issued:</b> ${fmtDate(v.issued_at)}${st==="REDEEMED"?`<br><b>Redeemed:</b> ${fmtDate(v.redeemed_at)}<br><b>Redeemed Branch:</b> ${esc(redeemedBranch)}`:""}</div></div>`;
  }).join(""):`<p class="sub">No voucher records found.</p>`;
 }
 
