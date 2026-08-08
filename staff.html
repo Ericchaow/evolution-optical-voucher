@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>Evolution Optical • Staff Voucher Portal</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
     :root{--navy:#111827;--navy2:#1f2a44;--bg:#f4f6f9;--card:#fff;--line:#dfe4ea;--text:#172033;--muted:#6b7280;--green:#187a45;--greenbg:#eaf8ef;--red:#b42318;--redbg:#fff1f0;--amber:#9a6700;--amberbg:#fff8db;--blue:#2457d6;--bluebg:#edf3ff}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -21,12 +22,12 @@
     .badge{display:inline-flex;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:900}.valid{background:var(--greenbg);color:var(--green)}.redeemed{background:var(--bluebg);color:#3049b4}.expired{background:var(--redbg);color:var(--red)}.blocked{background:var(--amberbg);color:var(--amber)}
     .voucher{border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:14px}.voucher-head{display:flex;justify-content:space-between;gap:12px}.code{font-size:21px;font-weight:900}.type{color:var(--muted);margin-top:4px}
     .kv{display:grid;grid-template-columns:130px 1fr;gap:8px 12px;margin-top:16px}.notice{margin-top:14px;border-radius:13px;padding:12px 14px;font-weight:800}.notice.good{background:var(--greenbg);color:var(--green)}.notice.bad{background:var(--redbg);color:var(--red)}
-    video{width:100%;max-height:340px;background:#000;border-radius:15px;margin-top:12px}.history-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.history-count{font-size:28px;font-weight:900}.history-label{color:var(--muted);font-size:12px;text-transform:uppercase}.history-item{border:1px solid var(--line);border-radius:14px;padding:13px;margin-top:10px;background:#fff}.history-code{font-weight:900;font-size:16px}.history-meta{margin-top:6px;color:#4b5563;font-size:13px;line-height:1.5}.manager-card{border:2px solid #d7deea}.manager-badge{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#3b4cca;font-size:12px;font-weight:900;margin-bottom:10px}.manager-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.manager-grid .fullrow{grid-column:1/-1}.readonly{background:#f3f4f6!important;color:#6b7280}.footer{text-align:center;color:#9ca3af;font-size:12px;margin-top:22px}
+    #qrReader{width:100%;margin-top:12px;overflow:hidden;border-radius:15px;background:#000}#qrReader video{border-radius:15px}.history-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.history-count{font-size:28px;font-weight:900}.history-label{color:var(--muted);font-size:12px;text-transform:uppercase}.history-item{border:1px solid var(--line);border-radius:14px;padding:13px;margin-top:10px;background:#fff}.history-code{font-weight:900;font-size:16px}.history-meta{margin-top:6px;color:#4b5563;font-size:13px;line-height:1.5}.manager-card{border:2px solid #d7deea}.manager-badge{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#3b4cca;font-size:12px;font-weight:900;margin-bottom:10px}.manager-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.manager-grid .fullrow{grid-column:1/-1}.readonly{background:#f3f4f6!important;color:#6b7280}.footer{text-align:center;color:#9ca3af;font-size:12px;margin-top:22px}
     @media(max-width:560px){.profile{grid-template-columns:1fr}.kv{grid-template-columns:1fr}.manager-grid{grid-template-columns:1fr}.manager-grid .fullrow{grid-column:auto}.topin{align-items:flex-start}.brand h1{font-size:23px}}
   </style>
 </head>
 <body>
-<header class="top"><div class="topin"><div class="brand"><h1>EVOLUTION OPTICAL</h1><p>Staff Voucher Portal <span style="opacity:.7">v7</span></p></div><button id="logoutBtn" class="btn ghost hidden">Logout</button></div></header>
+<header class="top"><div class="topin"><div class="brand"><h1>EVOLUTION OPTICAL</h1><p>Staff Voucher Portal</p></div><button id="logoutBtn" class="btn ghost hidden">Logout</button></div></header>
 <main class="wrap">
   <section id="loginCard" class="card">
     <h2>Staff Login</h2><p class="sub">Sign in with your authorised Evolution Optical staff account.</p>
@@ -43,12 +44,24 @@
         <div class="info"><span>Status</span><b id="staffStatus">—</b></div>
       </div>
     </section>
-
+    <section class="card">
+      <h3>Verify Voucher</h3><p class="sub">Enter a voucher code or scan a QR code before redemption.</p>
+      <div class="row"><input id="voucherCode" class="grow" placeholder="EO-20260808-XXXXXXX" autocomplete="off"><button id="verifyBtn" class="btn blue">VERIFY</button><button id="scanBtn" class="btn ghost">SCAN QR</button></div>
+      <div id="verifyMsg"></div>
+      <div id="scannerBox" class="hidden"><div id="qrReader"></div><div class="row" style="margin-top:10px"><button id="stopScanBtn" class="btn red">STOP CAMERA</button></div></div>
+      <div id="voucherCard" class="voucher hidden">
+        <div class="voucher-head"><div><div id="vCode" class="code"></div><div id="vType" class="type"></div></div><span id="vStatus" class="badge"></span></div>
+        <div class="kv"><b>Customer</b><span id="vCustomer"></span><b>Phone</b><span id="vPhone"></span><b>Valid Until</b><span id="vExpiry"></span><b>Staff Branch</b><span id="vBranch"></span></div>
+        <div id="redeemNotice" class="notice"></div>
+        <label>Notes (optional)</label><textarea id="notes" rows="2"></textarea>
+        <button id="redeemBtn" class="btn green full">CONFIRM REDEEM</button><div id="redeemMsg"></div>
+      </div>
+    </section>
 
     <section id="managerSection" class="card manager-card hidden">
-      <div class="manager-badge">STAFF MANAGEMENT • ROLE & BRANCH ASSIGNMENT</div>
+      <div class="manager-badge">STAFF MANAGEMENT</div>
       <h3>Staff Management</h3>
-      <p class="sub">Create a new Staff account and assign the Staff to any active branch.</p>
+      <p class="sub">Create a new Staff account. New Staff will be assigned to your current branch.</p>
 
       <div class="manager-grid">
         <div>
@@ -67,30 +80,10 @@
           <label for="newStaffBranch">Assigned Branch</label>
           <select id="newStaffBranch"></select>
         </div>
-        <div>
-          <label for="newStaffRole">Role</label>
-          <select id="newStaffRole">
-            <option value="staff">Staff</option>
-            <option value="manager">Manager</option>
-          </select>
-        </div>
         <div class="fullrow">
           <button id="addStaffBtn" class="btn green full">ADD STAFF</button>
           <div id="addStaffMsg"></div>
         </div>
-      </div>
-    </section>
-    <section class="card">
-      <h3>Verify Voucher</h3><p class="sub">Enter a voucher code or scan a QR code before redemption.</p>
-      <div class="row"><input id="voucherCode" class="grow" placeholder="EO-20260808-XXXXXXX" autocomplete="off"><button id="verifyBtn" class="btn blue">VERIFY</button><button id="scanBtn" class="btn ghost">SCAN QR</button></div>
-      <div id="verifyMsg"></div>
-      <div id="scannerBox" class="hidden"><video id="camera" playsinline muted></video><div class="row" style="margin-top:10px"><button id="stopScanBtn" class="btn red">STOP CAMERA</button></div></div>
-      <div id="voucherCard" class="voucher hidden">
-        <div class="voucher-head"><div><div id="vCode" class="code"></div><div id="vType" class="type"></div></div><span id="vStatus" class="badge"></span></div>
-        <div class="kv"><b>Customer</b><span id="vCustomer"></span><b>Phone</b><span id="vPhone"></span><b>Valid Until</b><span id="vExpiry"></span><b>Staff Branch</b><span id="vBranch"></span></div>
-        <div id="redeemNotice" class="notice"></div>
-        <label>Notes (optional)</label><textarea id="notes" rows="2"></textarea>
-        <button id="redeemBtn" class="btn green full">CONFIRM REDEEM</button><div id="redeemMsg"></div>
       </div>
     </section>
 
@@ -114,7 +107,7 @@
 const SUPABASE_URL="https://hukihbcyyqhanaqrizvm.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_kpPFeGYpedq2auo01Zo50A_aiSjdeVh";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-const $=id=>document.getElementById(id);let currentVoucher=null,mediaStream=null,scanTimer=null;
+const $=id=>document.getElementById(id);let currentVoucher=null,qrScanner=null,scanBusy=false;
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function msg(node,text,ok=false){node.innerHTML=text?`<div class="msg ${ok?'ok':'err'}">${esc(text)}</div>`:""}
 function showLogin(){$("loginCard").classList.remove("hidden");$("dashboard").classList.add("hidden");$("logoutBtn").classList.add("hidden")}
@@ -156,10 +149,9 @@ async function authorizeStaff(){
 
   if(role==="manager" || role==="all_branch_manager"){
     $("managerSection").classList.remove("hidden");
-    $("managerSection").style.display="block";
     await loadBranchOptions(role, data.branch_id);
   }else{
-    $("managerSection").classList.add("hidden");$("managerSection").style.display="none";
+    $("managerSection").classList.add("hidden");
   }
 
   showDash();
@@ -239,13 +231,9 @@ async function loadRedemptionHistory(){
 
 async function loadBranchOptions(role, ownBranchId){
   const sel=$("newStaffBranch");
-  const roleSel=$("newStaffRole");
   sel.innerHTML="";
-  roleSel.innerHTML="";
 
   if(role==="all_branch_manager"){
-    roleSel.disabled=false;
-    roleSel.innerHTML='<option value="staff">Staff</option><option value="manager">Manager</option>';
     const {data,error}=await db
       .from("branches")
       .select("id,branch_code,branch_name,status")
@@ -266,8 +254,6 @@ async function loadBranchOptions(role, ownBranchId){
       sel.value=ownBranchId;
     }
   }else{
-    roleSel.disabled=true;
-    roleSel.innerHTML='<option value="staff">Staff</option>';
     const {data:branch}=await db
       .from("branches")
       .select("id,branch_code,branch_name")
@@ -285,9 +271,8 @@ async function createStaff(){
   const email=$("newStaffEmail").value.trim();
   const password=$("newStaffPassword").value;
   const branch_id=$("newStaffBranch").value;
-  const role=$("newStaffRole").value;
 
-  if(!staff_name || !email || !password || !branch_id || !role){
+  if(!staff_name || !email || !password || !branch_id){
     msg($("addStaffMsg"),"Please complete Staff Name, Email, Temporary Password and Branch.");
     return;
   }
@@ -303,7 +288,7 @@ async function createStaff(){
       email,
       password,
       branch_id,
-      role
+      role:"staff"
     }
   });
   $("addStaffBtn").disabled=false;
@@ -326,19 +311,57 @@ async function createStaff(){
   }
 
   const branchText=$("newStaffBranch").selectedOptions[0]?.textContent||"selected branch";
-  const roleText=$("newStaffRole").selectedOptions[0]?.textContent||role;
-  msg($("addStaffMsg"),`${staff_name} created successfully as ${roleText} and assigned to ${branchText}.`,true);
+  msg($("addStaffMsg"),`Staff ${staff_name} created successfully and assigned to ${branchText}.`,true);
   $("newStaffName").value="";
   $("newStaffEmail").value="";
   $("newStaffPassword").value="";
 }
 
-async function startScanner(){msg($("verifyMsg"),"");if(!("BarcodeDetector"in window)){msg($("verifyMsg"),"QR scanning is not supported by this browser. Please enter the voucher code manually.");return}
-  try{const detector=new BarcodeDetector({formats:["qr_code"]});mediaStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});$("camera").srcObject=mediaStream;await $("camera").play();$("scannerBox").classList.remove("hidden");
-    scanTimer=setInterval(async()=>{try{const codes=await detector.detect($("camera"));if(codes?.length){const raw=(codes[0].rawValue||"").trim();if(raw){$("voucherCode").value=extractVoucherCode(raw);stopScanner();await verifyVoucher()}}}catch(_){}},600)}catch(e){stopScanner();msg($("verifyMsg"),"Unable to open camera. Please allow camera access or enter the code manually.")}}
-function extractVoucherCode(raw){try{const u=new URL(raw);return u.searchParams.get("code")||u.searchParams.get("voucher")||raw}catch(_){return raw}}
-function stopScanner(){if(scanTimer){clearInterval(scanTimer);scanTimer=null}if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop());mediaStream=null}$("camera").srcObject=null;$("scannerBox").classList.add("hidden")}
-$("loginBtn").onclick=login;$("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});$("voucherCode").addEventListener("keydown",e=>{if(e.key==="Enter")verifyVoucher()});$("verifyBtn").onclick=verifyVoucher;$("redeemBtn").onclick=redeemVoucher;$("scanBtn").onclick=startScanner;$("stopScanBtn").onclick=stopScanner;$("historyRefreshBtn").onclick=loadRedemptionHistory;$("addStaffBtn").onclick=createStaff;$("logoutBtn").onclick=async()=>{stopScanner();await db.auth.signOut();showLogin()};window.addEventListener("beforeunload",stopScanner);
+function extractVoucherCode(raw){try{const u=new URL(raw);return u.searchParams.get("code")||u.searchParams.get("voucher")||u.searchParams.get("id")||raw}catch(_){return raw}}
+async function resolveScannedVoucher(raw){
+  const value=String(extractVoucherCode(raw)||"").trim();
+  if(!value) return "";
+  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if(!uuid.test(value)) return value;
+  const {data,error}=await db.from("vouchers").select("voucher_code").eq("id",value).maybeSingle();
+  if(error || !data?.voucher_code) return value;
+  return data.voucher_code;
+}
+async function handleScanResult(decodedText){
+  if(scanBusy) return;
+  scanBusy=true;
+  try{
+    const code=await resolveScannedVoucher(decodedText);
+    if(!code){msg($("verifyMsg"),"QR code is empty or invalid.");return;}
+    $("voucherCode").value=code;
+    await stopScanner();
+    await verifyVoucher();
+  }finally{scanBusy=false;}
+}
+async function startScanner(){
+  msg($("verifyMsg"),"");
+  if(typeof Html5Qrcode==="undefined"){msg($("verifyMsg"),"QR scanner could not load. Please enter the voucher code manually.");return;}
+  try{
+    await stopScanner();
+    $("scannerBox").classList.remove("hidden");
+    qrScanner=new Html5Qrcode("qrReader");
+    const config={fps:10,qrbox:{width:240,height:240},aspectRatio:1.0};
+    await qrScanner.start({facingMode:"environment"},config,handleScanResult,()=>{});
+  }catch(e){
+    await stopScanner();
+    msg($("verifyMsg"),"Unable to open camera. Please allow camera access in Safari/Chrome settings, then try again.");
+  }
+}
+async function stopScanner(){
+  if(qrScanner){
+    try{if(qrScanner.isScanning) await qrScanner.stop();}catch(_){}
+    try{await qrScanner.clear();}catch(_){}
+    qrScanner=null;
+  }
+  const reader=$("qrReader");if(reader) reader.innerHTML="";
+  $("scannerBox").classList.add("hidden");
+}
+$("loginBtn").onclick=login;$("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});$("voucherCode").addEventListener("keydown",e=>{if(e.key==="Enter")verifyVoucher()});$("verifyBtn").onclick=verifyVoucher;$("redeemBtn").onclick=redeemVoucher;$("scanBtn").onclick=startScanner;$("stopScanBtn").onclick=stopScanner;$("historyRefreshBtn").onclick=loadRedemptionHistory;$("addStaffBtn").onclick=createStaff;$("logoutBtn").onclick=async()=>{await stopScanner();await db.auth.signOut();showLogin()};window.addEventListener("beforeunload",()=>{stopScanner()});
 (async()=>{const{data}=await db.auth.getSession();if(data?.session)await authorizeStaff();else showLogin()})();
 </script>
 </body></html>
