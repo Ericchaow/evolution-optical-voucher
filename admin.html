@@ -14,7 +14,7 @@
 .msg{margin-top:12px;padding:11px 12px;border-radius:12px;font-size:13px}.msg.ok{background:var(--greenbg);color:var(--green)}.msg.err{background:var(--redbg);color:var(--red)}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:16px;padding:13px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;font-size:23px;margin-top:3px}
 .toolbar{display:flex;gap:9px;margin:13px 0;flex-wrap:wrap}.toolbar input{flex:1;min-width:200px}.partner{border:1px solid var(--line);border-radius:17px;padding:15px;margin-top:11px}.prow{display:flex;gap:10px;align-items:flex-start}.pinfo{flex:1}.pname{font-weight:900;font-size:16px}.pcode{color:var(--muted);font-size:12px;margin-top:3px}.badge{font-size:11px;font-weight:900;border-radius:999px;padding:5px 8px;background:var(--greenbg);color:var(--green)}.badge.suspended{background:var(--redbg);color:var(--red)}
-.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.num{background:#f8fafc;border-radius:12px;padding:9px}.num span{font-size:11px;color:var(--muted);display:block}.num b{font-size:17px}.actions{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-top:12px}.actions input{min-height:42px;padding:9px}.note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.num{background:#f8fafc;border-radius:12px;padding:9px}.num span{font-size:11px;color:var(--muted);display:block}.num b{font-size:17px}.actions{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;margin-top:12px}.actions input{min-height:42px;padding:9px}.note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45}
 .create-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:10px 12px;margin-top:14px}.create-grid .wide{grid-column:1/-1}.create-actions{display:flex;gap:10px;margin-top:14px;align-items:center}
 @media(max-width:620px){.stats{grid-template-columns:1fr 1fr 1fr}.stat{padding:10px}.stat strong{font-size:20px}.actions{grid-template-columns:1fr 1fr}.actions input{grid-column:1/-1}.btn.small{width:100%}.create-grid{grid-template-columns:1fr}.create-grid .wide{grid-column:auto}.create-actions{display:block}.create-actions .btn{width:100%}}
 
@@ -165,7 +165,8 @@ function render(){
     <div class="nums"><div class="num"><span>Limit</span><b>${lim}</b></div><div class="num"><span>Issued</span><b>${issued}</b></div><div class="num"><span>Remaining</span><b>${rem}</b></div></div>
     <div class="actions"><input id="qty-${p.id}" type="number" min="0" step="1" placeholder="Enter quantity">
     <button class="btn small blue" onclick="setLimit('${p.id}')">Set Total</button>
-    <button class="btn small green" onclick="addLimit('${p.id}')">+ Add</button></div>
+    <button class="btn small green" onclick="addLimit('${p.id}')">+ Add</button>
+    <button class="btn small ${active?'red':'green'}" onclick="togglePartnerStatus('${p.id}')">${active?'Suspend':'Reactivate'}</button></div>
    </div>`;
  }).join(""):`<p class="sub">No Partner found.</p>`;
 }
@@ -435,6 +436,54 @@ async function createPartner(){
    btn.disabled=false;
    btn.textContent="Create Partner";
  }
+}
+
+
+async function togglePartnerStatus(id){
+ const p=partners.find(x=>x.id===id);
+ if(!p) return;
+
+ const isActive=String(p.status).toLowerCase()==="active";
+ const nextStatus=isActive?"suspended":"active";
+ const action=isActive?"Suspend":"Reactivate";
+
+ if(!confirm(`${action} ${p.partner_name}?`)) return;
+
+ msg($("partnerMsg"),"");
+
+ // Update Partner company status first.
+ const {error:partnerErr}=await db
+   .from("partners")
+   .update({status:nextStatus})
+   .eq("id",p.id);
+
+ if(partnerErr){
+   msg($("partnerMsg"),`${action} failed: ${partnerErr.message}`);
+   return;
+ }
+
+ // Also block/unblock all linked Partner logins.
+ const {error:userErr}=await db
+   .from("partner_users")
+   .update({status:nextStatus==="active"?"active":"suspended"})
+   .eq("partner_id",p.id)
+   .neq("role","admin");
+
+ if(userErr){
+   // Best-effort rollback of partner status if login update fails.
+   await db.from("partners").update({status:p.status}).eq("id",p.id);
+   msg($("partnerMsg"),`${action} failed while updating Partner login status: ${userErr.message}`);
+   return;
+ }
+
+ msg(
+   $("partnerMsg"),
+   `${p.partner_name} is now ${nextStatus.toUpperCase()}.`,
+   true
+ );
+
+ await loadPartners();
+ renderPerformance();
 }
 
 async function setLimit(id){
