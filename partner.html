@@ -252,58 +252,9 @@
         </div>
 
         <div class="field">
-          <label>Valid Branches</label>
-
-          <label class="branch">
-            <input id="allBranches" type="checkbox" />
-            <div>
-              <b>All Evolution Optical branches</b>
-              <small>Voucher can be redeemed at any active branch.</small>
-            </div>
-          </label>
-
-          <div id="specificBranches" style="margin-top:10px">
-            <div class="branch-actions">
-              <button type="button" id="selectAllBtn" class="mini">Select all</button>
-              <button type="button" id="clearBtn" class="mini">Clear</button>
-            </div>
-
-            <div class="branches">
-              <label class="branch">
-                <input class="branchCheck" type="checkbox" value="MINES">
-                <div><b>The Mines</b><small>MINES</small></div>
-              </label>
-
-              <label class="branch">
-                <input class="branchCheck" type="checkbox" value="DAMAI_PERDANA">
-                <div><b>Alam Damai / Damai Perdana</b><small>DAMAI_PERDANA</small></div>
-              </label>
-
-              <label class="branch">
-                <input class="branchCheck" type="checkbox" value="BANGI">
-                <div><b>Pasaraya CS Bangi</b><small>BANGI</small></div>
-              </label>
-
-              <label class="branch">
-                <input class="branchCheck" type="checkbox" value="BAHAU">
-                <div><b>Bahau</b><small>BAHAU</small></div>
-              </label>
-
-              <label class="branch">
-                <input class="branchCheck" type="checkbox" value="VISTA_VALLEY">
-                <div><b>Semenyih Vista Valley</b><small>VISTA_VALLEY</small></div>
-              </label>
-
-              <label class="branch">
-                <input class="branchCheck" type="checkbox" value="ECO_TAIPAN">
-                <div><b>Semenyih Eco Taipan</b><small>ECO_TAIPAN</small></div>
-              </label>
-
-              <label class="branch">
-                <input class="branchCheck" type="checkbox" value="PERTAMA">
-                <div><b>Pertama Complex</b><small>PERTAMA</small></div>
-              </label>
-            </div>
+          <label>Claim Branches (assigned by Evolution Optical Admin)</label>
+          <div id="assignedClaimBranches" class="branch" style="align-items:flex-start">
+            <div><b>Loading assigned branches…</b><small>Partner cannot change this setting.</small></div>
           </div>
         </div>
 
@@ -359,6 +310,9 @@
     const shareBtn = el("shareBtn");
     let currentVoucher = null;
     let currentPartnerName = "Partner";
+    let partnerClaimAll = true;
+    let partnerClaimCodes = [];
+    let partnerClaimNames = [];
 
     const OUTLETS = {
       MINES: {
@@ -425,19 +379,19 @@
 
     setDefaultExpiry();
 
-    el("allBranches").addEventListener("change", e => {
-      const on = e.target.checked;
-      el("specificBranches").style.opacity = on ? ".45" : "1";
-      document.querySelectorAll(".branchCheck").forEach(cb => cb.disabled = on);
-    });
 
-    el("selectAllBtn").addEventListener("click", () => {
-      document.querySelectorAll(".branchCheck").forEach(cb => cb.checked = true);
-    });
-
-    el("clearBtn").addEventListener("click", () => {
-      document.querySelectorAll(".branchCheck").forEach(cb => cb.checked = false);
-    });
+    async function loadMyClaimAccess(){
+      const {data,error}=await supabaseClient.rpc("get_my_partner_claim_access");
+      if(error) throw error;
+      partnerClaimAll=!!data?.all_branches;
+      partnerClaimCodes=data?.branch_codes||[];
+      partnerClaimNames=data?.branch_names||[];
+      const box=el("assignedClaimBranches");
+      if(box){
+        const label=partnerClaimAll ? "All Evolution Optical branches" : (partnerClaimNames.join(", ") || "No claim branch assigned");
+        box.innerHTML=`<div><b>${label}</b><small>Set by Evolution Optical Admin. Contact Admin if this needs to be changed.</small></div>`;
+      }
+    }
 
     async function login(){
       hideMsg(el("loginMsg"));
@@ -519,6 +473,9 @@
       el("remaining").textContent =
         Math.max(0, p.voucher_limit - p.vouchers_issued);
 
+      try{await loadMyClaimAccess();}
+      catch(e){showMsg(el("loginMsg"),"Unable to load assigned Claim Branches: "+e.message);return;}
+
       loginCard.classList.add("hidden");
       dashboard.classList.remove("hidden");
       logoutBtn.classList.remove("hidden");
@@ -537,11 +494,8 @@
       const phone = el("customerPhone").value.trim();
       const voucherType = el("voucherType").value;
       const expiry = el("expiryDate").value;
-      const allBranches = el("allBranches").checked;
-
-      const branchCodes =
-        [...document.querySelectorAll(".branchCheck:checked")]
-        .map(x => x.value);
+      const allBranches = partnerClaimAll;
+      const branchCodes = [...partnerClaimCodes];
 
       if (!customerName || !phone || !expiry) {
         showMsg(
@@ -552,10 +506,7 @@
       }
 
       if (!allBranches && branchCodes.length === 0) {
-        showMsg(
-          el("createMsg"),
-          "Please select at least one valid branch, or choose All Branches."
-        );
+        showMsg(el("createMsg"),"No claim branch is assigned to this Partner. Please contact Evolution Optical Admin.");
         return;
       }
 
@@ -597,15 +548,13 @@
       createBtn.textContent = "GENERATING…";
 
       const { data, error } = await supabaseClient.rpc(
-        "create_partner_voucher",
+        "create_partner_voucher_controlled",
         {
           p_customer_name: customerName,
           p_customer_phone: phone,
           p_customer_ic: "",
           p_voucher_type: voucherType,
-          p_expiry_date: expiry,
-          p_all_branches: allBranches,
-          p_branch_codes: branchCodes
+          p_expiry_date: expiry
         }
       );
 
