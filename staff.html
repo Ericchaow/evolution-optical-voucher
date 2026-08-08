@@ -21,8 +21,8 @@
     .badge{display:inline-flex;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:900}.valid{background:var(--greenbg);color:var(--green)}.redeemed{background:var(--bluebg);color:#3049b4}.expired{background:var(--redbg);color:var(--red)}.blocked{background:var(--amberbg);color:var(--amber)}
     .voucher{border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:14px}.voucher-head{display:flex;justify-content:space-between;gap:12px}.code{font-size:21px;font-weight:900}.type{color:var(--muted);margin-top:4px}
     .kv{display:grid;grid-template-columns:130px 1fr;gap:8px 12px;margin-top:16px}.notice{margin-top:14px;border-radius:13px;padding:12px 14px;font-weight:800}.notice.good{background:var(--greenbg);color:var(--green)}.notice.bad{background:var(--redbg);color:var(--red)}
-    video{width:100%;max-height:340px;background:#000;border-radius:15px;margin-top:12px}.history-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.history-count{font-size:28px;font-weight:900}.history-label{color:var(--muted);font-size:12px;text-transform:uppercase}.history-item{border:1px solid var(--line);border-radius:14px;padding:13px;margin-top:10px;background:#fff}.history-code{font-weight:900;font-size:16px}.history-meta{margin-top:6px;color:#4b5563;font-size:13px;line-height:1.5}.footer{text-align:center;color:#9ca3af;font-size:12px;margin-top:22px}
-    @media(max-width:560px){.profile{grid-template-columns:1fr}.kv{grid-template-columns:1fr}.topin{align-items:flex-start}.brand h1{font-size:23px}}
+    video{width:100%;max-height:340px;background:#000;border-radius:15px;margin-top:12px}.history-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.history-count{font-size:28px;font-weight:900}.history-label{color:var(--muted);font-size:12px;text-transform:uppercase}.history-item{border:1px solid var(--line);border-radius:14px;padding:13px;margin-top:10px;background:#fff}.history-code{font-weight:900;font-size:16px}.history-meta{margin-top:6px;color:#4b5563;font-size:13px;line-height:1.5}.manager-card{border:2px solid #d7deea}.manager-badge{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#3b4cca;font-size:12px;font-weight:900;margin-bottom:10px}.manager-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.manager-grid .fullrow{grid-column:1/-1}.readonly{background:#f3f4f6!important;color:#6b7280}.footer{text-align:center;color:#9ca3af;font-size:12px;margin-top:22px}
+    @media(max-width:560px){.profile{grid-template-columns:1fr}.kv{grid-template-columns:1fr}.manager-grid{grid-template-columns:1fr}.manager-grid .fullrow{grid-column:auto}.topin{align-items:flex-start}.brand h1{font-size:23px}}
   </style>
 </head>
 <body>
@@ -57,6 +57,35 @@
       </div>
     </section>
 
+    <section id="managerSection" class="card manager-card hidden">
+      <div class="manager-badge">MANAGER ONLY</div>
+      <h3>Staff Management</h3>
+      <p class="sub">Create a new Staff account. New Staff will be assigned to your current branch.</p>
+
+      <div class="manager-grid">
+        <div>
+          <label for="newStaffName">Staff Name</label>
+          <input id="newStaffName" placeholder="e.g. John Tan">
+        </div>
+        <div>
+          <label for="newStaffEmail">Email</label>
+          <input id="newStaffEmail" type="email" placeholder="staff@example.com">
+        </div>
+        <div>
+          <label for="newStaffPassword">Temporary Password</label>
+          <input id="newStaffPassword" type="password" placeholder="Minimum 6 characters">
+        </div>
+        <div>
+          <label for="newStaffBranch">Assigned Branch</label>
+          <input id="newStaffBranch" class="readonly" readonly>
+        </div>
+        <div class="fullrow">
+          <button id="addStaffBtn" class="btn green full">ADD STAFF</button>
+          <div id="addStaffMsg"></div>
+        </div>
+      </div>
+    </section>
+
     <section class="card">
       <div class="history-top">
         <div>
@@ -86,7 +115,7 @@ async function login(){msg($("loginMsg"),"");$("loginBtn").disabled=true;const{e
 async function authorizeStaff(){const{data:{user}}=await db.auth.getUser();if(!user){showLogin();return}
   const{data,error}=await db.from("staff_users").select("user_id,staff_name,branch_id,role,status,branches(branch_code,branch_name)").eq("user_id",user.id).maybeSingle();
   if(error||!data||String(data.status).toLowerCase()!=="active"){await db.auth.signOut();showLogin();msg($("loginMsg"),"This account is not authorised as an active Staff user.");return}
-  $("staffName").textContent=data.staff_name||"Staff";$("staffRole").textContent=(data.role||"staff").toUpperCase();$("staffStatus").textContent=(data.status||"active").toUpperCase();$("branchName").textContent=data.branches?.branch_name||data.branches?.branch_code||"Assigned branch";showDash();await loadRedemptionHistory()}
+  $("staffName").textContent=data.staff_name||"Staff";$("staffRole").textContent=(data.role||"staff").toUpperCase();$("staffStatus").textContent=(data.status||"active").toUpperCase();const currentBranch=data.branches?.branch_name||data.branches?.branch_code||"Assigned branch";$("branchName").textContent=currentBranch;$("newStaffBranch").value=currentBranch;if(String(data.role||"").toLowerCase()==="manager")$("managerSection").classList.remove("hidden");else $("managerSection").classList.add("hidden");showDash();await loadRedemptionHistory()}
 function statusClass(v){const s=String(v.status||"").toLowerCase();if(s==="redeemed")return"redeemed";if(v.expired)return"expired";if(s==="valid"&&v.branch_allowed)return"valid";return"blocked"}
 function renderVoucher(v){currentVoucher=v;$("voucherCard").classList.remove("hidden");$("vCode").textContent=v.voucher_code||"";$("vType").textContent=v.voucher_type||"";$("vCustomer").textContent=v.customer_name||"—";$("vPhone").textContent=v.customer_phone||"—";$("vExpiry").textContent=v.expiry_date||"—";$("vBranch").textContent=v.branch_name||"—";$("vStatus").textContent=String(v.status||"").toUpperCase();$("vStatus").className="badge "+statusClass(v);
   const n=$("redeemNotice");if(v.can_redeem){n.textContent="VALID FOR REDEMPTION AT THIS BRANCH";n.className="notice good"}else{let r="Voucher cannot be redeemed.";if(String(v.status||"").toLowerCase()!=="valid")r=`Voucher status is ${String(v.status||"").toUpperCase()}.`;else if(v.expired)r="Voucher has expired.";else if(!v.branch_allowed)r="Voucher is not valid for this branch.";n.textContent=r;n.className="notice bad"}$("redeemBtn").disabled=!v.can_redeem;msg($("redeemMsg"),"")}
@@ -157,12 +186,54 @@ async function loadRedemptionHistory(){
   }).join("") : `<p class="sub">No redemption history yet.</p>`;
 }
 
+
+async function createStaff(){
+  msg($("addStaffMsg"),"");
+  const staff_name=$("newStaffName").value.trim();
+  const email=$("newStaffEmail").value.trim();
+  const password=$("newStaffPassword").value;
+
+  if(!staff_name || !email || !password){
+    msg($("addStaffMsg"),"Please complete Staff Name, Email and Temporary Password.");
+    return;
+  }
+  if(password.length<6){
+    msg($("addStaffMsg"),"Temporary Password must be at least 6 characters.");
+    return;
+  }
+
+  $("addStaffBtn").disabled=true;
+  const {data,error}=await db.functions.invoke("create-staff",{
+    body:{
+      staff_name,
+      email,
+      password,
+      role:"staff"
+    }
+  });
+  $("addStaffBtn").disabled=false;
+
+  if(error){
+    msg($("addStaffMsg"),"Unable to create Staff: "+error.message);
+    return;
+  }
+  if(!data?.success){
+    msg($("addStaffMsg"),data?.error || data?.details || "Unable to create Staff.");
+    return;
+  }
+
+  msg($("addStaffMsg"),`Staff ${staff_name} created successfully and assigned to ${$("newStaffBranch").value}.`,true);
+  $("newStaffName").value="";
+  $("newStaffEmail").value="";
+  $("newStaffPassword").value="";
+}
+
 async function startScanner(){msg($("verifyMsg"),"");if(!("BarcodeDetector"in window)){msg($("verifyMsg"),"QR scanning is not supported by this browser. Please enter the voucher code manually.");return}
   try{const detector=new BarcodeDetector({formats:["qr_code"]});mediaStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});$("camera").srcObject=mediaStream;await $("camera").play();$("scannerBox").classList.remove("hidden");
     scanTimer=setInterval(async()=>{try{const codes=await detector.detect($("camera"));if(codes?.length){const raw=(codes[0].rawValue||"").trim();if(raw){$("voucherCode").value=extractVoucherCode(raw);stopScanner();await verifyVoucher()}}}catch(_){}},600)}catch(e){stopScanner();msg($("verifyMsg"),"Unable to open camera. Please allow camera access or enter the code manually.")}}
 function extractVoucherCode(raw){try{const u=new URL(raw);return u.searchParams.get("code")||u.searchParams.get("voucher")||raw}catch(_){return raw}}
 function stopScanner(){if(scanTimer){clearInterval(scanTimer);scanTimer=null}if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop());mediaStream=null}$("camera").srcObject=null;$("scannerBox").classList.add("hidden")}
-$("loginBtn").onclick=login;$("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});$("voucherCode").addEventListener("keydown",e=>{if(e.key==="Enter")verifyVoucher()});$("verifyBtn").onclick=verifyVoucher;$("redeemBtn").onclick=redeemVoucher;$("scanBtn").onclick=startScanner;$("stopScanBtn").onclick=stopScanner;$("historyRefreshBtn").onclick=loadRedemptionHistory;$("logoutBtn").onclick=async()=>{stopScanner();await db.auth.signOut();showLogin()};window.addEventListener("beforeunload",stopScanner);
+$("loginBtn").onclick=login;$("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});$("voucherCode").addEventListener("keydown",e=>{if(e.key==="Enter")verifyVoucher()});$("verifyBtn").onclick=verifyVoucher;$("redeemBtn").onclick=redeemVoucher;$("scanBtn").onclick=startScanner;$("stopScanBtn").onclick=stopScanner;$("historyRefreshBtn").onclick=loadRedemptionHistory;$("addStaffBtn").onclick=createStaff;$("logoutBtn").onclick=async()=>{stopScanner();await db.auth.signOut();showLogin()};window.addEventListener("beforeunload",stopScanner);
 (async()=>{const{data}=await db.auth.getSession();if(data?.session)await authorizeStaff();else showLogin()})();
 </script>
 </body></html>
