@@ -237,20 +237,13 @@
           </div>
         </div>
 
-        <div class="form-grid" style="margin-top:14px">
-          <div class="field">
-            <label for="customerIc">IC / Passport</label>
-            <input id="customerIc" placeholder="IC / Passport" />
-          </div>
-
-          <div class="field">
-            <label for="voucherType">Voucher Type</label>
-            <select id="voucherType">
-              <option value="RM59 Free Glasses">RM59 Free Glasses</option>
-              <option value="Free Eye Screening">Free Eye Screening</option>
-              <option value="Special Partner Voucher">Special Partner Voucher</option>
-            </select>
-          </div>
+        <div class="field">
+          <label for="voucherType">Voucher Type</label>
+          <select id="voucherType">
+            <option value="RM59 Free Glasses">RM59 Free Glasses</option>
+            <option value="Free Eye Screening">Free Eye Screening</option>
+            <option value="Special Partner Voucher">Special Partner Voucher</option>
+          </select>
         </div>
 
         <div class="field">
@@ -528,7 +521,6 @@
 
       const customerName = el("customerName").value.trim();
       const phone = el("customerPhone").value.trim();
-      const ic = el("customerIc").value.trim();
       const voucherType = el("voucherType").value;
       const expiry = el("expiryDate").value;
       const allBranches = el("allBranches").checked;
@@ -537,10 +529,10 @@
         [...document.querySelectorAll(".branchCheck:checked")]
         .map(x => x.value);
 
-      if (!customerName || !phone || !ic || !expiry) {
+      if (!customerName || !phone || !expiry) {
         showMsg(
           el("createMsg"),
-          "Please complete Customer Name, Phone, IC / Passport and Expiry Date."
+          "Please complete Customer Name, Phone and Expiry Date."
         );
         return;
       }
@@ -561,7 +553,7 @@
         {
           p_customer_name: customerName,
           p_customer_phone: phone,
-          p_customer_ic: ic,
+          p_customer_ic: "",
           p_voucher_type: voucherType,
           p_expiry_date: expiry,
           p_all_branches: allBranches,
