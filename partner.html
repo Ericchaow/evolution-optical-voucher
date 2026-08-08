@@ -262,6 +262,31 @@
         <div id="createMsg" class="msg hidden"></div>
       </section>
 
+
+      <section class="card">
+        <h3>Account Settings</h3>
+        <p class="sub">Change your Partner Portal password. This does not affect your voucher limit, claim branches or voucher history.</p>
+
+        <div class="form-grid" style="margin-top:15px">
+          <div class="field">
+            <label for="currentPassword">Current Password</label>
+            <input id="currentPassword" type="password" autocomplete="current-password" placeholder="Current password" />
+          </div>
+          <div class="field">
+            <label for="newPassword">New Password</label>
+            <input id="newPassword" type="password" autocomplete="new-password" placeholder="Minimum 6 characters" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="confirmNewPassword">Confirm New Password</label>
+          <input id="confirmNewPassword" type="password" autocomplete="new-password" placeholder="Enter new password again" />
+        </div>
+
+        <button id="changePasswordBtn" class="btn secondary">CHANGE PASSWORD</button>
+        <div id="changePasswordMsg" class="msg hidden"></div>
+      </section>
+
       <section id="voucherResultCard" class="card hidden">
         <h3>Voucher Generated</h3>
 
@@ -730,6 +755,75 @@ Please present this QR Voucher upon redemption.`;
       }
     }
 
+
+    async function changeMyPassword(){
+      hideMsg(el("changePasswordMsg"));
+
+      const currentPassword = el("currentPassword").value;
+      const newPassword = el("newPassword").value;
+      const confirmPassword = el("confirmNewPassword").value;
+
+      if(!currentPassword || !newPassword || !confirmPassword){
+        showMsg(el("changePasswordMsg"), "Please complete Current Password, New Password and Confirm New Password.");
+        return;
+      }
+
+      if(newPassword.length < 6){
+        showMsg(el("changePasswordMsg"), "New Password must be at least 6 characters.");
+        return;
+      }
+
+      if(newPassword !== confirmPassword){
+        showMsg(el("changePasswordMsg"), "New Password and Confirm New Password do not match.");
+        return;
+      }
+
+      if(currentPassword === newPassword){
+        showMsg(el("changePasswordMsg"), "New Password must be different from your Current Password.");
+        return;
+      }
+
+      const btn = el("changePasswordBtn");
+      btn.disabled = true;
+      btn.textContent = "UPDATING…";
+
+      try{
+        const { data: userData, error: userErr } = await supabaseClient.auth.getUser();
+        if(userErr || !userData?.user?.email){
+          showMsg(el("changePasswordMsg"), "Unable to verify your signed-in account.");
+          return;
+        }
+
+        // Re-authenticate so the current password must be correct.
+        const { error: authErr } = await supabaseClient.auth.signInWithPassword({
+          email: userData.user.email,
+          password: currentPassword
+        });
+
+        if(authErr){
+          showMsg(el("changePasswordMsg"), "Current Password is incorrect.");
+          return;
+        }
+
+        const { error: updateErr } = await supabaseClient.auth.updateUser({
+          password: newPassword
+        });
+
+        if(updateErr){
+          showMsg(el("changePasswordMsg"), updateErr.message || "Unable to change password.");
+          return;
+        }
+
+        el("currentPassword").value = "";
+        el("newPassword").value = "";
+        el("confirmNewPassword").value = "";
+        showMsg(el("changePasswordMsg"), "Password changed successfully.", "ok");
+      }finally{
+        btn.disabled = false;
+        btn.textContent = "CHANGE PASSWORD";
+      }
+    }
+
     el("loginBtn").addEventListener("click", login);
 
     el("password").addEventListener("keydown", e => {
@@ -738,6 +832,7 @@ Please present this QR Voucher upon redemption.`;
 
     createBtn.addEventListener("click", createVoucher);
     shareBtn.addEventListener("click", shareVoucher);
+    el("changePasswordBtn").addEventListener("click", changeMyPassword);
 
     logoutBtn.addEventListener("click", async () => {
       await supabaseClient.auth.signOut();
