@@ -26,7 +26,7 @@
   </style>
 </head>
 <body>
-<header class="top"><div class="topin"><div class="brand"><h1>EVOLUTION OPTICAL</h1><p>Staff Voucher Portal</p></div><button id="logoutBtn" class="btn ghost hidden">Logout</button></div></header>
+<header class="top"><div class="topin"><div class="brand"><h1>EVOLUTION OPTICAL</h1><p>Staff Voucher Portal <span style="opacity:.7">v6</span></p></div><button id="logoutBtn" class="btn ghost hidden">Logout</button></div></header>
 <main class="wrap">
   <section id="loginCard" class="card">
     <h2>Staff Login</h2><p class="sub">Sign in with your authorised Evolution Optical staff account.</p>
@@ -43,24 +43,12 @@
         <div class="info"><span>Status</span><b id="staffStatus">—</b></div>
       </div>
     </section>
-    <section class="card">
-      <h3>Verify Voucher</h3><p class="sub">Enter a voucher code or scan a QR code before redemption.</p>
-      <div class="row"><input id="voucherCode" class="grow" placeholder="EO-20260808-XXXXXXX" autocomplete="off"><button id="verifyBtn" class="btn blue">VERIFY</button><button id="scanBtn" class="btn ghost">SCAN QR</button></div>
-      <div id="verifyMsg"></div>
-      <div id="scannerBox" class="hidden"><video id="camera" playsinline muted></video><div class="row" style="margin-top:10px"><button id="stopScanBtn" class="btn red">STOP CAMERA</button></div></div>
-      <div id="voucherCard" class="voucher hidden">
-        <div class="voucher-head"><div><div id="vCode" class="code"></div><div id="vType" class="type"></div></div><span id="vStatus" class="badge"></span></div>
-        <div class="kv"><b>Customer</b><span id="vCustomer"></span><b>Phone</b><span id="vPhone"></span><b>Valid Until</b><span id="vExpiry"></span><b>Staff Branch</b><span id="vBranch"></span></div>
-        <div id="redeemNotice" class="notice"></div>
-        <label>Notes (optional)</label><textarea id="notes" rows="2"></textarea>
-        <button id="redeemBtn" class="btn green full">CONFIRM REDEEM</button><div id="redeemMsg"></div>
-      </div>
-    </section>
+
 
     <section id="managerSection" class="card manager-card hidden">
-      <div class="manager-badge">STAFF MANAGEMENT</div>
+      <div class="manager-badge">STAFF MANAGEMENT • ALL BRANCH READY</div>
       <h3>Staff Management</h3>
-      <p class="sub">Create a new Staff account. New Staff will be assigned to your current branch.</p>
+      <p class="sub">Create a new Staff account and assign the Staff to any active branch.</p>
 
       <div class="manager-grid">
         <div>
@@ -83,6 +71,19 @@
           <button id="addStaffBtn" class="btn green full">ADD STAFF</button>
           <div id="addStaffMsg"></div>
         </div>
+      </div>
+    </section>
+    <section class="card">
+      <h3>Verify Voucher</h3><p class="sub">Enter a voucher code or scan a QR code before redemption.</p>
+      <div class="row"><input id="voucherCode" class="grow" placeholder="EO-20260808-XXXXXXX" autocomplete="off"><button id="verifyBtn" class="btn blue">VERIFY</button><button id="scanBtn" class="btn ghost">SCAN QR</button></div>
+      <div id="verifyMsg"></div>
+      <div id="scannerBox" class="hidden"><video id="camera" playsinline muted></video><div class="row" style="margin-top:10px"><button id="stopScanBtn" class="btn red">STOP CAMERA</button></div></div>
+      <div id="voucherCard" class="voucher hidden">
+        <div class="voucher-head"><div><div id="vCode" class="code"></div><div id="vType" class="type"></div></div><span id="vStatus" class="badge"></span></div>
+        <div class="kv"><b>Customer</b><span id="vCustomer"></span><b>Phone</b><span id="vPhone"></span><b>Valid Until</b><span id="vExpiry"></span><b>Staff Branch</b><span id="vBranch"></span></div>
+        <div id="redeemNotice" class="notice"></div>
+        <label>Notes (optional)</label><textarea id="notes" rows="2"></textarea>
+        <button id="redeemBtn" class="btn green full">CONFIRM REDEEM</button><div id="redeemMsg"></div>
       </div>
     </section>
 
@@ -148,9 +149,10 @@ async function authorizeStaff(){
 
   if(role==="manager" || role==="all_branch_manager"){
     $("managerSection").classList.remove("hidden");
+    $("managerSection").style.display="block";
     await loadBranchOptions(role, data.branch_id);
   }else{
-    $("managerSection").classList.add("hidden");
+    $("managerSection").classList.add("hidden");$("managerSection").style.display="none";
   }
 
   showDash();
