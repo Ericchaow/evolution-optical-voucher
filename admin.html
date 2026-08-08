@@ -72,7 +72,7 @@ const SUPABASE_URL="https://hukihbcyyqhanaqrizvm.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_kpPFeGYpedq2auo01Zo50A_aiSjdeVh";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const $=id=>document.getElementById(id);
-let partners=[]; let vouchers=[]; let voucherBranches=[]; let branches=[];
+let partners=[]; let vouchers=[]; let voucherBranches=[]; let branches=[]; let redemptions=[];
 
 function msg(node,text,ok=false){node.innerHTML=text?`<div class="msg ${ok?'ok':'err'}">${esc(text)}</div>`:""}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -144,10 +144,11 @@ function fmtDate(x){
 async function loadVouchers(){
  msg($("voucherMsg"),"");
 
- const [voucherRes, vbRes, branchRes] = await Promise.all([
+ const [voucherRes, vbRes, branchRes, redemptionRes] = await Promise.all([
    db.from("vouchers").select("*").order("issued_at",{ascending:false}).limit(300),
    db.from("voucher_branches").select("voucher_id,branch_id"),
-   db.from("branches").select("id,branch_code,branch_name,address,phone,status")
+   db.from("branches").select("id,branch_code,branch_name,address,phone,status"),
+   db.from("redemptions").select("*")
  ]);
 
  if(voucherRes.error){
@@ -160,10 +161,14 @@ async function loadVouchers(){
  if(branchRes.error){
    msg($("voucherMsg"),"Voucher records loaded, but branch details are unavailable: "+branchRes.error.message);
  }
+ if(redemptionRes.error){
+   msg($("voucherMsg"),"Voucher records loaded, but redemption branch details are unavailable: "+redemptionRes.error.message);
+ }
 
  vouchers=voucherRes.data||[];
  voucherBranches=vbRes.data||[];
  branches=branchRes.data||[];
+ redemptions=redemptionRes.data||[];
 
  updateVoucherStats();
  renderVouchers();
@@ -189,6 +194,13 @@ function branchLabel(v){
 
  return names.length ? names.join(", ") : "Specific Evolution Optical branch(es)";
 }
+function redeemedBranchLabel(v){
+ const r = redemptions.find(x => x.voucher_id === v.id);
+ if(!r) return "—";
+ const b = branches.find(x => x.id === r.branch_id);
+ return b?.branch_name || b?.branch_code || "—";
+}
+
 function updateVoucherStats(){
  const counts={VALID:0,REDEEMED:0,EXPIRED:0};
  vouchers.forEach(v=>{const st=voucherEffectiveStatus(v); if(counts[st]!==undefined) counts[st]++;});
@@ -208,7 +220,7 @@ function renderVouchers(){
  });
  $("voucherRecords").innerHTML=list.length?list.map(v=>{
    const st=voucherEffectiveStatus(v);
-   const redeemedBranch="—";
+   const redeemedBranch=redeemedBranchLabel(v);
    return `<div class="vrecord"><div class="vtop"><div style="flex:1"><div class="vcode">${esc(v.voucher_code||v.id||"Voucher")}</div><div class="pcode">${esc(v.voucher_type||"RM60 Free Glasses")}</div></div><span class="vstatus ${st.toLowerCase()}">${st}</span></div>
    <div class="vmeta"><b>Customer:</b> ${esc(v.customer_name||"—")} ${v.customer_phone?`• ${esc(v.customer_phone)}`:""}<br>
    <b>Issued by:</b> ${esc(partnerNameFor(v))}<br>
