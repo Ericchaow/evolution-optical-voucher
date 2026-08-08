@@ -658,7 +658,9 @@
         });
 
         const outletText = currentVoucher.all_branches
-          ? `📍 Redeem at:\nAll Evolution Optical branches`
+          ? `📍 Redeem at any Evolution Optical branch:\n\n${Object.values(OUTLETS).map(o =>
+              `Evolution Optical – ${o.name}\n${o.address}\nTel: ${o.phone}`
+            ).join("\n\n")}`
           : currentVoucher.outlet.details.map(o =>
               `📍 Redeem at:\nEvolution Optical – ${o.name}\n${o.address}\nTel: ${o.phone}`
             ).join("\n\n");
