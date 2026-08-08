@@ -21,7 +21,7 @@
     .badge{display:inline-flex;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:900}.valid{background:var(--greenbg);color:var(--green)}.redeemed{background:var(--bluebg);color:#3049b4}.expired{background:var(--redbg);color:var(--red)}.blocked{background:var(--amberbg);color:var(--amber)}
     .voucher{border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:14px}.voucher-head{display:flex;justify-content:space-between;gap:12px}.code{font-size:21px;font-weight:900}.type{color:var(--muted);margin-top:4px}
     .kv{display:grid;grid-template-columns:130px 1fr;gap:8px 12px;margin-top:16px}.notice{margin-top:14px;border-radius:13px;padding:12px 14px;font-weight:800}.notice.good{background:var(--greenbg);color:var(--green)}.notice.bad{background:var(--redbg);color:var(--red)}
-    video{width:100%;max-height:340px;background:#000;border-radius:15px;margin-top:12px}.footer{text-align:center;color:#9ca3af;font-size:12px;margin-top:22px}
+    video{width:100%;max-height:340px;background:#000;border-radius:15px;margin-top:12px}.history-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.history-count{font-size:28px;font-weight:900}.history-label{color:var(--muted);font-size:12px;text-transform:uppercase}.history-item{border:1px solid var(--line);border-radius:14px;padding:13px;margin-top:10px;background:#fff}.history-code{font-weight:900;font-size:16px}.history-meta{margin-top:6px;color:#4b5563;font-size:13px;line-height:1.5}.footer{text-align:center;color:#9ca3af;font-size:12px;margin-top:22px}
     @media(max-width:560px){.profile{grid-template-columns:1fr}.kv{grid-template-columns:1fr}.topin{align-items:flex-start}.brand h1{font-size:23px}}
   </style>
 </head>
@@ -56,6 +56,20 @@
         <button id="redeemBtn" class="btn green full">CONFIRM REDEEM</button><div id="redeemMsg"></div>
       </div>
     </section>
+
+    <section class="card">
+      <div class="history-top">
+        <div>
+          <div class="history-label">Today Redeemed</div>
+          <div id="todayRedeemed" class="history-count">0</div>
+        </div>
+        <button id="historyRefreshBtn" class="btn ghost">Refresh</button>
+      </div>
+      <h3>Recent Redemptions</h3>
+      <p class="sub">Your most recent voucher redemptions at this branch.</p>
+      <div id="historyMsg"></div>
+      <div id="historyList"></div>
+    </section>
   </div>
   <div class="footer">Evolution Optical • Secure Branch-Controlled Voucher Redemption</div>
 </main>
@@ -72,7 +86,7 @@ async function login(){msg($("loginMsg"),"");$("loginBtn").disabled=true;const{e
 async function authorizeStaff(){const{data:{user}}=await db.auth.getUser();if(!user){showLogin();return}
   const{data,error}=await db.from("staff_users").select("user_id,staff_name,branch_id,role,status,branches(branch_code,branch_name)").eq("user_id",user.id).maybeSingle();
   if(error||!data||String(data.status).toLowerCase()!=="active"){await db.auth.signOut();showLogin();msg($("loginMsg"),"This account is not authorised as an active Staff user.");return}
-  $("staffName").textContent=data.staff_name||"Staff";$("staffRole").textContent=(data.role||"staff").toUpperCase();$("staffStatus").textContent=(data.status||"active").toUpperCase();$("branchName").textContent=data.branches?.branch_name||data.branches?.branch_code||"Assigned branch";showDash()}
+  $("staffName").textContent=data.staff_name||"Staff";$("staffRole").textContent=(data.role||"staff").toUpperCase();$("staffStatus").textContent=(data.status||"active").toUpperCase();$("branchName").textContent=data.branches?.branch_name||data.branches?.branch_code||"Assigned branch";showDash();await loadRedemptionHistory()}
 function statusClass(v){const s=String(v.status||"").toLowerCase();if(s==="redeemed")return"redeemed";if(v.expired)return"expired";if(s==="valid"&&v.branch_allowed)return"valid";return"blocked"}
 function renderVoucher(v){currentVoucher=v;$("voucherCard").classList.remove("hidden");$("vCode").textContent=v.voucher_code||"";$("vType").textContent=v.voucher_type||"";$("vCustomer").textContent=v.customer_name||"—";$("vPhone").textContent=v.customer_phone||"—";$("vExpiry").textContent=v.expiry_date||"—";$("vBranch").textContent=v.branch_name||"—";$("vStatus").textContent=String(v.status||"").toUpperCase();$("vStatus").className="badge "+statusClass(v);
   const n=$("redeemNotice");if(v.can_redeem){n.textContent="VALID FOR REDEMPTION AT THIS BRANCH";n.className="notice good"}else{let r="Voucher cannot be redeemed.";if(String(v.status||"").toLowerCase()!=="valid")r=`Voucher status is ${String(v.status||"").toUpperCase()}.`;else if(v.expired)r="Voucher has expired.";else if(!v.branch_allowed)r="Voucher is not valid for this branch.";n.textContent=r;n.className="notice bad"}$("redeemBtn").disabled=!v.can_redeem;msg($("redeemMsg"),"")}
@@ -81,13 +95,74 @@ async function verifyVoucher(){const code=$("voucherCode").value.trim();currentV
 async function redeemVoucher(){if(!currentVoucher?.can_redeem)return;if(!confirm(`Redeem ${currentVoucher.voucher_code} now? This action cannot be undone.`))return;$("redeemBtn").disabled=true;msg($("redeemMsg"),"");
   const{data,error}=await db.rpc("redeem_voucher",{p_voucher_code:currentVoucher.voucher_code,p_notes:$("notes").value.trim()||null});
   if(error){$("redeemBtn").disabled=false;msg($("redeemMsg"),"Redeem failed: "+error.message);return}if(!data?.success){$("redeemBtn").disabled=false;msg($("redeemMsg"),data?.error||"Redeem failed.");return}
-  msg($("redeemMsg"),`Redeemed successfully at ${data.branch_name||"your branch"}.`,true);$("redeemNotice").textContent="REDEEMED SUCCESSFULLY";$("redeemNotice").className="notice good";$("vStatus").textContent="REDEEMED";$("vStatus").className="badge redeemed";$("redeemBtn").disabled=true;currentVoucher.can_redeem=false}
+  msg($("redeemMsg"),`Redeemed successfully at ${data.branch_name||"your branch"}.`,true);$("redeemNotice").textContent="REDEEMED SUCCESSFULLY";$("redeemNotice").className="notice good";$("vStatus").textContent="REDEEMED";$("vStatus").className="badge redeemed";$("redeemBtn").disabled=true;currentVoucher.can_redeem=false;await loadRedemptionHistory()}
+
+function fmtDateTime(x){
+  if(!x) return "—";
+  const d=new Date(x);
+  return isNaN(d) ? String(x) : d.toLocaleString("en-MY",{
+    year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"
+  });
+}
+async function loadRedemptionHistory(){
+  msg($("historyMsg"),"");
+  const {data:{user}}=await db.auth.getUser();
+  if(!user) return;
+
+  const {data:staff,error:staffErr}=await db
+    .from("staff_users")
+    .select("id")
+    .eq("user_id",user.id)
+    .eq("status","active")
+    .maybeSingle();
+
+  if(staffErr || !staff){
+    msg($("historyMsg"),"Unable to load Staff redemption history.");
+    return;
+  }
+
+  const {data,error}=await db
+    .from("redemptions")
+    .select("id,voucher_id,branch_id,redeemed_at,notes,vouchers(voucher_code,customer_name,voucher_type)")
+    .eq("staff_user_id",staff.id)
+    .order("redeemed_at",{ascending:false})
+    .limit(20);
+
+  if(error){
+    msg($("historyMsg"),"Unable to load redemption history: "+error.message);
+    return;
+  }
+
+  const rows=data||[];
+  const now=new Date();
+  const today=rows.filter(r=>{
+    const d=new Date(r.redeemed_at);
+    return d.getFullYear()===now.getFullYear()
+      && d.getMonth()===now.getMonth()
+      && d.getDate()===now.getDate();
+  }).length;
+  $("todayRedeemed").textContent=today;
+
+  $("historyList").innerHTML=rows.length ? rows.map(r=>{
+    const v=r.vouchers||{};
+    return `<div class="history-item">
+      <div class="history-code">${esc(v.voucher_code||r.voucher_id||"Voucher")}</div>
+      <div class="history-meta">
+        <b>Customer:</b> ${esc(v.customer_name||"—")}<br>
+        <b>Voucher Type:</b> ${esc(v.voucher_type||"—")}<br>
+        <b>Redeemed:</b> ${esc(fmtDateTime(r.redeemed_at))}
+        ${r.notes?`<br><b>Notes:</b> ${esc(r.notes)}`:""}
+      </div>
+    </div>`;
+  }).join("") : `<p class="sub">No redemption history yet.</p>`;
+}
+
 async function startScanner(){msg($("verifyMsg"),"");if(!("BarcodeDetector"in window)){msg($("verifyMsg"),"QR scanning is not supported by this browser. Please enter the voucher code manually.");return}
   try{const detector=new BarcodeDetector({formats:["qr_code"]});mediaStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});$("camera").srcObject=mediaStream;await $("camera").play();$("scannerBox").classList.remove("hidden");
     scanTimer=setInterval(async()=>{try{const codes=await detector.detect($("camera"));if(codes?.length){const raw=(codes[0].rawValue||"").trim();if(raw){$("voucherCode").value=extractVoucherCode(raw);stopScanner();await verifyVoucher()}}}catch(_){}},600)}catch(e){stopScanner();msg($("verifyMsg"),"Unable to open camera. Please allow camera access or enter the code manually.")}}
 function extractVoucherCode(raw){try{const u=new URL(raw);return u.searchParams.get("code")||u.searchParams.get("voucher")||raw}catch(_){return raw}}
 function stopScanner(){if(scanTimer){clearInterval(scanTimer);scanTimer=null}if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop());mediaStream=null}$("camera").srcObject=null;$("scannerBox").classList.add("hidden")}
-$("loginBtn").onclick=login;$("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});$("voucherCode").addEventListener("keydown",e=>{if(e.key==="Enter")verifyVoucher()});$("verifyBtn").onclick=verifyVoucher;$("redeemBtn").onclick=redeemVoucher;$("scanBtn").onclick=startScanner;$("stopScanBtn").onclick=stopScanner;$("logoutBtn").onclick=async()=>{stopScanner();await db.auth.signOut();showLogin()};window.addEventListener("beforeunload",stopScanner);
+$("loginBtn").onclick=login;$("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});$("voucherCode").addEventListener("keydown",e=>{if(e.key==="Enter")verifyVoucher()});$("verifyBtn").onclick=verifyVoucher;$("redeemBtn").onclick=redeemVoucher;$("scanBtn").onclick=startScanner;$("stopScanBtn").onclick=stopScanner;$("historyRefreshBtn").onclick=loadRedemptionHistory;$("logoutBtn").onclick=async()=>{stopScanner();await db.auth.signOut();showLogin()};window.addEventListener("beforeunload",stopScanner);
 (async()=>{const{data}=await db.auth.getSession();if(data?.session)await authorizeStaff();else showLogin()})();
 </script>
 </body></html>
