@@ -325,6 +325,7 @@
           <div class="voucher-meta">
             <div id="resultCustomer"></div>
             <div id="resultExpiry"></div>
+            <div id="resultPartner" style="margin-top:6px;font-weight:800;color:#111827"></div>
             <div id="resultOutlet" style="margin-top:6px;font-weight:800;color:#111827"></div>
           </div>
 
@@ -357,6 +358,7 @@
     const createBtn = el("createBtn");
     const shareBtn = el("shareBtn");
     let currentVoucher = null;
+    let currentPartnerName = "";
 
     const OUTLETS = {
       MINES: {
@@ -497,7 +499,8 @@
 
       const p = data.partners;
 
-      el("partnerName").textContent = p.partner_name;
+      currentPartnerName = p.partner_name || "Partner";
+      el("partnerName").textContent = currentPartnerName;
       el("partnerCode").textContent = `${p.partner_code} • Partner Portal`;
       el("roleText").textContent = data.role;
       el("limit").textContent = p.voucher_limit;
@@ -578,6 +581,7 @@
         customer_name: customerName,
         customer_phone: phone,
         expiry_date: result.expiry_date,
+        partner_name: currentPartnerName,
         all_branches: allBranches,
         branch_codes: branchCodes,
         outlet: selectedOutletSummary(allBranches, branchCodes)
@@ -594,6 +598,8 @@
       el("resultCustomer").textContent = `${customerName} • ${phone}`;
       el("resultExpiry").textContent =
         `Valid until: ${result.expiry_date}`;
+      el("resultPartner").textContent =
+        `Issued by: ${currentVoucher.partner_name}`;
       el("resultOutlet").textContent =
         `Redeem at: ${currentVoucher.outlet.label}`;
 
@@ -673,6 +679,7 @@ ${currentVoucher.voucher_type}
 Voucher: ${currentVoucher.voucher_code}
 Customer: ${currentVoucher.customer_name}
 Valid until: ${currentVoucher.expiry_date}
+Issued by: ${currentVoucher.partner_name}
 
 ${outletText}
 
