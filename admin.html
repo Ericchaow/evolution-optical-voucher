@@ -220,6 +220,7 @@ function render(){
     <button class="btn small blue" onclick="setLimit('${p.id}')">Set Total</button>
     <button class="btn small green" onclick="addLimit('${p.id}')">+ Add</button>
     <button class="btn small blue" onclick="toggleClaimEditor('${p.id}')">Claim Branches</button>
+    <button class="btn small blue" onclick="resetPartnerPassword('${p.id}')">Reset Password</button>
     <button class="btn small ${active?'red':'green'}" onclick="togglePartnerStatus('${p.id}')">${active?'Suspend':'Reactivate'}</button></div>
     <div id="claim-summary-${p.id}" class="claim-summary">Claim: loading…</div><div id="claim-panel-${p.id}" class="claim-panel hidden"></div>
    </div>`;
@@ -540,6 +541,52 @@ async function togglePartnerStatus(id){
 
  await loadPartners();
  renderPerformance();
+}
+
+
+async function resetPartnerPassword(id){
+ const p=partners.find(x=>x.id===id);
+ if(!p) return;
+
+ const newPassword=prompt(`Enter a new password for ${p.partner_name}.\nMinimum 6 characters.`);
+ if(newPassword===null) return;
+ if(newPassword.length<6){
+   msg($("partnerMsg"),"New password must be at least 6 characters.");
+   return;
+ }
+
+ const confirmPassword=prompt("Enter the new password again to confirm.");
+ if(confirmPassword===null) return;
+ if(newPassword!==confirmPassword){
+   msg($("partnerMsg"),"Passwords do not match.");
+   return;
+ }
+
+ if(!confirm(`Reset password for ${p.partner_name}?`)) return;
+
+ msg($("partnerMsg"),"");
+ const {data,error}=await db.functions.invoke("reset-partner-password",{
+   body:{partner_id:p.id,new_password:newPassword}
+ });
+
+ if(error){
+   let detail=error.message||"Password reset failed.";
+   try{
+     if(error.context && typeof error.context.json==="function"){
+       const body=await error.context.json();
+       if(body?.error) detail=body.error+(body?.details?": "+body.details:"");
+     }
+   }catch(_){}
+   msg($("partnerMsg"),detail);
+   return;
+ }
+
+ if(!data?.success){
+   msg($("partnerMsg"),data?.error||"Password reset failed.");
+   return;
+ }
+
+ msg($("partnerMsg"),`${p.partner_name} password reset successfully.`,true);
 }
 
 async function setLimit(id){
