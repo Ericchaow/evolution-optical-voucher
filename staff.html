@@ -160,8 +160,21 @@ async function authorizeStaff(){
 function statusClass(v){const s=String(v.status||"").toLowerCase();if(s==="redeemed")return"redeemed";if(v.expired)return"expired";if(s==="valid"&&v.branch_allowed)return"valid";return"blocked"}
 function renderVoucher(v){currentVoucher=v;$("voucherCard").classList.remove("hidden");$("vCode").textContent=v.voucher_code||"";$("vType").textContent=v.voucher_type||"";$("vCustomer").textContent=v.customer_name||"—";$("vPhone").textContent=v.customer_phone||"—";$("vExpiry").textContent=v.expiry_date||"—";$("vBranch").textContent=v.branch_name||"—";$("vStatus").textContent=String(v.status||"").toUpperCase();$("vStatus").className="badge "+statusClass(v);
   const n=$("redeemNotice");if(v.can_redeem){n.textContent="VALID FOR REDEMPTION AT THIS BRANCH";n.className="notice good"}else{let r="Voucher cannot be redeemed.";if(String(v.status||"").toLowerCase()!=="valid")r=`Voucher status is ${String(v.status||"").toUpperCase()}.`;else if(v.expired)r="Voucher has expired.";else if(!v.branch_allowed)r="Voucher is not valid for this branch.";n.textContent=r;n.className="notice bad"}$("redeemBtn").disabled=!v.can_redeem;msg($("redeemMsg"),"")}
-async function verifyVoucher(){const code=$("voucherCode").value.trim();currentVoucher=null;$("voucherCard").classList.add("hidden");msg($("verifyMsg"),"");if(!code){msg($("verifyMsg"),"Please enter a voucher code.");return}
-  $("verifyBtn").disabled=true;const{data,error}=await db.rpc("verify_voucher",{p_voucher_code:code});$("verifyBtn").disabled=false;if(error){msg($("verifyMsg"),"Unable to verify voucher: "+error.message);return}if(!data?.success){msg($("verifyMsg"),data?.error||"Voucher verification failed.");return}renderVoucher(data)}
+async function verifyVoucher(){let code=$("voucherCode").value.trim();currentVoucher=null;$("voucherCard").classList.add("hidden");msg($("verifyMsg"),"");if(!code){msg($("verifyMsg"),"Please enter a voucher code.");return}
+  $("verifyBtn").disabled=true;
+  const resolved=await resolveScannedVoucher(code);
+  if(resolved && resolved!==code){code=resolved;$("voucherCode").value=code;}
+  const{data,error}=await db.rpc("verify_voucher",{p_voucher_code:code});
+  $("verifyBtn").disabled=false;
+  if(error){msg($("verifyMsg"),"Unable to verify voucher: "+error.message);return}
+  if(!data?.success){
+    const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if(uuid.test(code)) msg($("verifyMsg"),"This is an older QR voucher ID. Please use the printed Voucher Code for this voucher, or use a newly generated QR voucher.");
+    else msg($("verifyMsg"),data?.error||"Voucher verification failed.");
+    return;
+  }
+  renderVoucher(data)
+}
 async function redeemVoucher(){if(!currentVoucher?.can_redeem)return;if(!confirm(`Redeem ${currentVoucher.voucher_code} now? This action cannot be undone.`))return;$("redeemBtn").disabled=true;msg($("redeemMsg"),"");
   const{data,error}=await db.rpc("redeem_voucher",{p_voucher_code:currentVoucher.voucher_code,p_notes:$("notes").value.trim()||null});
   if(error){$("redeemBtn").disabled=false;msg($("redeemMsg"),"Redeem failed: "+error.message);return}if(!data?.success){$("redeemBtn").disabled=false;msg($("redeemMsg"),data?.error||"Redeem failed.");return}
