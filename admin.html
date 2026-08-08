@@ -30,6 +30,8 @@
 .vstatus{font-size:11px;font-weight:900;border-radius:999px;padding:5px 8px;background:var(--greenbg);color:var(--green);white-space:nowrap}
 .vstatus.redeemed{background:#eef2ff;color:#3730a3}.vstatus.expired{background:var(--redbg);color:var(--red)}
 @media(max-width:820px){.vfilters{grid-template-columns:1fr 1fr}.vfilters input:first-child{grid-column:1/-1}.perf-grid{grid-template-columns:1fr}}@media(max-width:620px){.vfilters{grid-template-columns:1fr}.vfilters input:first-child{grid-column:auto}.vfilters select,.vfilters .btn,.vfilters input[type="date"]{width:100%}.vstats{grid-template-columns:1fr 1fr}.perf-metrics{grid-template-columns:1fr 1fr}}
+
+.claim-summary{margin-top:10px;padding:10px 12px;border-radius:12px;background:#f8fafc;border:1px solid var(--line);font-size:13px;color:#475569}.claim-panel{margin-top:12px;padding:14px;border:1px solid #dbe3ee;border-radius:14px;background:#fbfdff}.claim-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.claim-option{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#fff}.claim-option input{width:auto}.claim-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}@media(max-width:560px){.claim-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -55,6 +57,10 @@
   <div class="field"><label>Email</label><input id="newPartnerEmail" type="email" autocomplete="off" placeholder="partner@example.com"></div>
   <div class="field"><label>Temporary Password</label><input id="newPartnerPassword" type="password" autocomplete="new-password" placeholder="Minimum 6 characters"></div>
   <div class="field wide"><label>Initial Voucher Limit</label><input id="newPartnerLimit" type="number" min="0" step="1" value="100"></div>
+  <div class="field wide"><label>Voucher Claim Branch Permission</label>
+    <label class="claim-option"><input id="newPartnerAllBranches" type="checkbox" checked> <span><b>All Evolution Optical branches</b><br><small>Admin controls this permission. Partner cannot change it.</small></span></label>
+    <div id="newPartnerClaimBranches" class="claim-grid"></div>
+  </div>
 </div>
 <div class="create-actions">
   <button id="createPartnerBtn" class="btn green">Create Partner</button>
@@ -111,7 +117,7 @@ const SUPABASE_URL="https://hukihbcyyqhanaqrizvm.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_kpPFeGYpedq2auo01Zo50A_aiSjdeVh";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const $=id=>document.getElementById(id);
-let partners=[]; let vouchers=[]; let voucherBranches=[]; let branches=[]; let redemptions=[];
+let partners=[]; let vouchers=[]; let voucherBranches=[]; let branches=[]; let redemptions=[]; let claimBranchOptions=[];
 
 function msg(node,text,ok=false){node.innerHTML=text?`<div class="msg ${ok?'ok':'err'}">${esc(text)}</div>`:""}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -135,6 +141,52 @@ async function authorize(){
    await db.auth.signOut();showLogin();msg($("loginMsg"),"This account is not authorised as Admin.");return;
  }
  showDash();await loadPartners();await loadVouchers();
+}
+
+
+async function ensureClaimBranchOptions(){
+ if(claimBranchOptions.length) return claimBranchOptions;
+ const {data,error}=await db.from("branches").select("id,branch_code,branch_name,status").eq("status","active").order("branch_name");
+ if(error) throw error;
+ claimBranchOptions=data||[];
+ const box=$("newPartnerClaimBranches");
+ if(box){box.innerHTML=claimBranchOptions.map(b=>`<label class="claim-option"><input class="newClaimBranch" type="checkbox" value="${esc(b.branch_code)}"><span>${esc(b.branch_name||b.branch_code)}</span></label>`).join(""); syncNewPartnerClaimUI();}
+ return claimBranchOptions;
+}
+function syncNewPartnerClaimUI(){
+ const all=$("newPartnerAllBranches")?.checked;
+ document.querySelectorAll(".newClaimBranch").forEach(cb=>{cb.disabled=!!all; if(all) cb.checked=false;});
+ const box=$("newPartnerClaimBranches"); if(box) box.style.opacity=all?".45":"1";
+}
+async function getPartnerClaimAccess(id){
+ const {data,error}=await db.rpc("admin_get_partner_claim_access",{p_partner_id:id});
+ if(error) throw error; return data||{};
+}
+async function savePartnerClaimAccess(id,all,codes){
+ const {data,error}=await db.rpc("admin_set_partner_claim_access",{p_partner_id:id,p_all_branches:!!all,p_branch_codes:codes||[]});
+ if(error) throw error; return data;
+}
+async function toggleClaimEditor(id){
+ const panel=$("claim-panel-"+id); if(!panel)return;
+ if(!panel.classList.contains("hidden")){panel.classList.add("hidden");return;}
+ try{
+  await ensureClaimBranchOptions();
+  const access=await getPartnerClaimAccess(id);
+  const selected=new Set(access.branch_codes||[]);
+  panel.innerHTML=`<label class="claim-option"><input id="claim-all-${id}" type="checkbox" ${access.all_branches?'checked':''}><span><b>All Evolution Optical branches</b></span></label><div id="claim-grid-${id}" class="claim-grid">${claimBranchOptions.map(b=>`<label class="claim-option"><input class="claim-edit-${id}" type="checkbox" value="${esc(b.branch_code)}" ${selected.has(b.branch_code)?'checked':''}><span>${esc(b.branch_name||b.branch_code)}</span></label>`).join('')}</div><div class="claim-actions"><button class="btn small green" onclick="saveClaimEditor('${id}')">Save Claim Branches</button><button class="btn small" onclick="toggleClaimEditor('${id}')">Close</button></div><div id="claim-msg-${id}"></div>`;
+  panel.classList.remove("hidden");
+  const allBox=$("claim-all-"+id); const sync=()=>{const on=allBox.checked;panel.querySelectorAll('.claim-edit-'+id).forEach(x=>x.disabled=on);$("claim-grid-"+id).style.opacity=on?'.45':'1'}; allBox.onchange=sync;sync();
+ }catch(e){msg($("partnerMsg"),"Unable to load claim branches: "+e.message);}
+}
+async function saveClaimEditor(id){
+ const all=$("claim-all-"+id).checked;
+ const codes=[...document.querySelectorAll('.claim-edit-'+id+':checked')].map(x=>x.value);
+ if(!all&&!codes.length){msg($("claim-msg-"+id),"Select at least one claim branch.");return;}
+ try{await savePartnerClaimAccess(id,all,codes);msg($("claim-msg-"+id),"Claim branch permission updated.",true);await refreshClaimSummary(id);}catch(e){msg($("claim-msg-"+id),e.message);}
+}
+async function refreshClaimSummary(id){
+ const node=$("claim-summary-"+id);if(!node)return;
+ try{const a=await getPartnerClaimAccess(id);if(a.all_branches){node.textContent="Claim: All Evolution Optical branches";}else{const names=claimBranchOptions.filter(b=>(a.branch_codes||[]).includes(b.branch_code)).map(b=>b.branch_name||b.branch_code);node.textContent="Claim: "+(names.join(", ")||"No branch assigned");}}catch(_){node.textContent="Claim permission unavailable";}
 }
 
 async function loadPartners(){
@@ -167,9 +219,12 @@ function render(){
     <div class="actions"><input id="qty-${p.id}" type="number" min="0" step="1" placeholder="Enter quantity">
     <button class="btn small blue" onclick="setLimit('${p.id}')">Set Total</button>
     <button class="btn small green" onclick="addLimit('${p.id}')">+ Add</button>
+    <button class="btn small blue" onclick="toggleClaimEditor('${p.id}')">Claim Branches</button>
     <button class="btn small ${active?'red':'green'}" onclick="togglePartnerStatus('${p.id}')">${active?'Suspend':'Reactivate'}</button></div>
+    <div id="claim-summary-${p.id}" class="claim-summary">Claim: loading…</div><div id="claim-panel-${p.id}" class="claim-panel hidden"></div>
    </div>`;
  }).join(""):`<p class="sub">No Partner found.</p>`;
+ ensureClaimBranchOptions().then(()=>list.forEach(p=>refreshClaimSummary(p.id))).catch(()=>{});
 }
 
 
@@ -377,6 +432,8 @@ async function createPartner(){
  const email=$("newPartnerEmail").value.trim().toLowerCase();
  const password=$("newPartnerPassword").value;
  const voucher_limit=Number($("newPartnerLimit").value);
+ const claim_all=$("newPartnerAllBranches").checked;
+ const claim_codes=[...document.querySelectorAll(".newClaimBranch:checked")].map(x=>x.value);
 
  if(!partner_code||!partner_name||!email||!password){
    msg(out,"Please complete Partner Code, Company Name, Email and Password."); return;
@@ -426,6 +483,7 @@ async function createPartner(){
    $("newPartnerEmail").value="";
    $("newPartnerPassword").value="";
    $("newPartnerLimit").value="100";
+    $("newPartnerAllBranches").checked=true; document.querySelectorAll(".newClaimBranch").forEach(x=>x.checked=false); syncNewPartnerClaimUI();
    await loadPartners();
    renderPerformance();
  }catch(e){
@@ -506,6 +564,8 @@ async function updateLimit(p,n){
  await loadPartners();
 }
 $("createPartnerBtn").onclick=createPartner;
+$("newPartnerAllBranches").addEventListener("change",syncNewPartnerClaimUI);
+ensureClaimBranchOptions().catch(e=>msg($("createPartnerMsg"),"Unable to load Claim Branches: "+e.message));
 $("login").onclick=signIn;$("password").addEventListener("keydown",e=>{if(e.key==="Enter")signIn()});
 $("logout").onclick=async()=>{await db.auth.signOut();showLogin()};
 $("refresh").onclick=loadPartners;$("search").addEventListener("input",render);
