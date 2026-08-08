@@ -16,6 +16,14 @@
 .toolbar{display:flex;gap:9px;margin:13px 0;flex-wrap:wrap}.toolbar input{flex:1;min-width:200px}.partner{border:1px solid var(--line);border-radius:17px;padding:15px;margin-top:11px}.prow{display:flex;gap:10px;align-items:flex-start}.pinfo{flex:1}.pname{font-weight:900;font-size:16px}.pcode{color:var(--muted);font-size:12px;margin-top:3px}.badge{font-size:11px;font-weight:900;border-radius:999px;padding:5px 8px;background:var(--greenbg);color:var(--green)}.badge.suspended{background:var(--redbg);color:var(--red)}
 .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.num{background:#f8fafc;border-radius:12px;padding:9px}.num span{font-size:11px;color:var(--muted);display:block}.num b{font-size:17px}.actions{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-top:12px}.actions input{min-height:42px;padding:9px}.note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45}
 @media(max-width:620px){.stats{grid-template-columns:1fr 1fr 1fr}.stat{padding:10px}.stat strong{font-size:20px}.actions{grid-template-columns:1fr 1fr}.actions input{grid-column:1/-1}.btn.small{width:100%}}
+
+.vfilters{display:grid;grid-template-columns:1fr 160px auto;gap:8px;margin:13px 0}
+.vfilters select{border:1px solid #d1d5db;border-radius:14px;padding:11px;background:#fff;min-height:49px}
+.vrecord{border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:10px}
+.vtop{display:flex;gap:10px;align-items:flex-start}.vcode{font-weight:900;font-size:15px;word-break:break-all}.vmeta{font-size:13px;color:var(--muted);line-height:1.55;margin-top:8px}
+.vstatus{font-size:11px;font-weight:900;border-radius:999px;padding:5px 8px;background:var(--greenbg);color:var(--green);white-space:nowrap}
+.vstatus.redeemed{background:#eef2ff;color:#3730a3}.vstatus.expired{background:var(--redbg);color:var(--red)}
+@media(max-width:620px){.vfilters{grid-template-columns:1fr}.vfilters select,.vfilters .btn{width:100%}}
 </style>
 </head>
 <body>
@@ -37,6 +45,17 @@
 <div id="partnerMsg"></div><div id="partners"></div>
 <p class="note">“Set Total” replaces the Partner's total voucher limit. “Add” increases the existing limit. The total limit cannot be set below vouchers already issued.</p>
 </section>
+<section class="card">
+<h3>Voucher Records</h3>
+<p class="sub">View vouchers issued by Partners and filter by current status.</p>
+<div class="vfilters">
+<input id="voucherSearch" placeholder="Voucher code, customer, phone or Partner">
+<select id="voucherStatus"><option value="ALL">All Status</option><option value="VALID">VALID</option><option value="REDEEMED">REDEEMED</option><option value="EXPIRED">EXPIRED</option></select>
+<button id="voucherRefresh" class="btn small">Refresh</button>
+</div>
+<div id="voucherMsg"></div>
+<div id="voucherRecords"></div>
+</section>
 </div>
 </main>
 <script>
@@ -44,7 +63,7 @@ const SUPABASE_URL="https://hukihbcyyqhanaqrizvm.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_kpPFeGYpedq2auo01Zo50A_aiSjdeVh";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const $=id=>document.getElementById(id);
-let partners=[];
+let partners=[]; let vouchers=[];
 
 function msg(node,text,ok=false){node.innerHTML=text?`<div class="msg ${ok?'ok':'err'}">${esc(text)}</div>`:""}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -67,14 +86,14 @@ async function authorize(){
  if(error || !data || String(data.role).toLowerCase()!=="admin"){
    await db.auth.signOut();showLogin();msg($("loginMsg"),"This account is not authorised as Admin.");return;
  }
- showDash();await loadPartners();
+ showDash();await loadPartners();await loadVouchers();
 }
 
 async function loadPartners(){
  msg($("partnerMsg"),"");
  const {data,error}=await db.from("partners").select("id,partner_code,partner_name,voucher_limit,vouchers_issued,status").order("partner_name");
  if(error){msg($("partnerMsg"),"Unable to load Partners: "+error.message);return}
- partners=data||[];render();updateStats();
+ partners=(data||[]).filter(p=>String(p.partner_code).toUpperCase()!=="ADMIN");render();updateStats();
 }
 
 function updateStats(){
@@ -95,6 +114,56 @@ function render(){
     <button class="btn small green" onclick="addLimit('${p.id}')">+ Add</button></div>
    </div>`;
  }).join(""):`<p class="sub">No Partner found.</p>`;
+}
+
+
+function voucherEffectiveStatus(v){
+ const raw=String(v.status||"VALID").toUpperCase();
+ if(raw==="REDEEMED"||raw==="USED"||v.redeemed_at) return "REDEEMED";
+ if(raw==="EXPIRED") return "EXPIRED";
+ if(v.expiry_date){
+   const today=new Date(); today.setHours(0,0,0,0);
+   const exp=new Date(v.expiry_date+"T23:59:59");
+   if(exp<today) return "EXPIRED";
+ }
+ return "VALID";
+}
+function fmtDate(x){
+ if(!x)return "—";
+ const d=new Date(x); return isNaN(d)?esc(x):d.toLocaleString("en-MY",{year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"});
+}
+async function loadVouchers(){
+ msg($("voucherMsg"),"");
+ // The current project has used "vouchers" for created voucher records.
+ const {data,error}=await db.from("vouchers").select("*").order("created_at",{ascending:false}).limit(300);
+ if(error){
+   msg($("voucherMsg"),"Voucher Records need Admin read permission for the vouchers table: "+error.message);
+   vouchers=[]; renderVouchers(); return;
+ }
+ vouchers=data||[]; renderVouchers();
+}
+function partnerNameFor(v){
+ const pid=v.partner_id||v.issued_by_partner_id;
+ const p=partners.find(x=>x.id===pid);
+ return p?.partner_name||v.partner_name||v.issued_by||"—";
+}
+function renderVouchers(){
+ const q=($("voucherSearch")?.value||"").trim().toLowerCase();
+ const sf=$("voucherStatus")?.value||"ALL";
+ const list=vouchers.filter(v=>{
+   const st=voucherEffectiveStatus(v);
+   const hay=[v.voucher_code,v.customer_name,v.customer_phone,partnerNameFor(v),v.voucher_type].join(" ").toLowerCase();
+   return (!q||hay.includes(q))&&(sf==="ALL"||st===sf);
+ });
+ $("voucherRecords").innerHTML=list.length?list.map(v=>{
+   const st=voucherEffectiveStatus(v);
+   const redeemedBranch=v.redeemed_branch_name||v.redeemed_branch||v.branch_name||"—";
+   return `<div class="vrecord"><div class="vtop"><div style="flex:1"><div class="vcode">${esc(v.voucher_code||v.id||"Voucher")}</div><div class="pcode">${esc(v.voucher_type||"RM60 Free Glasses")}</div></div><span class="vstatus ${st.toLowerCase()}">${st}</span></div>
+   <div class="vmeta"><b>Customer:</b> ${esc(v.customer_name||"—")} ${v.customer_phone?`• ${esc(v.customer_phone)}`:""}<br>
+   <b>Issued by:</b> ${esc(partnerNameFor(v))}<br>
+   <b>Expiry:</b> ${esc(v.expiry_date||"—")}<br>
+   <b>Created:</b> ${fmtDate(v.created_at)}${st==="REDEEMED"?`<br><b>Redeemed:</b> ${fmtDate(v.redeemed_at)}<br><b>Branch:</b> ${esc(redeemedBranch)}`:""}</div></div>`;
+ }).join(""):`<p class="sub">No voucher records found.</p>`;
 }
 
 async function setLimit(id){
@@ -121,6 +190,7 @@ async function updateLimit(p,n){
 $("login").onclick=signIn;$("password").addEventListener("keydown",e=>{if(e.key==="Enter")signIn()});
 $("logout").onclick=async()=>{await db.auth.signOut();showLogin()};
 $("refresh").onclick=loadPartners;$("search").addEventListener("input",render);
+$("voucherRefresh").onclick=loadVouchers;$("voucherSearch").addEventListener("input",renderVouchers);$("voucherStatus").addEventListener("change",renderVouchers);
 (async()=>{const {data}=await db.auth.getSession();if(data.session)await authorize();})();
 </script>
 </body></html>
