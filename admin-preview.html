@@ -120,11 +120,52 @@ h2,h3{color:#0b1c33!important;letter-spacing:-.2px}.sub{color:#68778b!important}
     grid-template-columns:1fr!important;
   }
 }
+
+
+/* V3: genuinely compact mobile admin */
+@media(max-width:720px){
+  .create-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:9px!important;
+  }
+  .create-grid .field{margin:0!important;min-width:0!important}
+  .create-grid .field label{font-size:11px!important;margin-bottom:5px!important}
+  .create-grid input,.create-grid select{min-height:44px!important;padding:10px!important;font-size:14px!important}
+  .create-grid .wide{grid-column:1/-1!important}
+  .create-actions{margin-top:10px!important}
+  .create-actions .btn{min-height:46px!important}
+  #newPartnerBranchBox{grid-column:1/-1!important}
+  #partners{grid-template-columns:1fr!important}
+  #partners .partner{height:auto!important}
+  #partners .partner .partner-extra{display:none}
+  #partners .partner.expanded .partner-extra{display:block}
+  #partners .partner .prow{cursor:pointer;align-items:center!important}
+  #partners .partner .prow:after{
+    content:"⌄";font-size:18px;color:#64748b;margin-left:5px;transition:.18s transform
+  }
+  #partners .partner.expanded .prow:after{transform:rotate(180deg)}
+  #partners .nums{margin-top:8px!important}
+  #partners .num{padding:8px!important}
+}
+@media(min-width:721px){
+  #partners{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+#newPartnerBranchBox{
+  background:linear-gradient(145deg,#fbfdff,#f1f6fc)!important;
+  border:1px solid #dde7f2!important;border-radius:16px!important;padding:12px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 7px 16px rgba(39,60,91,.05)!important
+}
+#newPartnerBranchBox .branch-title{font-weight:800;font-size:12px;color:#17314f;margin-bottom:8px}
+#newPartnerBranchBox .branch-all{display:flex;gap:8px;align-items:flex-start;font-size:12px}
+#newPartnerBranchList{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}
+#newPartnerBranchList label{display:flex;gap:6px;align-items:flex-start;padding:8px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;font-size:11px}
+#newPartnerBranchBox input[type=checkbox]{width:17px!important;height:17px!important;min-height:0!important;flex:0 0 auto}
 `;
 fetch('admin.html?preview=' + Date.now(), {cache:'no-store'})
   .then(r=>{if(!r.ok) throw new Error('Unable to load admin.html'); return r.text();})
   .then(html=>{
-    const patched=html.replace('</head>',`<style id="modernPremium3D">${modernCSS}</style></head>`);
+    const enhancementJS="\n(function(){\n  function esc2(s){return String(s??\"\").replace(/[&<>\"']/g,c=>({\"&\":\"&amp;\",\"<\":\"&lt;\",\">\":\"&gt;\",'\"':\"&quot;\",\"'\":\"&#39;\"}[c]))}\n\n  function installBranchCreateUI(){\n    const limit=document.getElementById(\"newPartnerLimit\");\n    const grid=limit?.closest(\".create-grid\");\n    if(!grid || document.getElementById(\"newPartnerBranchBox\")) return;\n\n    const box=document.createElement(\"div\");\n    box.id=\"newPartnerBranchBox\";\n    box.className=\"field wide\";\n    box.innerHTML=`<div class=\"branch-title\">Voucher Claim Branch Permission</div>\n      <label class=\"branch-all\"><input id=\"newPartnerAllBranches\" type=\"checkbox\" checked>\n        <span><b>All Evolution Optical branches</b><br><small style=\"color:#718096\">Or untick to select specific branches.</small></span>\n      </label>\n      <div id=\"newPartnerBranchList\"></div>`;\n    grid.appendChild(box);\n\n    const render=()=>{\n      const all=document.getElementById(\"newPartnerAllBranches\");\n      const list=document.getElementById(\"newPartnerBranchList\");\n      if(!list) return;\n      const rows=(typeof branches!==\"undefined\" && Array.isArray(branches)?branches:[])\n        .filter(b=>String(b.status||\"active\").toLowerCase()===\"active\");\n      list.innerHTML=rows.length?rows.map(b=>`<label><input class=\"newPartnerBranchCheck\" type=\"checkbox\" value=\"${esc2(b.branch_code)}\" ${all?.checked?\"disabled\":\"\"}><span>${esc2(String(b.branch_name||b.branch_code).replace(/\\s*\\(HQ\\)\\s*/gi,\" \").trim())}</span></label>`).join(\"\")\n        :`<small style=\"color:#718096\">Branches will appear after dashboard data finishes loading.</small>`;\n    };\n    box.querySelector(\"#newPartnerAllBranches\").onchange=e=>{\n      box.querySelectorAll(\".newPartnerBranchCheck\").forEach(x=>x.disabled=e.target.checked);\n    };\n    render();\n    setTimeout(render,700);setTimeout(render,1800);\n\n    const btn=document.getElementById(\"createPartnerBtn\");\n    if(btn && !btn.dataset.branchWrapped){\n      btn.dataset.branchWrapped=\"1\";\n      const original=btn.onclick;\n      btn.onclick=async function(e){\n        const code=(document.getElementById(\"newPartnerCode\")?.value||\"\").trim().toUpperCase();\n        const all=document.getElementById(\"newPartnerAllBranches\")?.checked!==false;\n        const codes=[...document.querySelectorAll(\".newPartnerBranchCheck:checked\")].map(x=>x.value);\n        if(!all && !codes.length){\n          const out=document.getElementById(\"createPartnerMsg\");\n          if(typeof msg===\"function\" && out) msg(out,\"Please select at least one branch, or choose All Evolution Optical branches.\");\n          return;\n        }\n        if(original) await original.call(this,e);\n        const out=document.getElementById(\"createPartnerMsg\");\n        if(!code || !out || !/created successfully/i.test(out.textContent||\"\")) return;\n        try{\n          const {data:p,error:qerr}=await db.from(\"partners\").select(\"id,partner_name\").eq(\"partner_code\",code).maybeSingle();\n          if(qerr||!p?.id) throw qerr||new Error(\"Created Partner could not be found.\");\n          const {error}=await db.rpc(\"admin_set_partner_claim_access\",{p_partner_id:p.id,p_all_branches:all,p_branch_codes:codes});\n          if(error) throw error;\n          if(typeof msg===\"function\") msg(out,`${p.partner_name||code} created successfully with branch access saved.`,true);\n        }catch(err){\n          if(typeof msg===\"function\") msg(out,`Partner created, but branch access could not be saved: ${err?.message||err}`);\n        }\n      };\n    }\n  }\n\n  function compactPartnerCards(){\n    const root=document.getElementById(\"partners\");\n    if(!root) return;\n    [...root.querySelectorAll(\".partner\")].forEach(card=>{\n      if(card.dataset.compactReady) return;\n      card.dataset.compactReady=\"1\";\n      const prow=card.querySelector(\".prow\");\n      const nums=card.querySelector(\".nums\");\n      if(!prow||!nums) return;\n      const extra=document.createElement(\"div\");\n      extra.className=\"partner-extra\";\n      let node=nums.nextElementSibling;\n      while(node){const next=node.nextElementSibling;extra.appendChild(node);node=next}\n      card.appendChild(extra);\n      prow.addEventListener(\"click\",ev=>{\n        if(ev.target.closest(\"button,input,select,a\")) return;\n        card.classList.toggle(\"expanded\");\n      });\n    });\n  }\n\n  function bootEnhancements(){\n    installBranchCreateUI();\n    compactPartnerCards();\n    const root=document.getElementById(\"partners\");\n    if(root) new MutationObserver(compactPartnerCards).observe(root,{childList:true});\n  }\n  if(document.readyState===\"loading\") document.addEventListener(\"DOMContentLoaded\",()=>setTimeout(bootEnhancements,0));\n  else setTimeout(bootEnhancements,0);\n})();\n";
+    const patched=html.replace('</head>',`<style id="modernPremium3D">${modernCSS}</style></head>`).replace('</body>',`<script>${enhancementJS}</scr`+`ipt></body>`);
     document.open();document.write(patched);document.close();
   })
   .catch(err=>{
