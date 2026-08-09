@@ -30,6 +30,19 @@ button,input{font:inherit}.hidden{display:none!important}.shell{display:grid;gri
 .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:11px}.num{background:#f8fafc;border-radius:11px;padding:8px}.num span{display:block;font-size:9px;color:var(--muted)}.num b{font-size:14px}.actions{display:grid;grid-template-columns:1fr auto auto;gap:7px;margin-top:11px}.actions input{border:1px solid var(--line);border-radius:11px;padding:9px;min-width:0}
 .claim{margin-top:10px;padding:0;border:1px solid var(--line);border-radius:12px;background:#fbfdff;overflow:hidden}.claimToggle{width:100%;border:0;background:linear-gradient(145deg,#fff,#f4f8fd);padding:12px;text-align:left;font-size:11px;font-weight:850;color:#0f172a;display:flex;justify-content:space-between;align-items:center}.claimToggle .chev{transition:.18s ease}.claim.open .claimToggle .chev{transform:rotate(180deg)}.claimBody{display:none;padding:11px;border-top:1px solid var(--line)}.claim.open .claimBody{display:block}.claimgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:9px}.claimopt{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;font-size:10px}.claimopt input{width:auto}.claimbuttons{display:flex;gap:7px;margin-top:8px}
 .field{margin-top:12px}.field label{display:block;font-size:11px;font-weight:800;margin-bottom:5px}.field input{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;background:#fff}.loginbtn{width:100%;margin-top:14px}.msg{margin-top:10px;padding:10px 11px;border-radius:11px;font-size:11px}.msg.ok{background:#ecfdf3;color:#166534}.msg.err{background:#fef2f2;color:#b91c1c}
+
+.branchManager{margin-top:14px}
+.branchManager.hidden{display:none}
+.branchTop{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
+.branchTop select{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;background:#fff}
+.branchAccessBox{margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,#fff,#f4f8fd);box-shadow:7px 7px 16px rgba(78,101,137,.08),-5px -5px 14px rgba(255,255,255,.92)}
+.branchAccessBox h4{margin:0 0 4px;font-size:13px}
+.branchAccessBox p{margin:0;color:var(--muted);font-size:10px}
+.branchGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+.branchChoice{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:9px;font-size:10px}
+.branchChoice input{width:auto}
+.branchActions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+@media(max-width:700px){.branchTop{grid-template-columns:1fr}.branchGrid{grid-template-columns:1fr}}
 .mobile-nav{display:none}
 @media(max-width:900px){.shell{display:block}.sidebar{display:none}.topbar{height:62px;padding:0 13px}.content{padding:12px 10px 86px}.hero{padding:16px}.hero h2{font-size:21px}.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.claimgrid{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}.actions input{grid-column:1/-1}.mobile-nav{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:7px 4px calc(7px + env(safe-area-inset-bottom));z-index:9}.mobile-nav button{border:0;background:transparent;font-size:9px;color:#64748b}.mobile-nav b{display:block;color:#2563eb;font-size:16px;margin-bottom:2px}}
 </style>
@@ -86,6 +99,22 @@ button,input{font:inherit}.hidden{display:none!important}.shell{display:grid;gri
     </div>
   </section>
 
+  <section id="branchManager" class="card branchManager hidden">
+    <h3>Branch Access Manager</h3>
+    <p class="sub">Choose a Partner, then assign where their vouchers can be redeemed.</p>
+    <div class="branchTop">
+      <div class="field">
+        <label>Partner</label>
+        <select id="branchPartnerSelect"></select>
+      </div>
+      <button id="closeBranchManager" class="smallbtn">Close</button>
+    </div>
+    <div id="branchManagerMsg"></div>
+    <div id="branchAccessBox" class="branchAccessBox">
+      <div class="sub">Choose a Partner to load branch access.</div>
+    </div>
+  </section>
+
   <section id="partnerManagement" class="card" style="margin-top:14px">
     <h3>Partner Management</h3><p class="sub">Search, update quota, status and redemption branch access.</p>
     <div class="toolbar"><input id="search" class="search" placeholder="Search company or partner code"><button id="refreshPartners" class="smallbtn blue">Refresh</button></div>
@@ -136,7 +165,7 @@ async function refreshAll(){
   ]);
   if(p.error)return message($("partnerMsg"),p.error.message);
   partners=p.data||[];branches=b.data||[];accessCache.clear();
-  renderStats();renderPartners();
+  renderStats();renderPartners();renderBranchPartnerOptions();
 }
 function renderStats(){
   const active=partners.filter(p=>String(p.status).toLowerCase()==="active");
@@ -144,6 +173,82 @@ function renderStats(){
   const issued=partners.reduce((s,p)=>s+(Number(p.vouchers_issued)||0),0);
   $("kPartners").textContent=active.length;$("kLimit").textContent=limit;$("kIssued").textContent=issued;$("kRemaining").textContent=Math.max(0,limit-issued);
 }
+
+function renderBranchPartnerOptions(){
+  const sel=$("branchPartnerSelect");
+  if(!sel)return;
+  const current=sel.value;
+  sel.innerHTML='<option value="">Select Partner</option>'+partners
+    .filter(p=>String(p.status).toLowerCase()==="active")
+    .map(p=>`<option value="${p.id}">${esc(p.partner_name)} (${esc(p.partner_code)})</option>`).join("");
+  if(current && partners.some(p=>p.id===current)) sel.value=current;
+}
+async function openBranchManager(){
+  const panel=$("branchManager");
+  panel.classList.remove("hidden");
+  renderBranchPartnerOptions();
+  panel.scrollIntoView({behavior:"smooth",block:"start"});
+  if(!$("branchPartnerSelect").value && partners.length){
+    const first=partners.find(p=>String(p.status).toLowerCase()==="active");
+    if(first){
+      $("branchPartnerSelect").value=first.id;
+      await loadBranchManagerAccess();
+    }
+  }
+}
+async function loadBranchManagerAccess(){
+  const pid=$("branchPartnerSelect").value;
+  const box=$("branchAccessBox");
+  if(!pid){
+    box.innerHTML='<div class="sub">Choose a Partner to load branch access.</div>';
+    return;
+  }
+  const p=partners.find(x=>x.id===pid);
+  box.innerHTML='<div class="sub">Loading branch access…</div>';
+  const {data,error}=await db.rpc("admin_get_partner_claim_access",{p_partner_id:pid});
+  if(error){
+    box.innerHTML=`<div class="msg err">Unable to load Branch Access: ${esc(error.message)}</div>`;
+    return;
+  }
+  const payload=Array.isArray(data)?(data[0]||{}):(data||{});
+  const all=!!payload.all_branches;
+  const codes=payload.branch_codes||[];
+  box.innerHTML=`
+    <h4>${esc(p?.partner_name||"Partner")}</h4>
+    <p>${esc(p?.partner_code||"")}</p>
+    <label class="branchChoice" style="margin-top:12px">
+      <input id="managerAllBranches" type="checkbox" ${all?"checked":""}>
+      <b>All Evolution Optical branches</b>
+    </label>
+    <div class="branchGrid">
+      ${branches.map(b=>`<label class="branchChoice">
+        <input class="managerBranchCheck" type="checkbox" value="${esc(b.branch_code)}"
+          ${all?"disabled":""} ${codes.includes(b.branch_code)?"checked":""}>
+        ${esc(String(b.branch_name).replace(/\s*\(HQ\)\s*/gi," ").trim())}
+      </label>`).join("")}
+    </div>
+    <div class="branchActions">
+      <button id="managerSaveAccess" class="smallbtn blue">Save Branch Access</button>
+    </div>`;
+  const allBox=$("managerAllBranches");
+  allBox.onchange=()=>document.querySelectorAll(".managerBranchCheck").forEach(x=>x.disabled=allBox.checked);
+  $("managerSaveAccess").onclick=saveBranchManagerAccess;
+}
+async function saveBranchManagerAccess(){
+  const pid=$("branchPartnerSelect").value;
+  const p=partners.find(x=>x.id===pid);
+  const all=$("managerAllBranches").checked;
+  const codes=[...document.querySelectorAll(".managerBranchCheck:checked")].map(x=>x.value);
+  if(!all&&!codes.length){
+    return message($("branchManagerMsg"),"Select at least one branch, or choose All Evolution Optical branches.");
+  }
+  const {error}=await db.rpc("admin_set_partner_claim_access",{
+    p_partner_id:pid,p_all_branches:all,p_branch_codes:codes
+  });
+  if(error)return message($("branchManagerMsg"),error.message);
+  message($("branchManagerMsg"),`${p?.partner_name||"Partner"} branch access updated.`,true);
+}
+
 function filteredPartners(){
   const q=$("search").value.trim().toLowerCase();
   return !q?partners:partners.filter(p=>String(p.partner_name).toLowerCase().includes(q)||String(p.partner_code).toLowerCase().includes(q));
@@ -233,18 +338,13 @@ document.querySelectorAll(".qbtn").forEach(btn=>{
   btn.onclick=async()=>{
     const action=btn.dataset.action;
     if(action==="refresh"){ await refreshAll(); return; }
-    const target=$("partnerManagement");
-    target?.scrollIntoView({behavior:"smooth",block:"start"});
-    if(action==="branches"){
-      message($("partnerMsg"),"Branch Access is managed inside each Partner card. Tap “Voucher Claim Branch Permission” under the Partner you want to edit.",true);
-      setTimeout(()=>{
-        const first=document.querySelector(".partner .claimToggle");
-        if(first) first.focus();
-      },450);
-    }
+    if(action==="branches"){ await openBranchManager(); return; }
+    $("partnerManagement")?.scrollIntoView({behavior:"smooth",block:"start"});
   };
 });
 
+$("branchPartnerSelect").onchange=loadBranchManagerAccess;
+$("closeBranchManager").onclick=()=>$("branchManager").classList.add("hidden");
 $("login").onclick=login;$("password").onkeydown=e=>{if(e.key==="Enter")login()};
 $("logout").onclick=async()=>{await db.auth.signOut();showLogin()};
 $("refreshAll").onclick=refreshAll;$("refreshPartners").onclick=refreshAll;$("search").oninput=renderPartners;
