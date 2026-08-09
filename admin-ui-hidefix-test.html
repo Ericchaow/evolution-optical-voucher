@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Evolution Optical Admin UI Hide Fix Test</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#eef3f9}
+iframe{border:0;width:100%;height:100%;display:block}
+</style>
+</head>
+<body>
+<iframe id="app" src="admin.html"></iframe>
+<script>
+const frame=document.getElementById('app');
+frame.addEventListener('load',()=>{
+  try{
+    const w=frame.contentWindow,d=frame.contentDocument;
+    const KEY='evolution_admin_hidden_partners_v3';
+    const getHidden=()=>{try{return new Set(JSON.parse(w.localStorage.getItem(KEY)||'[]').map(String))}catch(_){return new Set()}};
+    const save=s=>w.localStorage.setItem(KEY,JSON.stringify([...s]));
+    const codeOf=card=>(card?.querySelector('.pcode,.perf-code')?.textContent||'').trim().toUpperCase();
+
+    function apply(){
+      const hidden=getHidden();
+
+      d.querySelectorAll('#partners .partner').forEach(card=>{
+        const code=codeOf(card);
+        card.style.display=hidden.has(code)?'none':'';
+      });
+
+      d.querySelectorAll('.perf-grid .perf-card').forEach(card=>{
+        const code=codeOf(card);
+        card.style.display=hidden.has(code)?'none':'';
+      });
+
+      let btn=d.getElementById('hiddenPartnersBtnFix');
+      const allocation=[...d.querySelectorAll('.card')].find(c=>/Partner Voucher Allocation/i.test(c.querySelector('h2,h3')?.textContent||''));
+      const toolbar=allocation?.querySelector('.toolbar');
+      if(toolbar && !btn){
+        btn=d.createElement('button');
+        btn.id='hiddenPartnersBtnFix';
+        btn.type='button';
+        btn.className='btn small';
+        toolbar.appendChild(btn);
+        btn.onclick=()=>{
+          const codes=[...getHidden()];
+          if(!codes.length){w.alert('No hidden partners.');return}
+          const pick=w.prompt('Hidden Partners:\\n\\n'+codes.map((c,i)=>`${i+1}. ${c}`).join('\\n')+'\\n\\nEnter number to restore:');
+          const n=Number(pick);
+          if(Number.isInteger(n)&&n>=1&&n<=codes.length){
+            const s=getHidden();s.delete(codes[n-1]);save(s);apply();
+          }
+        };
+      }
+      if(btn) btn.textContent=`Hidden Partners ${hidden.size}`;
+    }
+
+    d.addEventListener('click',e=>{
+      const b=e.target.closest('.hide-partner-btn');
+      if(!b)return;
+      e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+      const card=b.closest('.partner'),code=codeOf(card);
+      const name=(card?.querySelector('.pname')?.textContent||code).trim();
+      if(!code)return;
+      if(!w.confirm(`Hide ${name} from this Admin view?`))return;
+      const s=getHidden();s.add(code);save(s);apply();
+    },true);
+
+    new MutationObserver(apply).observe(d.documentElement,{childList:true,subtree:true});
+    setTimeout(apply,500);setTimeout(apply,1500);
+  }catch(err){console.error(err)}
+});
+</script>
+</body>
+</html>
