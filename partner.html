@@ -1,850 +1,463 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0f172a" />
-  <title>Evolution Optical • Partner Portal</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#0f172a" />
+<title>Evolution Optical • Partner Portal</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <style>
-    :root{
-      --bg:#f4f6f8;
-      --card:#ffffff;
-      --ink:#111827;
-      --muted:#6b7280;
-      --navy:#0f172a;
-      --line:#e5e7eb;
-      --soft:#f8fafc;
-      --green:#166534;
-      --green2:#15803d;
-      --green-bg:#ecfdf3;
-      --red:#b91c1c;
-      --red-bg:#fef2f2;
-      --radius:24px;
-    }
+<style>
+:root{
+  --bg:#f4f6f8;
+  --card:#fff;
+  --ink:#111827;
+  --muted:#6b7280;
+  --navy:#0f172a;
+  --line:#e5e7eb;
+  --green:#166534;
+  --green-bg:#ecfdf3;
+  --red:#b91c1c;
+  --red-bg:#fef2f2;
+  --blue:#1260c4;
+  --soft-blue:#edf6ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+body{min-height:100vh}
+button,input,select{font:inherit}
+.hidden{display:none!important}
 
-    *{box-sizing:border-box}
-    html,body{
-      margin:0;padding:0;background:var(--bg);color:var(--ink);
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    }
-    body{min-height:100vh}
-    button,input,select{font:inherit}
-    .hidden{display:none!important}
+.top{background:var(--navy);color:#fff;padding:calc(20px + env(safe-area-inset-top)) 18px 20px;position:sticky;top:0;z-index:10}
+.top-inner{max-width:780px;margin:auto;display:flex;align-items:center;gap:14px}
+.brand{flex:1}.brand h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.4px}.brand p{margin:3px 0 0;color:#cbd5e1;font-size:14px}
+.ghost{border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;border-radius:12px;padding:9px 12px;font-weight:700}
 
-    .top{
-      background:var(--navy);color:#fff;
-      padding:calc(20px + env(safe-area-inset-top)) 18px 20px;
-      position:sticky;top:0;z-index:10;
-    }
-    .top-inner{
-      max-width:780px;margin:auto;display:flex;align-items:center;gap:14px;
-    }
-    .brand{flex:1}
-    .brand h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.4px}
-    .brand p{margin:3px 0 0;color:#cbd5e1;font-size:14px}
-    .ghost{
-      border:1px solid rgba(255,255,255,.25);background:transparent;color:white;
-      border-radius:12px;padding:9px 12px;font-weight:700;
-    }
+.wrap{width:min(780px,calc(100% - 28px));margin:18px auto 42px}
+.card{background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:0 8px 28px rgba(15,23,42,.06);padding:20px}
+.card + .card{margin-top:16px}
+h2{margin:0 0 6px;font-size:25px} h3{margin:0 0 12px;font-size:19px}
+.sub{margin:0;color:var(--muted);line-height:1.5}
+.field{margin-top:15px}
+label{display:block;font-weight:750;margin-bottom:7px;font-size:14px}
+input,select{width:100%;border:1px solid #d1d5db;background:#fff;border-radius:15px;padding:14px;outline:none;min-height:52px}
+input:focus,select:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,139,.12)}
+.btn{border:0;border-radius:16px;background:var(--navy);color:#fff;width:100%;min-height:54px;padding:14px 16px;font-weight:800;font-size:16px;margin-top:18px;cursor:pointer}
+.btn:disabled{opacity:.55}.btn.secondary{background:#e5e7eb;color:#111827}
+.msg{margin-top:13px;border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.45}
+.msg.error{background:var(--red-bg);color:var(--red)}.msg.ok{background:var(--green-bg);color:var(--green)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.stat{background:#f8fafc;border:1px solid var(--line);border-radius:18px;padding:14px}
+.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;margin-top:4px;font-size:22px}
+.partner-line{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:14px}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;background:var(--green-bg);color:var(--green);font-size:12px;font-weight:800}
+.branch{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:14px;padding:12px;background:white}
+.branch b{font-size:14px}.branch small{display:block;color:var(--muted);margin-top:2px}
 
-    .wrap{width:min(780px,calc(100% - 28px));margin:18px auto 42px}
-    .card{
-      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-      box-shadow:0 8px 28px rgba(15,23,42,.06);padding:20px;
-    }
-    .card + .card{margin-top:16px}
+/* ===== Warm blue shared voucher ===== */
+.voucher{
+  width:min(100%,620px);
+  margin:0 auto;
+  color:#101828;
+  text-align:center;
+  background:
+    radial-gradient(circle at 86% 5%,rgba(255,255,255,.96),transparent 18%),
+    radial-gradient(circle at 10% 4%,rgba(125,187,255,.18),transparent 26%),
+    linear-gradient(180deg,#eef7ff 0%,#f9fcff 36%,#eaf5ff 100%);
+  border:1px solid #d1e5fb;
+  border-radius:30px;
+  overflow:hidden;
+  box-shadow:0 18px 45px rgba(27,88,150,.16);
+  position:relative;
+  padding:22px 20px 18px;
+}
+.voucher:before{
+  content:"";
+  position:absolute;left:-65px;top:-55px;width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(80,155,236,.19),transparent 66%);
+}
+.voucher:after{
+  content:"";
+  position:absolute;right:-52px;top:145px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(174,211,247,.30),transparent 67%);
+}
+.voucher-content{position:relative;z-index:1}
 
-    h2{margin:0 0 6px;font-size:25px}
-    h3{margin:0 0 12px;font-size:19px}
-    .sub{margin:0;color:var(--muted);line-height:1.5}
+.gift-top{
+  display:grid;
+  grid-template-columns:95px 1fr 95px;
+  align-items:start;
+  min-height:110px;
+}
+.ribbon{
+  width:78px;height:70px;position:relative;margin-left:-2px;margin-top:4px;
+}
+.ribbon:before,.ribbon:after{
+  content:"";position:absolute;top:6px;width:45px;height:36px;border-radius:60% 50% 55% 30%;
+  background:linear-gradient(135deg,#94c8ff,#2c7ad2 70%,#8dc5ff);
+  box-shadow:inset 0 2px 5px rgba(255,255,255,.75),0 5px 12px rgba(34,104,174,.18);
+}
+.ribbon:before{left:2px;transform:rotate(-19deg)}
+.ribbon:after{right:2px;transform:scaleX(-1) rotate(-19deg)}
+.ribbon i{position:absolute;left:31px;top:21px;width:19px;height:19px;border-radius:5px;background:linear-gradient(#5ba3eb,#1d68bd);z-index:2}
+.ribbon i:before,.ribbon i:after{content:"";position:absolute;top:15px;width:15px;height:43px;background:linear-gradient(#4f98e2,#a9d6ff);clip-path:polygon(0 0,100% 0,75% 100%,45% 78%,15% 100%)}
+.ribbon i:before{left:-7px;transform:rotate(11deg)}.ribbon i:after{left:11px;transform:rotate(-11deg)}
 
-    .field{margin-top:15px}
-    label{display:block;font-weight:750;margin-bottom:7px;font-size:14px}
-    input,select{
-      width:100%;border:1px solid #d1d5db;background:white;border-radius:15px;
-      padding:14px 14px;outline:none;min-height:52px;
-    }
-    input:focus,select:focus{
-      border-color:#64748b;
-      box-shadow:0 0 0 3px rgba(100,116,139,.12);
-    }
+.heart3d{width:48px;height:43px;margin:16px auto 0;position:relative;transform:rotate(-45deg);background:linear-gradient(135deg,#d9efff,#7eb9f1);border-radius:8px 0 9px 0;box-shadow:0 6px 12px rgba(56,125,194,.16)}
+.heart3d:before,.heart3d:after{content:"";position:absolute;width:48px;height:43px;background:inherit;border-radius:50%}
+.heart3d:before{top:-22px;left:0}.heart3d:after{left:22px;top:0}
 
-    .btn{
-      border:0;border-radius:16px;background:var(--navy);color:white;
-      width:100%;min-height:54px;padding:14px 16px;font-weight:800;font-size:16px;
-      margin-top:18px;
-    }
-    .btn:disabled{opacity:.55}
-    .btn.secondary{background:#e5e7eb;color:#111827}
+.vlogo-wrap{display:flex;justify-content:center}
+.vlogo{width:78px;height:78px;filter:drop-shadow(0 5px 8px rgba(85,68,190,.16))}
+.vbrand{font-size:19px;font-weight:700;letter-spacing:5px;margin-top:2px}
+.vbrand-sub{font-size:11px;letter-spacing:7px;margin-top:2px}
+.gift-script{font-family:"Segoe Script","Bradley Hand","Brush Script MT",cursive;font-size:34px;line-height:1.07;color:#0d58b6;margin:8px 0 3px}
+.hi{font-size:23px;font-weight:800;color:#135bb9;margin-top:10px}
+.tagline{font-size:14px;margin:5px 0 13px;color:#222}
 
-    .msg{
-      margin-top:13px;border-radius:14px;padding:12px 14px;
-      font-size:14px;line-height:1.45;
-    }
-    .msg.error{background:var(--red-bg);color:var(--red)}
-    .msg.ok{background:var(--green-bg);color:var(--green)}
+.offer-card{
+  background:rgba(255,255,255,.88);
+  border:1px solid rgba(193,220,248,.9);
+  border-radius:24px;
+  padding:16px 15px 14px;
+  box-shadow:0 10px 25px rgba(51,110,170,.08);
+}
+.offer-head{display:grid;grid-template-columns:1.35fr 1fr;gap:12px;align-items:center}
+.offer-left{padding-right:12px;border-right:1px dashed #75aee7}
+.received{font-size:13px;font-weight:800;letter-spacing:.8px;color:#155db7}
+.offer-title{font-family:Georgia,"Times New Roman",serif;font-size:24px;font-weight:800;line-height:1.05;color:#145db9;margin-top:2px}
+.offer-sub{font-size:15px;font-weight:800;color:#175eb4;margin-top:3px}
+.offer-value{font-family:Georgia,"Times New Roman",serif;font-size:60px;line-height:.92;font-weight:800;color:#125ab4;margin:4px 0}
+.qr-label{display:inline-block;padding:4px 13px;background:#115bb8;color:#fff;font-size:14px;font-weight:800;letter-spacing:1px;clip-path:polygon(7% 0,93% 0,100% 50%,93% 100%,7% 100%,0 50%)}
+.partner-from{font-size:13px;text-align:left;color:#222;padding-left:7px}
+.partner-from b{display:block;font-size:19px;margin-top:5px}
+.gift-box{font-size:48px;line-height:1;margin-top:8px}
 
-    .stats{
-      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;
-    }
-    .stat{
-      background:var(--soft);border:1px solid var(--line);
-      border-radius:18px;padding:14px;
-    }
-    .stat span{display:block;color:var(--muted);font-size:12px}
-    .stat strong{display:block;margin-top:4px;font-size:22px}
+.qr-area{position:relative;margin:13px auto 8px;max-width:390px;padding:4px 0 0}
+.glasses-deco{position:absolute;right:-55px;top:44px;width:92px;height:45px;opacity:.72}
+.glasses-deco.left{right:auto;left:-60px;top:110px;opacity:.20;transform:scale(1.18)}
+.glasses-deco svg{width:100%;height:100%}
+#qrBox{
+  width:340px;height:340px;max-width:86vw;max-height:86vw;
+  margin:0 auto;
+  padding:11px;
+  background:#fff;
+  border:2px solid #83b8ee;
+  border-radius:18px;
+  display:flex;justify-content:center;align-items:center;
+}
+#qrBox img,#qrBox canvas{width:100%!important;height:100%!important;object-fit:contain;image-rendering:pixelated}
+.voucher-code{font-size:14px;letter-spacing:.5px;font-weight:700;margin:6px 0 0;word-break:break-word}
 
-    .partner-line{
-      margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;
-      border-top:1px solid var(--line);padding-top:14px;
-    }
-    .badge{
-      display:inline-flex;align-items:center;border-radius:999px;
-      padding:7px 10px;background:var(--green-bg);
-      color:var(--green);font-size:12px;font-weight:800;
-    }
+.meta-strip{
+  margin:10px auto 9px;
+  border:1px solid #67a7eb;
+  background:rgba(255,255,255,.62);
+  border-radius:999px;
+  padding:7px 12px;
+  display:flex;justify-content:center;align-items:center;gap:14px;
+  font-size:12px;
+}
+.meta-strip b{color:#125ab4}.meta-sep{width:1px;height:19px;background:#6ea9e6}
+.smile-strip{
+  display:grid;grid-template-columns:43px 1fr 56px;align-items:center;gap:10px;
+  border-radius:16px;background:linear-gradient(90deg,#dcebfb,#f5f9ff,#dcecfb);
+  padding:10px 12px;text-align:left;font-size:13px;margin-top:9px
+}
+.heart-icon{width:40px;height:40px;border-radius:50%;background:#1260c4;color:white;display:grid;place-items:center;font-size:22px}
+.smile{font-size:37px;color:#1260c4;text-align:center}
 
-    .branch-actions{display:flex;gap:8px;margin-bottom:10px}
-    .mini{
-      border:1px solid var(--line);background:white;border-radius:11px;
-      padding:7px 10px;font-size:12px;font-weight:750;color:#374151;
-    }
+.locations{margin-top:12px}
+.locations-title{font-size:16px;font-weight:900;color:#145bb4;letter-spacing:1px;margin-bottom:2px}
+.location-row{
+  display:grid;grid-template-columns:36px 1fr;gap:8px;text-align:left;
+  padding:7px 2px;border-top:1px solid #c8ddf2;align-items:start
+}
+.pin{width:32px;height:32px;border-radius:50%;background:#dcecff;color:#1260c4;display:grid;place-items:center;font-size:20px}
+.location-name{font-size:13px;font-weight:900}
+.location-address{font-size:11px;line-height:1.25}
+.location-phone{font-size:12px;color:#1260c4;font-weight:800;margin-top:2px}
+.vfooter{font-family:"Segoe Script","Brush Script MT",cursive;color:#1260c4;font-size:12px;margin-top:7px}
 
-    .branches{display:grid;grid-template-columns:1fr;gap:9px}
-    .branch{
-      display:flex;align-items:center;gap:10px;border:1px solid var(--line);
-      border-radius:14px;padding:12px;background:white;
-    }
-    .branch input{width:20px;height:20px;min-height:auto}
-    .branch b{font-size:14px}
-    .branch small{display:block;color:var(--muted);margin-top:2px}
+.share-note{font-size:12px;color:#64748b;line-height:1.4;margin-top:10px}
+.footer{text-align:center;color:#9ca3af;font-size:12px;margin-top:22px;padding-bottom:env(safe-area-inset-bottom)}
 
-    .voucher{
-      text-align:center;border:1px dashed #9ca3af;
-      border-radius:22px;padding:20px;background:white;
-    }
-    .voucher .logo{
-      font-weight:900;font-size:19px;letter-spacing:.5px;
-    }
-    .voucher .type{
-      font-size:28px;font-weight:900;margin:16px 0;
-    }
-    #qrBox{
-      width:260px;max-width:100%;margin:0 auto;
-      display:flex;justify-content:center;align-items:center;
-    }
-    #qrBox img,#qrBox canvas{
-      max-width:100%;height:auto!important;
-    }
-    .voucher-code{
-      font-weight:900;letter-spacing:1px;margin:12px 0;
-      word-break:break-word;
-    }
-    .voucher-meta{color:#374151;line-height:1.65}
-    .valid{
-      margin-top:14px;padding:12px;border-radius:14px;
-      background:var(--green-bg);color:var(--green);font-weight:900;
-    }
-
-    .footer{
-      text-align:center;color:#9ca3af;font-size:12px;margin-top:22px;
-      padding-bottom:env(safe-area-inset-bottom);
-    }
-
-    @media(min-width:680px){
-      .branches{grid-template-columns:1fr 1fr}
-      .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-      .form-grid .field{margin-top:0}
-    }
-  </style>
+@media(min-width:680px){.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.form-grid .field{margin-top:0}}
+@media(max-width:520px){
+  .wrap{width:min(100% - 16px,780px)}
+  .card{padding:14px;border-radius:20px}
+  .voucher{padding:13px 9px 12px;border-radius:23px}
+  .gift-top{grid-template-columns:65px 1fr 65px;min-height:82px}
+  .ribbon{transform:scale(.72);transform-origin:left top}
+  .heart3d{transform:rotate(-45deg) scale(.72);transform-origin:center}
+  .vlogo{width:58px;height:58px}.vbrand{font-size:15px;letter-spacing:3.5px}.vbrand-sub{font-size:8px;letter-spacing:5px}
+  .gift-script{font-size:26px}.hi{font-size:19px}.tagline{font-size:12px}
+  .offer-card{padding:12px 9px}.offer-head{gap:8px}.offer-left{padding-right:7px}
+  .received{font-size:10px}.offer-title{font-size:18px}.offer-sub{font-size:11px}.offer-value{font-size:48px}
+  .partner-from{font-size:10px}.partner-from b{font-size:15px}.gift-box{font-size:38px}
+  #qrBox{width:305px;height:305px;max-width:88vw;max-height:88vw}
+  .glasses-deco{right:-24px;width:62px}.glasses-deco.left{left:-28px;width:65px}
+  .meta-strip{font-size:10px;gap:8px;padding:6px 7px}
+  .smile-strip{font-size:11px;grid-template-columns:36px 1fr 42px;padding:8px}
+  .heart-icon{width:34px;height:34px}.smile{font-size:29px}
+  .location-name{font-size:11px}.location-address{font-size:9px}.location-phone{font-size:10px}
+}
+</style>
 </head>
 <body>
-  <header class="top">
-    <div class="top-inner">
-      <div class="brand">
-        <h1>EVOLUTION OPTICAL</h1>
-        <p>Partner Voucher Portal</p>
-      </div>
-      <button id="logoutBtn" class="ghost hidden">Logout</button>
+<header class="top"><div class="top-inner"><div class="brand"><h1>EVOLUTION OPTICAL</h1><p>Partner Voucher Portal</p></div><button id="logoutBtn" class="ghost hidden">Logout</button></div></header>
+
+<main class="wrap">
+<section id="loginCard" class="card">
+<h2>Partner Login</h2><p class="sub">Sign in with the partner account created in Supabase Authentication.</p>
+<div class="field"><label>Email</label><input id="email" type="email" autocomplete="username" placeholder="partner@example.com"></div>
+<div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Password"></div>
+<button id="loginBtn" class="btn">SIGN IN</button><div id="loginMsg" class="msg hidden"></div>
+</section>
+
+<div id="dashboard" class="hidden">
+<section class="card">
+<h2 id="partnerName">Partner</h2><p class="sub" id="partnerCode">Loading partner profile…</p>
+<div class="stats"><div class="stat"><span>Limit</span><strong id="limit">—</strong></div><div class="stat"><span>Issued</span><strong id="issued">—</strong></div><div class="stat"><span>Remaining</span><strong id="remaining">—</strong></div></div>
+<div class="partner-line"><span class="badge">ACTIVE PARTNER</span><span id="roleText" class="sub"></span></div>
+</section>
+
+<section class="card">
+<h3>Create Voucher</h3><p class="sub">Create a secure voucher for your customer. Redemption locations are controlled by Evolution Optical Admin.</p>
+<div class="form-grid" style="margin-top:15px">
+<div class="field"><label>Customer Name</label><input id="customerName" placeholder="Customer full name"></div>
+<div class="field"><label>Phone</label><input id="customerPhone" inputmode="tel" placeholder="01xxxxxxxx"></div>
+</div>
+<div class="field"><label>Voucher Type</label><select id="voucherType"><option value="RM60 Free Glasses">RM60 Free Glasses</option><option value="Free Eye Screening">Free Eye Screening</option><option value="Special Partner Voucher">Special Partner Voucher</option></select></div>
+<div class="field"><label>Expiry Date</label><input id="expiryDate" type="date"></div>
+<div class="field"><label>Claim Branches (assigned by Evolution Optical Admin)</label><div id="assignedClaimBranches" class="branch"><div><b>Loading assigned branches…</b><small>Partner cannot change this setting.</small></div></div></div>
+<button id="createBtn" class="btn">GENERATE QR VOUCHER</button><div id="createMsg" class="msg hidden"></div>
+</section>
+
+<section class="card">
+<h3>Account Settings</h3><p class="sub">Change your Partner Portal password. This does not affect your voucher limit, claim branches or voucher history.</p>
+<div class="form-grid" style="margin-top:15px"><div class="field"><label>Current Password</label><input id="currentPassword" type="password" autocomplete="current-password"></div><div class="field"><label>New Password</label><input id="newPassword" type="password" autocomplete="new-password"></div></div>
+<div class="field"><label>Confirm New Password</label><input id="confirmNewPassword" type="password" autocomplete="new-password"></div>
+<button id="changePasswordBtn" class="btn secondary">CHANGE PASSWORD</button><div id="changePasswordMsg" class="msg hidden"></div>
+</section>
+
+<section id="voucherResultCard" class="card hidden">
+<h3>Voucher Generated</h3>
+
+<div class="voucher">
+<div class="voucher-content">
+<div class="gift-top">
+  <div class="ribbon"><i></i></div>
+  <div>
+    <div class="vlogo-wrap">
+      <svg class="vlogo" viewBox="0 0 200 200" aria-label="Evolution Optical">
+        <defs>
+          <linearGradient id="evoGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#d65cff"/>
+            <stop offset="38%" stop-color="#7b66ff"/>
+            <stop offset="72%" stop-color="#3f8dff"/>
+            <stop offset="100%" stop-color="#27d8ef"/>
+          </linearGradient>
+        </defs>
+        <path d="M146 31 A76 76 0 1 0 151 158" fill="none" stroke="url(#evoGrad)" stroke-width="14" stroke-linecap="round"/>
+        <path d="M148 39 Q171 61 174 100 Q172 139 149 158" fill="none" stroke="url(#evoGrad)" stroke-width="12" stroke-linecap="round"/>
+        <path d="M68 101 L108 75 H145 L123 94 H157 L174 101 L157 108 H123 L145 127 H108 Z" fill="url(#evoGrad)"/>
+        <path d="M174 91 L191 101 L174 111 Z" fill="url(#evoGrad)"/>
+      </svg>
     </div>
-  </header>
-
-  <main class="wrap">
-
-    <section id="loginCard" class="card">
-      <h2>Partner Login</h2>
-      <p class="sub">Sign in with the partner account created in Supabase Authentication.</p>
-
-      <div class="field">
-        <label for="email">Email</label>
-        <input id="email" type="email" autocomplete="username" placeholder="partner@example.com" />
-      </div>
-
-      <div class="field">
-        <label for="password">Password</label>
-        <input id="password" type="password" autocomplete="current-password" placeholder="Password" />
-      </div>
-
-      <button id="loginBtn" class="btn">SIGN IN</button>
-      <div id="loginMsg" class="msg hidden"></div>
-    </section>
-
-    <div id="dashboard" class="hidden">
-
-      <section class="card">
-        <h2 id="partnerName">Partner</h2>
-        <p class="sub" id="partnerCode">Loading partner profile…</p>
-
-        <div class="stats">
-          <div class="stat">
-            <span>Limit</span>
-            <strong id="limit">—</strong>
-          </div>
-          <div class="stat">
-            <span>Issued</span>
-            <strong id="issued">—</strong>
-          </div>
-          <div class="stat">
-            <span>Remaining</span>
-            <strong id="remaining">—</strong>
-          </div>
-        </div>
-
-        <div class="partner-line">
-          <span class="badge">ACTIVE PARTNER</span>
-          <span id="roleText" class="sub"></span>
-        </div>
-      </section>
-
-      <section class="card">
-        <h3>Create Voucher</h3>
-        <p class="sub">Create a secure voucher for your customer and choose where it can be redeemed.</p>
-
-        <div class="form-grid" style="margin-top:15px">
-          <div class="field">
-            <label for="customerName">Customer Name</label>
-            <input id="customerName" placeholder="Customer full name" />
-          </div>
-
-          <div class="field">
-            <label for="customerPhone">Phone</label>
-            <input id="customerPhone" inputmode="tel" placeholder="01xxxxxxxx" />
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="voucherType">Voucher Type</label>
-          <select id="voucherType">
-            <option value="RM60 Free Glasses">RM60 Free Glasses</option>
-            <option value="Free Eye Screening">Free Eye Screening</option>
-            <option value="Special Partner Voucher">Special Partner Voucher</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="expiryDate">Expiry Date</label>
-          <input id="expiryDate" type="date" />
-        </div>
-
-        <div class="field">
-          <label>Claim Branches (assigned by Evolution Optical Admin)</label>
-          <div id="assignedClaimBranches" class="branch" style="align-items:flex-start">
-            <div><b>Loading assigned branches…</b><small>Partner cannot change this setting.</small></div>
-          </div>
-        </div>
-
-        <button id="createBtn" class="btn">GENERATE QR VOUCHER</button>
-        <div id="createMsg" class="msg hidden"></div>
-      </section>
-
-
-      <section class="card">
-        <h3>Account Settings</h3>
-        <p class="sub">Change your Partner Portal password. This does not affect your voucher limit, claim branches or voucher history.</p>
-
-        <div class="form-grid" style="margin-top:15px">
-          <div class="field">
-            <label for="currentPassword">Current Password</label>
-            <input id="currentPassword" type="password" autocomplete="current-password" placeholder="Current password" />
-          </div>
-          <div class="field">
-            <label for="newPassword">New Password</label>
-            <input id="newPassword" type="password" autocomplete="new-password" placeholder="Minimum 6 characters" />
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="confirmNewPassword">Confirm New Password</label>
-          <input id="confirmNewPassword" type="password" autocomplete="new-password" placeholder="Enter new password again" />
-        </div>
-
-        <button id="changePasswordBtn" class="btn secondary">CHANGE PASSWORD</button>
-        <div id="changePasswordMsg" class="msg hidden"></div>
-      </section>
-
-      <section id="voucherResultCard" class="card hidden">
-        <h3>Voucher Generated</h3>
-
-        <div class="voucher">
-          <div class="logo">EVOLUTION OPTICAL</div>
-          <div id="resultType" class="type"></div>
-
-          <div id="qrBox"></div>
-
-          <div id="resultCode" class="voucher-code"></div>
-
-          <div class="voucher-meta">
-            <div id="resultCustomer"></div>
-            <div id="resultExpiry"></div>
-            <div id="resultPartner" style="margin-top:6px;font-weight:800;color:#111827"></div>
-            <div id="resultOutlet" style="margin-top:6px;font-weight:800;color:#111827"></div>
-          </div>
-
-          <div class="valid">VALID</div>
-        </div>
-
-        <button id="shareBtn" class="btn" style="margin-top:14px">SHARE VOUCHER</button>
-        <div id="shareMsg" class="msg hidden"></div>
-      </section>
-
-    </div>
-
-    <div class="footer">Evolution Optical • Partner Voucher Platform</div>
-  </main>
-
-  <script>
-    const SUPABASE_URL = "https://hukihbcyyqhanaqrizvm.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_kpPFeGYpedq2auo01Zo50A_aiSjdeVh";
-
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
-
-    const el = id => document.getElementById(id);
-
-    const loginCard = el("loginCard");
-    const dashboard = el("dashboard");
-    const logoutBtn = el("logoutBtn");
-    const createBtn = el("createBtn");
-    const shareBtn = el("shareBtn");
-    let currentVoucher = null;
-    let currentPartnerName = "Partner";
-    let partnerClaimAll = true;
-    let partnerClaimCodes = [];
-    let partnerClaimNames = [];
-
-    const OUTLETS = {
-      MINES: {
-        name: "The Mines",
-        address: "L3-56, The Mines Shopping Mall, Level 3, Seri Kembangan",
-        phone: "012-4732881"
-      },
-      DAMAI_PERDANA: {
-        name: "CS Damai Perdana (HQ)",
-        address: "No. 1, Jalan Damai Perdana 6/1E, Bandar Damai Perdana, 56000 Cheras, Selangor Darul Ehsan",
-        phone: "017-4276608"
-      },
-      BANGI: {
-        name: "CS Bangi",
-        address: "Lot 27 & 28, Pasar Raya Besar CS, No. 1, Persiaran Bangi Avenue, 43000 Bangi, Selangor",
-        phone: "017-2076413"
-      },
-      BAHAU: {
-        name: "Bahau",
-        address: "No. 104, Jalan Gurney, 72100 Bahau, Negeri Sembilan",
-        phone: "06-4540984"
-      },
-      VISTA_VALLEY: {
-        name: "Semenyih Vista Valley",
-        address: "No. 12A-G, Jalan Vista Valley 3, Semenyih Vista Valley, 43500 Semenyih",
-        phone: "010-5658922 / 03-87276827"
-      },
-      ECO_TAIPAN: {
-        name: "Semenyih Eco Taipan",
-        address: "No. 12-1 (Ground Floor), Setia Eco Hill Taipan, Semenyih",
-        phone: "011-27302218"
-      },
-      PERTAMA: {
-        name: "Pertama Complex",
-        address: "No. 1.36, 1st Floor, Pertama Shopping Complex, Jalan Tuanku Abdul Rahman, Chow Kit, 50100 Kuala Lumpur",
-        phone: "012-6766016"
-      }
-    };
-
-    function selectedOutletSummary(allBranches, branchCodes){
-      if (allBranches) return { label: "All Evolution Optical branches", details: [] };
-      const details = branchCodes.map(code => OUTLETS[code]).filter(Boolean);
-      const label = details.length === 1
-        ? details[0].name
-        : details.map(x => x.name).join(", ");
-      return { label, details };
-    }
-
-    function showMsg(node, text, type="error"){
-      node.textContent = text;
-      node.className = "msg " + (type === "ok" ? "ok" : "error");
-    }
-
-    function hideMsg(node){
-      node.className = "msg hidden";
-      node.textContent = "";
-    }
-
-    function setDefaultExpiry(){
-      const d = new Date();
-      d.setDate(d.getDate() + 30);
-      el("expiryDate").value = d.toISOString().slice(0,10);
-    }
-
-    setDefaultExpiry();
-
-
-    async function loadMyClaimAccess(){
-      const {data,error}=await supabaseClient.rpc("get_my_partner_claim_access");
-      if(error) throw error;
-      partnerClaimAll=!!data?.all_branches;
-      partnerClaimCodes=data?.branch_codes||[];
-      partnerClaimNames=data?.branch_names||[];
-      const box=el("assignedClaimBranches");
-      if(box){
-        const label=partnerClaimAll ? "All Evolution Optical branches" : (partnerClaimNames.join(", ") || "No claim branch assigned");
-        box.innerHTML=`<div><b>${label}</b><small>Set by Evolution Optical Admin. Contact Admin if this needs to be changed.</small></div>`;
-      }
-    }
-
-    async function login(){
-      hideMsg(el("loginMsg"));
-      el("loginBtn").disabled = true;
-
-      const { error } = await supabaseClient.auth.signInWithPassword({
-        email: el("email").value.trim(),
-        password: el("password").value
-      });
-
-      el("loginBtn").disabled = false;
-
-      if (error) {
-        showMsg(el("loginMsg"), error.message);
-        return;
-      }
-
-      await loadPartner();
-    }
-
-    async function loadPartner(){
-      const { data: authData } = await supabaseClient.auth.getUser();
-      const user = authData?.user;
-
-      if (!user) {
-        showLogin();
-        return;
-      }
-
-      const { data, error } = await supabaseClient
-        .from("partner_users")
-        .select(`
-          user_id,
-          role,
-          status,
-          partner_id,
-          partners (
-            id,
-            partner_code,
-            partner_name,
-            voucher_limit,
-            vouchers_issued,
-            status
-          )
-        `)
-        .eq("user_id", user.id)
-        .eq("status", "active")
-        .single();
-
-      if (error || !data || !data.partners) {
-        await supabaseClient.auth.signOut();
-        showLogin();
-        showMsg(
-          el("loginMsg"),
-          "This account is not linked to an active Partner."
-        );
-        return;
-      }
-
-      const p = data.partners;
-
-      if (String(p.status || "").toLowerCase() !== "active") {
-        await supabaseClient.auth.signOut();
-        showLogin();
-        showMsg(
-          el("loginMsg"),
-          "This Partner account is currently suspended. Please contact Evolution Optical."
-        );
-        return;
-      }
-
-      currentPartnerName = p.partner_name || "Partner";
-
-      el("partnerName").textContent = currentPartnerName;
-      el("partnerCode").textContent = `${p.partner_code} • Partner Portal`;
-      el("roleText").textContent = data.role;
-      el("limit").textContent = p.voucher_limit;
-      el("issued").textContent = p.vouchers_issued;
-      el("remaining").textContent =
-        Math.max(0, p.voucher_limit - p.vouchers_issued);
-
-      try{await loadMyClaimAccess();}
-      catch(e){showMsg(el("loginMsg"),"Unable to load assigned Claim Branches: "+e.message);return;}
-
-      loginCard.classList.add("hidden");
-      dashboard.classList.remove("hidden");
-      logoutBtn.classList.remove("hidden");
-    }
-
-    function showLogin(){
-      loginCard.classList.remove("hidden");
-      dashboard.classList.add("hidden");
-      logoutBtn.classList.add("hidden");
-    }
-
-    async function createVoucher(){
-      hideMsg(el("createMsg"));
-
-      const customerName = el("customerName").value.trim();
-      const phone = el("customerPhone").value.trim();
-      const voucherType = el("voucherType").value;
-      const expiry = el("expiryDate").value;
-      const allBranches = partnerClaimAll;
-      const branchCodes = [...partnerClaimCodes];
-
-      if (!customerName || !phone || !expiry) {
-        showMsg(
-          el("createMsg"),
-          "Please complete Customer Name, Phone and Expiry Date."
-        );
-        return;
-      }
-
-      if (!allBranches && branchCodes.length === 0) {
-        showMsg(el("createMsg"),"No claim branch is assigned to this Partner. Please contact Evolution Optical Admin.");
-        return;
-      }
-
-      const { data: authData } = await supabaseClient.auth.getUser();
-      const currentUser = authData?.user;
-
-      if (!currentUser) {
-        showMsg(el("createMsg"), "Your session has expired. Please sign in again.");
-        return;
-      }
-
-      const { data: currentProfile, error: statusError } = await supabaseClient
-        .from("partner_users")
-        .select(`
-          partner_id,
-          status,
-          partners (
-            status
-          )
-        `)
-        .eq("user_id", currentUser.id)
-        .eq("status", "active")
-        .single();
-
-      if (
-        statusError ||
-        !currentProfile ||
-        !currentProfile.partners ||
-        String(currentProfile.partners.status || "").toLowerCase() !== "active"
-      ) {
-        showMsg(
-          el("createMsg"),
-          "This Partner account is suspended and cannot issue vouchers."
-        );
-        return;
-      }
-
-      createBtn.disabled = true;
-      createBtn.textContent = "GENERATING…";
-
-      const { data, error } = await supabaseClient.rpc(
-        "create_partner_voucher_controlled",
-        {
-          p_customer_name: customerName,
-          p_customer_phone: phone,
-          p_customer_ic: "",
-          p_voucher_type: voucherType,
-          p_expiry_date: expiry
-        }
-      );
-
-      createBtn.disabled = false;
-      createBtn.textContent = "GENERATE QR VOUCHER";
-
-      if (error) {
-        showMsg(el("createMsg"), error.message);
-        return;
-      }
-
-      const result = data;
-
-      currentVoucher = {
-        voucher_id: result.voucher_id,
-        voucher_code: result.voucher_code,
-        voucher_type: voucherType,
-        customer_name: customerName,
-        customer_phone: phone,
-        expiry_date: result.expiry_date,
-        partner_name: currentPartnerName,
-        all_branches: allBranches,
-        branch_codes: branchCodes,
-        outlet: selectedOutletSummary(allBranches, branchCodes)
-      };
-
-      showMsg(
-        el("createMsg"),
-        `Voucher ${result.voucher_code} created successfully.`,
-        "ok"
-      );
-
-      el("resultType").textContent = voucherType;
-      el("resultCode").textContent = result.voucher_code;
-      el("resultCustomer").textContent = `${customerName} • ${phone}`;
-      el("resultExpiry").textContent =
-        `Valid until: ${result.expiry_date}`;
-      el("resultPartner").textContent =
-        `Issued by: ${currentVoucher.partner_name}`;
-      el("resultOutlet").textContent =
-        `Redeem at: ${currentVoucher.outlet.label}`;
-
-      const qrBox = el("qrBox");
-      qrBox.innerHTML = "";
-
-      new QRCode(qrBox, {
-        text: result.voucher_code,
-        width: 260,
-        height: 260,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.M
-      });
-
-      el("voucherResultCard").classList.remove("hidden");
-
-      setTimeout(() => {
-        el("voucherResultCard").scrollIntoView({
-          behavior:"smooth",
-          block:"start"
-        });
-      }, 100);
-
-      await loadPartner();
-    }
-
-
-    async function shareVoucher(){
-      hideMsg(el("shareMsg"));
-
-      if (!currentVoucher) {
-        showMsg(el("shareMsg"), "Please generate a voucher first.");
-        return;
-      }
-
-      shareBtn.disabled = true;
-      shareBtn.textContent = "PREPARING…";
-
-      try {
-        const voucherNode = document.querySelector(".voucher");
-
-        const canvas = await html2canvas(voucherNode, {
-          scale: 2,
-          backgroundColor: "#ffffff",
-          useCORS: true
-        });
-
-        const blob = await new Promise(resolve =>
-          canvas.toBlob(resolve, "image/png", 1)
-        );
-
-        if (!blob) {
-          throw new Error("Could not create voucher image.");
-        }
-
-        const fileName =
-          `${currentVoucher.voucher_code.replace(/[^a-z0-9_-]/gi, "_")}.png`;
-
-        const file = new File([blob], fileName, {
-          type: "image/png"
-        });
-
-        const outletText = currentVoucher.all_branches
-          ? `📍 Redeem at any Evolution Optical branch:\n\n${Object.values(OUTLETS).map(o =>
-              `Evolution Optical – ${o.name}\n${o.address}\nTel: ${o.phone}`
-            ).join("\n\n")}`
-          : currentVoucher.outlet.details.map(o =>
-              `📍 Redeem at:\nEvolution Optical – ${o.name}\n${o.address}\nTel: ${o.phone}`
-            ).join("\n\n");
-
-        const shareText =
-`EVOLUTION OPTICAL
-
-${currentVoucher.voucher_type}
-
-Voucher: ${currentVoucher.voucher_code}
-Customer: ${currentVoucher.customer_name}
-Valid until: ${currentVoucher.expiry_date}
-Issued by: ${currentVoucher.partner_name}
-
-${outletText}
-
-Please present this QR Voucher upon redemption.`;
-
-        if (
-          navigator.share &&
-          navigator.canShare &&
-          navigator.canShare({ files: [file] })
-        ) {
-          await navigator.share({
-            title: "Evolution Optical QR Voucher",
-            text: shareText,
-            files: [file]
-          });
-
-          showMsg(
-            el("shareMsg"),
-            "Share menu opened. Choose WhatsApp to send the QR Voucher.",
-            "ok"
-          );
-        } else if (navigator.share) {
-          await navigator.share({
-            title: "Evolution Optical QR Voucher",
-            text: shareText
-          });
-
-          showMsg(
-            el("shareMsg"),
-            "Your device shared the voucher text. QR image sharing is not supported by this browser.",
-            "ok"
-          );
-        } else {
-          const wa = "https://wa.me/?text=" + encodeURIComponent(shareText);
-          window.open(wa, "_blank");
-          showMsg(
-            el("shareMsg"),
-            "WhatsApp opened with the voucher details.",
-            "ok"
-          );
-        }
-      } catch (err) {
-        if (err && err.name === "AbortError") {
-          showMsg(el("shareMsg"), "Sharing cancelled.");
-        } else {
-          showMsg(
-            el("shareMsg"),
-            err?.message || "Unable to share the voucher."
-          );
-        }
-      } finally {
-        shareBtn.disabled = false;
-        shareBtn.textContent = "SHARE VOUCHER";
-      }
-    }
-
-
-    async function changeMyPassword(){
-      hideMsg(el("changePasswordMsg"));
-
-      const currentPassword = el("currentPassword").value;
-      const newPassword = el("newPassword").value;
-      const confirmPassword = el("confirmNewPassword").value;
-
-      if(!currentPassword || !newPassword || !confirmPassword){
-        showMsg(el("changePasswordMsg"), "Please complete Current Password, New Password and Confirm New Password.");
-        return;
-      }
-
-      if(newPassword.length < 6){
-        showMsg(el("changePasswordMsg"), "New Password must be at least 6 characters.");
-        return;
-      }
-
-      if(newPassword !== confirmPassword){
-        showMsg(el("changePasswordMsg"), "New Password and Confirm New Password do not match.");
-        return;
-      }
-
-      if(currentPassword === newPassword){
-        showMsg(el("changePasswordMsg"), "New Password must be different from your Current Password.");
-        return;
-      }
-
-      const btn = el("changePasswordBtn");
-      btn.disabled = true;
-      btn.textContent = "UPDATING…";
-
-      try{
-        const { data: userData, error: userErr } = await supabaseClient.auth.getUser();
-        if(userErr || !userData?.user?.email){
-          showMsg(el("changePasswordMsg"), "Unable to verify your signed-in account.");
-          return;
-        }
-
-        // Re-authenticate so the current password must be correct.
-        const { error: authErr } = await supabaseClient.auth.signInWithPassword({
-          email: userData.user.email,
-          password: currentPassword
-        });
-
-        if(authErr){
-          showMsg(el("changePasswordMsg"), "Current Password is incorrect.");
-          return;
-        }
-
-        const { error: updateErr } = await supabaseClient.auth.updateUser({
-          password: newPassword
-        });
-
-        if(updateErr){
-          showMsg(el("changePasswordMsg"), updateErr.message || "Unable to change password.");
-          return;
-        }
-
-        el("currentPassword").value = "";
-        el("newPassword").value = "";
-        el("confirmNewPassword").value = "";
-        showMsg(el("changePasswordMsg"), "Password changed successfully.", "ok");
-      }finally{
-        btn.disabled = false;
-        btn.textContent = "CHANGE PASSWORD";
-      }
-    }
-
-    el("loginBtn").addEventListener("click", login);
-
-    el("password").addEventListener("keydown", e => {
-      if(e.key === "Enter") login();
-    });
-
-    createBtn.addEventListener("click", createVoucher);
-    shareBtn.addEventListener("click", shareVoucher);
-    el("changePasswordBtn").addEventListener("click", changeMyPassword);
-
-    logoutBtn.addEventListener("click", async () => {
-      await supabaseClient.auth.signOut();
-      showLogin();
-    });
-
-    (async function init(){
-      const { data } = await supabaseClient.auth.getSession();
-      if (data?.session) {
-        await loadPartner();
-      }
-    })();
-  </script>
+    <div class="vbrand">EVOLUTION</div><div class="vbrand-sub">OPTICAL</div>
+  </div>
+  <div class="heart3d"></div>
+</div>
+
+<div class="gift-script">A little gift<br>just for your ♡</div>
+<div class="hi">— • Hi <span id="giftCustomer">Customer</span>, • —</div>
+<div class="tagline">Enjoy better vision, enjoy better life.</div>
+
+<div class="offer-card">
+<div class="offer-head">
+  <div class="offer-left">
+    <div class="received">YOU ARE RECEIVED</div>
+    <div id="offerTitle" class="offer-title">FREE SPECTACLE</div>
+    <div id="offerSub" class="offer-sub">WITH GLASSES VALUE</div>
+    <div id="offerValue" class="offer-value">RM60</div>
+    <div class="qr-label">• REDEMPTION QR •</div>
+  </div>
+  <div class="partner-from">From<b id="giftPartner">Partner</b><div class="gift-box">🎁</div></div>
+</div>
+
+<div class="qr-area">
+  <div class="glasses-deco left">
+    <svg viewBox="0 0 160 70"><g fill="none" stroke="#2c77c8" stroke-width="4"><path d="M7 32 Q21 8 56 14 Q76 18 77 37 Q77 57 53 61 Q20 62 10 43Z"/><path d="M83 37 Q84 18 104 14 Q139 8 153 32 L150 43 Q140 62 107 61 Q83 57 83 37Z"/><path d="M77 35 Q80 31 83 35"/><path d="M5 30 L0 23 M155 30 L160 23"/></g></svg>
+  </div>
+  <div class="glasses-deco">
+    <svg viewBox="0 0 160 70"><g fill="none" stroke="#2c77c8" stroke-width="4"><path d="M7 32 Q21 8 56 14 Q76 18 77 37 Q77 57 53 61 Q20 62 10 43Z"/><path d="M83 37 Q84 18 104 14 Q139 8 153 32 L150 43 Q140 62 107 61 Q83 57 83 37Z"/><path d="M77 35 Q80 31 83 35"/><path d="M5 30 L0 23 M155 30 L160 23"/></g></svg>
+  </div>
+  <div id="qrBox"></div>
+  <div id="resultCode" class="voucher-code"></div>
+</div>
+
+<div class="meta-strip">
+  <span>📅 Valid until &nbsp;<b id="giftExpiry"></b></span>
+  <span class="meta-sep"></span>
+  <span>👤 Customer &nbsp;<b id="giftCustomer2"></b></span>
+</div>
+
+<div class="smile-strip"><div class="heart-icon">♥</div><div>We hope this little gift<br>brings a smile to your day. ♡</div><div class="smile">☺♡</div></div>
+
+<div class="locations">
+  <div class="locations-title">— • REDEEM AT • —</div>
+  <div id="giftLocations"></div>
+</div>
+
+<div class="vfooter">♡ &nbsp; Please show this voucher when redeeming. &nbsp; ♡</div>
+</div>
+</div>
+
+<button id="shareBtn" class="btn" style="margin-top:14px">SHARE VOUCHER</button>
+<div id="shareMsg" class="msg hidden"></div>
+<p class="share-note">WhatsApp sharing includes the voucher image plus the assigned redemption locations, addresses and telephone numbers.</p>
+</section>
+</div>
+
+<div class="footer">Evolution Optical • Partner Voucher Platform</div>
+</main>
+
+<script>
+const SUPABASE_URL="https://hukihbcyyqhanaqrizvm.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_kpPFeGYpedq2auo01Zo50A_aiSjdeVh";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const el=id=>document.getElementById(id);
+const loginCard=el("loginCard"),dashboard=el("dashboard"),logoutBtn=el("logoutBtn"),createBtn=el("createBtn"),shareBtn=el("shareBtn");
+let currentVoucher=null,currentPartnerName="Partner",partnerClaimAll=true,partnerClaimCodes=[],partnerClaimNames=[];
+
+const OUTLETS={
+  MINES:{name:"The Mines",address:"L3-56, The Mines Shopping Mall, Level 3, Seri Kembangan",phone:"012-4732881"},
+  DAMAI_PERDANA:{name:"CS Damai Perdana",address:"No. 1, Jalan Damai Perdana 6/1E, Bandar Damai Perdana, 56000 Cheras, Selangor Darul Ehsan",phone:"017-4276608"},
+  BANGI:{name:"CS Bangi",address:"Lot 27 & 28, Pasar Raya Besar CS, No. 1, Persiaran Bangi Avenue, 43000 Bangi, Selangor",phone:"017-2076413"},
+  BAHAU:{name:"Bahau",address:"No. 104, Jalan Gurney, 72100 Bahau, Negeri Sembilan",phone:"06-4540984"},
+  VISTA_VALLEY:{name:"Semenyih Vista Valley",address:"No. 12A-G, Jalan Vista Valley 3, Semenyih Vista Valley, 43500 Semenyih",phone:"010-5658922 / 03-87276827"},
+  ECO_TAIPAN:{name:"Semenyih Eco Taipan",address:"No. 12-1 (Ground Floor), Setia Eco Hill Taipan, Semenyih",phone:"011-27302218"},
+  PERTAMA:{name:"Pertama Complex",address:"No. 1.36, 1st Floor, Pertama Shopping Complex, Jalan Tuanku Abdul Rahman, Chow Kit, 50100 Kuala Lumpur",phone:"012-6766016"}
+};
+
+function cleanOutletName(name){return String(name||"").replace(/\s*\(HQ\)\s*/gi," ").replace(/\s{2,}/g," ").trim()}
+function selectedOutletSummary(allBranches,branchCodes){
+  const details=(allBranches?Object.values(OUTLETS):branchCodes.map(c=>OUTLETS[c]).filter(Boolean)).map(o=>({...o,name:cleanOutletName(o.name)}));
+  const label=allBranches?"All Evolution Optical branches":details.map(x=>x.name).join(", ");
+  return {label,details};
+}
+function showMsg(node,text,type="error"){node.textContent=text;node.className="msg "+(type==="ok"?"ok":"error")}
+function hideMsg(node){node.className="msg hidden";node.textContent=""}
+function setDefaultExpiry(){const d=new Date();d.setDate(d.getDate()+30);el("expiryDate").value=d.toISOString().slice(0,10)}
+setDefaultExpiry();
+
+async function loadMyClaimAccess(){
+  const {data,error}=await supabaseClient.rpc("get_my_partner_claim_access");
+  if(error) throw error;
+  partnerClaimAll=!!data?.all_branches;
+  partnerClaimCodes=data?.branch_codes||[];
+  partnerClaimNames=(data?.branch_names||[]).map(cleanOutletName);
+  const box=el("assignedClaimBranches");
+  if(box){const label=partnerClaimAll?"All Evolution Optical branches":(partnerClaimNames.join(", ")||"No claim branch assigned");box.innerHTML=`<div><b>${label}</b><small>Set by Evolution Optical Admin. Contact Admin if this needs to be changed.</small></div>`}
+}
+
+async function login(){
+  hideMsg(el("loginMsg"));el("loginBtn").disabled=true;
+  const {error}=await supabaseClient.auth.signInWithPassword({email:el("email").value.trim(),password:el("password").value});
+  el("loginBtn").disabled=false;if(error){showMsg(el("loginMsg"),error.message);return}await loadPartner();
+}
+async function loadPartner(){
+  const {data:authData}=await supabaseClient.auth.getUser();const user=authData?.user;if(!user){showLogin();return}
+  const {data,error}=await supabaseClient.from("partner_users").select(`user_id,role,status,partner_id,partners(id,partner_code,partner_name,voucher_limit,vouchers_issued,status)`).eq("user_id",user.id).eq("status","active").single();
+  if(error||!data||!data.partners){await supabaseClient.auth.signOut();showLogin();showMsg(el("loginMsg"),"This account is not linked to an active Partner.");return}
+  const p=data.partners;
+  if(String(p.status||"").toLowerCase()!=="active"){await supabaseClient.auth.signOut();showLogin();showMsg(el("loginMsg"),"This Partner account is currently suspended. Please contact Evolution Optical.");return}
+  currentPartnerName=p.partner_name||"Partner";el("partnerName").textContent=currentPartnerName;el("partnerCode").textContent=`${p.partner_code} • Partner Portal`;el("roleText").textContent=data.role;el("limit").textContent=p.voucher_limit;el("issued").textContent=p.vouchers_issued;el("remaining").textContent=Math.max(0,p.voucher_limit-p.vouchers_issued);
+  try{await loadMyClaimAccess()}catch(e){showMsg(el("loginMsg"),"Unable to load assigned Claim Branches: "+e.message);return}
+  loginCard.classList.add("hidden");dashboard.classList.remove("hidden");logoutBtn.classList.remove("hidden");
+}
+function showLogin(){loginCard.classList.remove("hidden");dashboard.classList.add("hidden");logoutBtn.classList.add("hidden")}
+
+function renderOffer(type){
+  if(String(type).toLowerCase().includes("rm60")){
+    el("offerTitle").textContent="FREE SPECTACLE";el("offerSub").textContent="WITH GLASSES VALUE";el("offerValue").textContent="RM60";
+  }else if(String(type).toLowerCase().includes("eye screening")){
+    el("offerTitle").textContent="FREE EYE";el("offerSub").textContent="SCREENING";el("offerValue").textContent="";
+  }else{
+    el("offerTitle").textContent="SPECIAL PARTNER";el("offerSub").textContent="VOUCHER";el("offerValue").textContent="";
+  }
+}
+function renderLocations(details){
+  el("giftLocations").innerHTML=details.map(o=>`<div class="location-row"><div class="pin">●</div><div><div class="location-name">Evolution Optical – ${cleanOutletName(o.name)}</div><div class="location-address">${o.address}</div><div class="location-phone">☎ ${o.phone}</div></div></div>`).join("");
+}
+
+async function createVoucher(){
+  hideMsg(el("createMsg"));
+  const customerName=el("customerName").value.trim(),phone=el("customerPhone").value.trim(),voucherType=el("voucherType").value,expiry=el("expiryDate").value,allBranches=partnerClaimAll,branchCodes=[...partnerClaimCodes];
+  if(!customerName||!phone||!expiry){showMsg(el("createMsg"),"Please complete Customer Name, Phone and Expiry Date.");return}
+  if(!allBranches&&branchCodes.length===0){showMsg(el("createMsg"),"No claim branch is assigned to this Partner. Please contact Evolution Optical Admin.");return}
+  const {data:authData}=await supabaseClient.auth.getUser();const currentUser=authData?.user;if(!currentUser){showMsg(el("createMsg"),"Your session has expired. Please sign in again.");return}
+  const {data:currentProfile,error:statusError}=await supabaseClient.from("partner_users").select(`partner_id,status,partners(status)`).eq("user_id",currentUser.id).eq("status","active").single();
+  if(statusError||!currentProfile||!currentProfile.partners||String(currentProfile.partners.status||"").toLowerCase()!=="active"){showMsg(el("createMsg"),"This Partner account is suspended and cannot issue vouchers.");return}
+  createBtn.disabled=true;createBtn.textContent="GENERATING…";
+  const {data,error}=await supabaseClient.rpc("create_partner_voucher_controlled",{p_customer_name:customerName,p_customer_phone:phone,p_customer_ic:"",p_voucher_type:voucherType,p_expiry_date:expiry});
+  createBtn.disabled=false;createBtn.textContent="GENERATE QR VOUCHER";
+  if(error){showMsg(el("createMsg"),error.message);return}
+  const result=data;
+  currentVoucher={voucher_id:result.voucher_id,voucher_code:result.voucher_code,voucher_type:voucherType,customer_name:customerName,customer_phone:phone,expiry_date:result.expiry_date,partner_name:currentPartnerName,all_branches:allBranches,branch_codes:branchCodes,outlet:selectedOutletSummary(allBranches,branchCodes)};
+  showMsg(el("createMsg"),`Voucher ${result.voucher_code} created successfully.`,"ok");
+  el("giftCustomer").textContent=customerName;el("giftCustomer2").textContent=customerName;el("giftPartner").textContent=currentPartnerName;el("giftExpiry").textContent=result.expiry_date;el("resultCode").textContent=result.voucher_code;
+  renderOffer(voucherType);renderLocations(currentVoucher.outlet.details);
+
+  const qrBox=el("qrBox");qrBox.innerHTML="";
+  new QRCode(qrBox,{text:result.voucher_code,width:340,height:340,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
+  el("voucherResultCard").classList.remove("hidden");
+  setTimeout(()=>el("voucherResultCard").scrollIntoView({behavior:"smooth",block:"start"}),100);
+  await loadPartner();
+}
+
+async function shareVoucher(){
+  hideMsg(el("shareMsg"));if(!currentVoucher){showMsg(el("shareMsg"),"Please generate a voucher first.");return}
+  shareBtn.disabled=true;shareBtn.textContent="PREPARING…";
+  try{
+    const canvas=await html2canvas(document.querySelector(".voucher"),{scale:2,backgroundColor:"#eef7ff",useCORS:true});
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png",1));if(!blob)throw new Error("Could not create voucher image.");
+    const file=new File([blob],`${currentVoucher.voucher_code.replace(/[^a-z0-9_-]/gi,"_")}.png`,{type:"image/png"});
+    const outletText=currentVoucher.outlet.details.map(o=>`📍 Redeem at:\nEvolution Optical – ${cleanOutletName(o.name)}\n${o.address}\nTel: ${o.phone}`).join("\n\n");
+    const shareText=`Hi ${currentVoucher.customer_name} 👋\nA little gift just for you 🎁\n\n${currentVoucher.voucher_type}\nFrom: ${currentVoucher.partner_name}\nVoucher: ${currentVoucher.voucher_code}\nValid until: ${currentVoucher.expiry_date}\n\n${outletText}\n\nPlease show this QR voucher when redeeming.`;
+    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Evolution Optical Redemption QR",text:shareText,files:[file]});showMsg(el("shareMsg"),"Share menu opened. Choose WhatsApp to send the Redemption QR.","ok")}
+    else if(navigator.share){await navigator.share({title:"Evolution Optical Redemption QR",text:shareText});showMsg(el("shareMsg"),"Your device shared the voucher text. Image sharing is not supported by this browser.","ok")}
+    else{window.open("https://wa.me/?text="+encodeURIComponent(shareText),"_blank");showMsg(el("shareMsg"),"WhatsApp opened with the voucher details.","ok")}
+  }catch(err){if(err?.name==="AbortError")showMsg(el("shareMsg"),"Sharing cancelled.");else showMsg(el("shareMsg"),err?.message||"Unable to share the voucher.")}
+  finally{shareBtn.disabled=false;shareBtn.textContent="SHARE VOUCHER"}
+}
+
+async function changeMyPassword(){
+  hideMsg(el("changePasswordMsg"));const currentPassword=el("currentPassword").value,newPassword=el("newPassword").value,confirmPassword=el("confirmNewPassword").value;
+  if(!currentPassword||!newPassword||!confirmPassword){showMsg(el("changePasswordMsg"),"Please complete Current Password, New Password and Confirm New Password.");return}
+  if(newPassword.length<6){showMsg(el("changePasswordMsg"),"New Password must be at least 6 characters.");return}
+  if(newPassword!==confirmPassword){showMsg(el("changePasswordMsg"),"New Password and Confirm New Password do not match.");return}
+  if(currentPassword===newPassword){showMsg(el("changePasswordMsg"),"New Password must be different from your Current Password.");return}
+  const btn=el("changePasswordBtn");btn.disabled=true;btn.textContent="UPDATING…";
+  try{
+    const {data:userData,error:userErr}=await supabaseClient.auth.getUser();if(userErr||!userData?.user?.email){showMsg(el("changePasswordMsg"),"Unable to verify your signed-in account.");return}
+    const {error:authErr}=await supabaseClient.auth.signInWithPassword({email:userData.user.email,password:currentPassword});if(authErr){showMsg(el("changePasswordMsg"),"Current Password is incorrect.");return}
+    const {error:updateErr}=await supabaseClient.auth.updateUser({password:newPassword});if(updateErr){showMsg(el("changePasswordMsg"),updateErr.message||"Unable to change password.");return}
+    el("currentPassword").value="";el("newPassword").value="";el("confirmNewPassword").value="";showMsg(el("changePasswordMsg"),"Password changed successfully.","ok");
+  }finally{btn.disabled=false;btn.textContent="CHANGE PASSWORD"}
+}
+
+el("loginBtn").addEventListener("click",login);
+el("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
+createBtn.addEventListener("click",createVoucher);
+shareBtn.addEventListener("click",shareVoucher);
+el("changePasswordBtn").addEventListener("click",changeMyPassword);
+logoutBtn.addEventListener("click",async()=>{await supabaseClient.auth.signOut();showLogin()});
+(async function init(){const {data}=await supabaseClient.auth.getSession();if(data?.session)await loadPartner()})();
+</script>
 </body>
 </html>
