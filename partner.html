@@ -1117,7 +1117,7 @@ input:focus,select:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,
 
 <button id="shareBtn" class="btn" style="margin-top:14px">SHARE VOUCHER</button>
 <div id="shareMsg" class="msg hidden"></div>
-<p class="share-note">WhatsApp sharing includes the personalized voucher image and voucher details.</p>
+<p class="share-note">WhatsApp sharing includes the personalized voucher image plus the Admin-assigned redemption branch names and telephone numbers.</p>
 </section>
 </div>
 
@@ -1224,7 +1224,23 @@ async function shareVoucher(){
     const canvas=await html2canvas(voucherNode,{scale:2,backgroundColor:"#eef7ff",useCORS:true});
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png",1));if(!blob)throw new Error("Could not create voucher image.");
     const file=new File([blob],`${currentVoucher.voucher_code.replace(/[^a-z0-9_-]/gi,"_")}.png`,{type:"image/png"});
-    const shareText=`Hi ${currentVoucher.customer_name} 👋\nA little gift just for you 🎁\n\n${currentVoucher.voucher_type}\nFrom: ${currentVoucher.partner_name}\nVoucher: ${currentVoucher.voucher_code}\nValid until: ${currentVoucher.expiry_date}\n\n${outletText}\n\nPlease show this QR voucher when redeeming.`;
+
+    // WhatsApp text keeps the voucher image clean, but includes
+    // the Admin-assigned redemption branches + telephone numbers.
+    const outletText = (currentVoucher.outlet?.details || [])
+      .map(o => `📍 ${cleanOutletName(o.name)}\n☎ ${o.phone}`)
+      .join("\n\n");
+
+    const shareText=`Hi ${currentVoucher.customer_name} 👋
+A little gift just for you 🎁
+
+FREE SPECTACLE WITH FREE GLASSES
+Value RM60
+Partner: ${currentVoucher.partner_name}
+Voucher: ${currentVoucher.voucher_code}
+Valid Date: ${currentVoucher.expiry_date}
+
+${outletText ? `Redeem at:\n${outletText}\n\n` : ""}Please show this QR voucher when redeeming.`;
     if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Evolution Optical Redemption QR",text:shareText,files:[file]});showMsg(el("shareMsg"),"Share menu opened. Choose WhatsApp to send the Redemption QR.","ok")}
     else if(navigator.share){await navigator.share({title:"Evolution Optical Redemption QR",text:shareText});showMsg(el("shareMsg"),"Your device shared the voucher text. Image sharing is not supported by this browser.","ok")}
     else{window.open("https://wa.me/?text="+encodeURIComponent(shareText),"_blank");showMsg(el("shareMsg"),"WhatsApp opened with the voucher details.","ok")}
