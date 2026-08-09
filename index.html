@@ -2,33 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, viewport-fit=cover"
->
-
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#03172b">
 
 <title>Evolution Optical Partner Voucher Platform</title>
 
 <style>
-
 :root{
   --navy:#03172b;
-  --navy-light:#0a3155;
-  --navy-card:#06223e;
+  --navy2:#082a4a;
+  --navy3:#0d3559;
 
-  --gold:#d7a84c;
-  --gold-light:#ffe1a0;
+  --gold:#d8a84b;
+  --gold-light:#ffe3a1;
 
-  --white:#ffffff;
-  --muted:#c7d0db;
+  --black:#050505;
+  --text:#ffffff;
+  --muted:#c9d2dc;
 }
 
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 html,body{
   margin:0;
@@ -37,501 +30,456 @@ html,body{
 }
 
 body{
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  color:white;
-
   min-height:100vh;
+  color:var(--text);
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
 
   background:
-    radial-gradient(
-      circle at 50% 0%,
-      #12446f 0,
-      #062744 26%,
-      #03172b 58%,
-      #020d19 100%
-    );
+    radial-gradient(circle at 50% -10%, #1a537f 0%, transparent 34%),
+    radial-gradient(circle at 12% 40%, #0d3a63 0%, transparent 28%),
+    radial-gradient(circle at 92% 68%, #0a3154 0%, transparent 30%),
+    linear-gradient(145deg,#020b16 0%,#03172b 44%,#020c19 100%);
 }
 
-
-/* =========================
-   PAGE
-========================= */
+/* ======================
+   MAIN
+====================== */
 
 .app{
   width:min(820px,100%);
   margin:auto;
 
   padding:
-    calc(16px + env(safe-area-inset-top))
-    15px
-    calc(35px + env(safe-area-inset-bottom));
+    calc(14px + env(safe-area-inset-top))
+    14px
+    calc(34px + env(safe-area-inset-bottom));
 }
 
-
-/* =========================
+/* ======================
    HEADER
-========================= */
+====================== */
 
 .header{
   text-align:center;
   position:relative;
-
-  padding:
-    5px 5px
-    32px;
+  padding:4px 5px 30px;
 }
 
-
-/* =========================
-   SVG LOGO
-========================= */
+/* ======================
+   LOGO
+====================== */
 
 .logo{
-  width:115px;
-  height:115px;
-
+  width:116px;
+  height:116px;
   display:block;
-
-  margin:
-    0 auto
-    7px;
+  margin:0 auto 8px;
 
   filter:
-    drop-shadow(
-      0 8px 10px
-      rgba(0,0,0,.7)
-    );
+    drop-shadow(0 7px 10px rgba(0,0,0,.95))
+    drop-shadow(0 0 10px rgba(32,118,228,.22));
 }
-
-
-/* =========================
-   COMPANY NAME
-========================= */
 
 .company-name{
   margin:0;
 
-  font-size:
-    clamp(
-      27px,
-      7vw,
-      43px
-    );
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
 
+  font-size:clamp(27px,7vw,43px);
   font-weight:600;
+  letter-spacing:3px;
 
-  letter-spacing:
-    3px;
-
-  color:
-    var(--gold-light);
+  color:var(--gold-light);
 
   text-shadow:
-    0 3px 7px
-    rgba(0,0,0,.8);
+    0 2px 0 #7b551d,
+    0 5px 9px rgba(0,0,0,.85),
+    0 0 14px rgba(218,168,75,.18);
 }
-
 
 .platform-name{
-  margin-top:10px;
-
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Arial,
-    sans-serif;
+  margin-top:9px;
+  color:#efc771;
 
   font-size:12px;
-
-  letter-spacing:4px;
-
-  color:
-    #f1c975;
+  font-weight:600;
+  letter-spacing:3.5px;
 }
 
-
-/* =========================
-   GOLD HEADER LINE
-========================= */
-
 .header-line{
-  width:75%;
-  height:1px;
-
-  margin:
-    19px auto
-    0;
+  width:78%;
+  height:2px;
+  margin:18px auto 0;
 
   background:
     linear-gradient(
       90deg,
       transparent,
-      #9d6a24,
-      #ffe49c,
-      #9d6a24,
+      #7a4f19,
+      #e6b95e,
+      #fff2b5,
+      #e6b95e,
+      #7a4f19,
       transparent
     );
 
   box-shadow:
-    0 0 9px
-    rgba(255,194,70,.8);
+    0 0 6px #a36f20,
+    0 0 16px rgba(255,198,83,.5);
 
   position:relative;
 }
 
 .header-line::after{
   content:"";
-
   position:absolute;
-
-  width:50px;
-  height:3px;
-
   left:50%;
-  top:-1px;
+  top:-2px;
 
-  transform:
-    translateX(-50%);
+  transform:translateX(-50%);
 
-  background:
-    #ffd36f;
+  width:54px;
+  height:4px;
+
+  background:#ffd56f;
 
   box-shadow:
-    0 0 12px
-    #ffc44b;
+    0 0 8px #ffd56f,
+    0 0 18px rgba(255,196,70,.8);
 }
 
-
-/* =========================
-   COMMON CARD
-========================= */
+/* ======================
+   CARD BASE
+====================== */
 
 .card{
+  position:relative;
+
   background:
     linear-gradient(
-      135deg,
-      rgba(9,47,82,.97),
-      rgba(2,23,43,.98)
+      145deg,
+      rgba(17,58,95,.98),
+      rgba(5,30,54,.98) 58%,
+      rgba(2,18,34,.99)
     );
 
-  border:
-    1px solid
-    rgba(221,168,70,.78);
+  border:1px solid rgba(219,166,67,.78);
 
-  border-radius:19px;
+  border-radius:20px;
 
   box-shadow:
-    inset 0 1px 1px
-    rgba(255,255,255,.07),
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -10px 22px rgba(0,0,0,.18),
+    0 2px 0 rgba(0,0,0,.65),
+    0 12px 24px rgba(0,0,0,.48),
+    0 22px 42px rgba(0,0,0,.26),
+    0 0 15px rgba(216,168,75,.08);
 
-    0 12px 25px
-    rgba(0,0,0,.38);
+  overflow:hidden;
 }
 
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
 
-/* =========================
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255,255,255,.09),
+      transparent 20%,
+      transparent 74%,
+      rgba(218,168,75,.06)
+    );
+}
+
+/* ======================
    WELCOME
-========================= */
+====================== */
 
 .welcome{
   display:grid;
-
-  grid-template-columns:
-    48% 52%;
-
-  overflow:hidden;
+  grid-template-columns:48% 52%;
 
   min-height:220px;
-
   margin-bottom:12px;
 }
-
 
 .welcome-image{
   min-height:220px;
 
   background-image:
     linear-gradient(
-      rgba(2,20,38,.06),
-      rgba(2,20,38,.18)
+      rgba(1,17,31,.05),
+      rgba(1,17,31,.12)
     ),
     url("welcome-glasses.jpg");
 
   background-size:cover;
-
   background-position:center;
-}
 
+  box-shadow:
+    inset -14px 0 24px rgba(0,0,0,.24);
+}
 
 .welcome-content{
   display:flex;
-
   flex-direction:column;
-
   justify-content:center;
 
-  padding:
-    25px 24px;
+  padding:26px 24px;
 }
-
 
 .welcome-content h2{
   margin:0;
 
-  color:
-    var(--gold-light);
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
 
-  font-size:
-    38px;
+  font-size:38px;
+  font-weight:600;
 
-  font-weight:500;
+  color:var(--gold-light);
+
+  text-shadow:
+    0 2px 0 #6f4b19,
+    0 5px 9px rgba(0,0,0,.7);
 }
-
 
 .title-line{
-  width:55px;
-  height:2px;
+  width:57px;
+  height:3px;
 
-  margin:
-    13px 0
-    16px;
+  margin:13px 0 16px;
 
   background:
-    var(--gold);
-}
+    linear-gradient(
+      90deg,
+      #b47a27,
+      #ffe2a0
+    );
 
+  box-shadow:
+    0 0 8px rgba(216,168,75,.55);
+}
 
 .welcome-content p{
   margin:0;
+  color:#f0f3f7;
 
-  color:#f2f3f6;
+  font-size:16px;
+  line-height:1.55;
 
-  font-size:17px;
-
-  line-height:1.5;
+  text-shadow:0 2px 4px rgba(0,0,0,.35);
 }
 
-
-/* =========================
-   PORTALS
-========================= */
+/* ======================
+   PORTAL
+====================== */
 
 .portals{
   display:grid;
-
-  gap:10px;
+  gap:11px;
 }
 
-
 .portal{
-  min-height:120px;
+  min-height:122px;
 
   display:grid;
-
-  grid-template-columns:
-    85px 1fr 55px;
-
+  grid-template-columns:88px 1fr 54px;
   align-items:center;
 
-  padding:
-    13px 17px;
+  padding:14px 18px;
 
   color:white;
-
   text-decoration:none;
 
   transition:
-    transform .15s ease,
-    filter .15s ease;
+    transform .16s ease,
+    filter .16s ease,
+    box-shadow .16s ease;
 }
 
+.portal:hover{
+  filter:brightness(1.07);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -10px 22px rgba(0,0,0,.18),
+    0 2px 0 rgba(0,0,0,.65),
+    0 15px 30px rgba(0,0,0,.55),
+    0 0 20px rgba(216,168,75,.12);
+}
 
 .portal:active{
-  transform:
-    scale(.985);
-
-  filter:
-    brightness(1.12);
+  transform:translateY(2px) scale(.99);
 }
 
-
-/* =========================
-   PORTAL ICON
-========================= */
+/* ======================
+   ICON BUTTON
+====================== */
 
 .portal-icon{
-  width:68px;
-  height:68px;
-
-  border-radius:50%;
+  width:70px;
+  height:70px;
 
   display:grid;
-
   place-items:center;
 
-  color:
-    var(--gold-light);
-
-  border:
-    1px solid
-    rgba(220,170,75,.75);
+  border-radius:50%;
 
   background:
     radial-gradient(
       circle at 35% 25%,
-      #123d66,
-      #03172b 70%
+      #1c568b,
+      #092b4e 46%,
+      #02111f 78%
     );
 
+  border:1px solid rgba(229,183,89,.86);
+
   box-shadow:
-    inset 0 0 12px
-    rgba(0,0,0,.7),
-
-    0 5px 12px
-    rgba(0,0,0,.45);
+    inset 0 2px 3px rgba(255,255,255,.13),
+    inset 0 -8px 16px rgba(0,0,0,.6),
+    0 2px 0 #02080d,
+    0 7px 13px rgba(0,0,0,.7),
+    0 0 10px rgba(216,168,75,.14);
 }
-
 
 .portal-icon svg{
-  width:38px;
-  height:38px;
+  width:39px;
+  height:39px;
 
-  stroke:
-    var(--gold-light);
-
+  stroke:var(--gold-light);
   fill:none;
 
-  stroke-width:1.7;
-
+  stroke-width:1.8;
   stroke-linecap:round;
-
   stroke-linejoin:round;
+
+  filter:
+    drop-shadow(0 2px 2px rgba(0,0,0,.65));
 }
 
-
-/* =========================
-   PORTAL TEXT
-========================= */
+/* ======================
+   PORTAL INFO
+====================== */
 
 .portal-info{
   display:grid;
-
-  grid-template-columns:
-    minmax(125px,38%)
-    1fr;
-
+  grid-template-columns:minmax(125px,37%) 1fr;
+  gap:18px;
   align-items:center;
-
-  gap:16px;
 }
-
 
 .portal-info h3{
   margin:0;
 
-  color:
-    var(--gold-light);
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
 
   font-size:29px;
+  font-weight:600;
 
-  font-weight:500;
+  color:var(--gold-light);
+
+  text-shadow:
+    0 2px 0 #704b18,
+    0 4px 7px rgba(0,0,0,.7);
 }
-
 
 .portal-info p{
   margin:0;
-
-  color:#f0f2f5;
+  color:#eef2f6;
 
   font-size:15px;
-
   line-height:1.4;
 }
 
-
-/* =========================
-   ARROW
-========================= */
+/* ======================
+   ARROW BUTTON
+====================== */
 
 .arrow{
-  width:43px;
-  height:43px;
-
-  border-radius:50%;
-
-  display:grid;
-
-  place-items:center;
+  width:45px;
+  height:45px;
 
   justify-self:end;
 
-  border:
-    1px solid
-    var(--gold);
+  display:grid;
+  place-items:center;
 
-  color:
-    var(--gold-light);
+  border-radius:50%;
 
-  font-family:
-    Arial,
-    sans-serif;
+  border:1px solid var(--gold);
 
+  color:var(--gold-light);
+
+  font-family:Arial,sans-serif;
   font-size:29px;
+  font-weight:700;
 
-  line-height:1;
+  background:
+    radial-gradient(
+      circle at 35% 24%,
+      #184b7a,
+      #052540 64%,
+      #021522
+    );
 
   box-shadow:
-    0 4px 10px
-    rgba(0,0,0,.45);
+    inset 0 1px 2px rgba(255,255,255,.13),
+    inset 0 -5px 10px rgba(0,0,0,.55),
+    0 2px 0 #02080d,
+    0 6px 12px rgba(0,0,0,.62),
+    0 0 8px rgba(216,168,75,.18);
 }
 
-
-/* =========================
-   SECURITY BAR
-========================= */
+/* ======================
+   FEATURES
+====================== */
 
 .features{
-  margin-top:11px;
+  margin-top:12px;
 
-  padding:
-    16px 8px;
+  padding:16px 7px;
 
   display:grid;
-
-  grid-template-columns:
-    repeat(3,1fr);
+  grid-template-columns:repeat(3,1fr);
 }
-
 
 .feature{
-  min-height:58px;
+  min-height:60px;
 
   display:flex;
-
   justify-content:center;
-
   align-items:center;
-
   gap:10px;
 
-  padding:
-    5px 12px;
+  padding:5px 11px;
 
   border-right:
-    1px solid
-    rgba(218,168,75,.45);
+    1px solid rgba(218,168,75,.42);
 }
-
 
 .feature:last-child{
   border-right:none;
 }
-
 
 .feature svg{
   width:31px;
@@ -539,105 +487,94 @@ body{
 
   flex:0 0 31px;
 
-  stroke:
-    var(--gold-light);
-
+  stroke:var(--gold-light);
   fill:none;
 
-  stroke-width:1.7;
-
+  stroke-width:1.8;
   stroke-linecap:round;
-
   stroke-linejoin:round;
-}
 
+  filter:
+    drop-shadow(0 2px 2px rgba(0,0,0,.55));
+}
 
 .feature span{
-  color:
-    var(--gold-light);
+  color:var(--gold-light);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
 
   font-size:14px;
-
   line-height:1.25;
+
+  text-shadow:0 2px 4px rgba(0,0,0,.5);
 }
 
-
-/* =========================
+/* ======================
    FOOTER
-========================= */
+====================== */
 
 .footer{
   text-align:center;
 
   margin-top:20px;
 
-  color:
-    #d4b36d;
+  color:#d7b56c;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
 
   font-size:13px;
 }
 
-
 .footer-line{
-  width:70%;
+  width:72%;
   height:1px;
 
-  margin:
-    15px auto 0;
+  margin:15px auto 0;
 
   background:
     linear-gradient(
       90deg,
       transparent,
-      #d29c3e,
-      #ffe3a0,
-      #d29c3e,
+      #8f5b1b,
+      #ffe0a0,
+      #8f5b1b,
       transparent
     );
 
   box-shadow:
-    0 0 7px
-    rgba(255,192,70,.55);
+    0 0 7px rgba(255,193,67,.5);
 }
 
-
-/* =========================
+/* ======================
    MOBILE
-========================= */
+====================== */
 
 @media(max-width:600px){
 
-  .app{
-    padding-left:13px;
-    padding-right:13px;
-  }
-
   .logo{
-    width:98px;
-    height:98px;
+    width:100px;
+    height:100px;
   }
 
   .company-name{
-    font-size:
-      clamp(
-        25px,
-        7.2vw,
-        34px
-      );
-
+    font-size:clamp(25px,7.3vw,34px);
     letter-spacing:2px;
   }
 
   .platform-name{
     font-size:11px;
-    letter-spacing:2.6px;
+    letter-spacing:2.5px;
   }
 
   .welcome{
     min-height:205px;
-
-    grid-template-columns:
-      45% 55%;
+    grid-template-columns:45% 55%;
   }
 
   .welcome-image{
@@ -645,8 +582,7 @@ body{
   }
 
   .welcome-content{
-    padding:
-      20px 17px;
+    padding:20px 17px;
   }
 
   .welcome-content h2{
@@ -658,15 +594,14 @@ body{
   }
 
   .portal{
-    min-height:115px;
+    min-height:116px;
 
     grid-template-columns:
       72px
       1fr
       42px;
 
-    padding:
-      12px 13px;
+    padding:12px 13px;
   }
 
   .portal-icon{
@@ -685,7 +620,6 @@ body{
 
   .portal-info h3{
     font-size:25px;
-
     margin-bottom:6px;
   }
 
@@ -694,63 +628,46 @@ body{
   }
 
   .arrow{
-    width:37px;
-    height:37px;
-
+    width:38px;
+    height:38px;
     font-size:25px;
   }
 
   .features{
-    padding:
-      13px 3px;
+    padding:13px 3px;
   }
 
   .feature{
     display:block;
-
     text-align:center;
-
-    padding:
-      4px 6px;
+    padding:4px 5px;
   }
 
   .feature svg{
     width:27px;
     height:27px;
-
     margin-bottom:5px;
   }
 
   .feature span{
     display:block;
-
     font-size:10px;
   }
-
 }
-
-
-/* =========================
-   SMALL PHONE
-========================= */
 
 @media(max-width:390px){
 
   .welcome{
-    grid-template-columns:
-      1fr;
+    grid-template-columns:1fr;
   }
 
   .welcome-image{
     height:150px;
-
     min-height:150px;
   }
 
   .welcome-content{
-    padding:
-      18px 20px
-      22px;
+    padding:18px 20px 22px;
   }
 
   .portal{
@@ -776,32 +693,17 @@ body{
   .arrow{
     width:33px;
     height:33px;
-
     font-size:22px;
   }
-
 }
-
 </style>
 </head>
-
 
 <body>
 
 <main class="app">
 
-
-<!-- =========================
-     HEADER
-========================= -->
-
 <header class="header">
-
-
-<!--
-EVOLUTION OPTICAL LOGO
-No PNG required
--->
 
 <svg
   class="logo"
@@ -813,57 +715,16 @@ No PNG required
 <defs>
 
   <linearGradient
-    id="blackMetal"
-    x1="0"
-    y1="0"
-    x2="1"
-    y2="1"
-  >
-    <stop
-      offset="0%"
-      stop-color="#555b63"
-    />
-
-    <stop
-      offset="35%"
-      stop-color="#090b0e"
-    />
-
-    <stop
-      offset="70%"
-      stop-color="#20252b"
-    />
-
-    <stop
-      offset="100%"
-      stop-color="#050608"
-    />
-  </linearGradient>
-
-
-  <linearGradient
     id="blueMetal"
     x1="0"
     y1="0"
     x2="1"
     y2="1"
   >
-    <stop
-      offset="0%"
-      stop-color="#3d9cff"
-    />
-
-    <stop
-      offset="45%"
-      stop-color="#0757bb"
-    />
-
-    <stop
-      offset="100%"
-      stop-color="#003b87"
-    />
+    <stop offset="0%" stop-color="#3d9cff"/>
+    <stop offset="45%" stop-color="#0757bb"/>
+    <stop offset="100%" stop-color="#003b87"/>
   </linearGradient>
-
 
   <filter
     id="shadow"
@@ -872,146 +733,126 @@ No PNG required
     width="180%"
     height="180%"
   >
-
     <feDropShadow
       dx="0"
-      dy="5"
+      dy="6"
       stdDeviation="5"
       flood-color="#000"
-      flood-opacity=".75"
+      flood-opacity=".9"
     />
-
   </filter>
 
 </defs>
 
-
-<!-- BLACK OUTER CIRCLE -->
-
 <g filter="url(#shadow)">
 
-  <path
-    d="
-      M93 22
-      A78 78 0 0 0 36 54
-      A78 78 0 0 0 33 143
-      A78 78 0 0 0 80 176
-    "
-    fill="none"
-    stroke="url(#blackMetal)"
-    stroke-width="18"
-    stroke-linecap="butt"
-  />
+<!-- PURE BLACK OUTER CIRCLE -->
 
+<path
+  d="
+    M93 22
+    A78 78 0 0 0 36 54
+    A78 78 0 0 0 33 143
+    A78 78 0 0 0 80 176
+  "
+  fill="none"
+  stroke="#050505"
+  stroke-width="18"
+/>
 
-  <path
-    d="
-      M92 22
-      A78 78 0 0 1 149 43
-    "
-    fill="none"
-    stroke="url(#blackMetal)"
-    stroke-width="18"
-  />
+<path
+  d="
+    M92 22
+    A78 78 0 0 1 149 43
+  "
+  fill="none"
+  stroke="#050505"
+  stroke-width="18"
+/>
 
-
-  <path
-    d="
-      M84 178
-      A78 78 0 0 0 146 159
-    "
-    fill="none"
-    stroke="url(#blackMetal)"
-    stroke-width="18"
-  />
-
+<path
+  d="
+    M84 178
+    A78 78 0 0 0 146 159
+  "
+  fill="none"
+  stroke="#050505"
+  stroke-width="18"
+/>
 
 <!-- BLUE RIGHT ARC -->
 
-  <path
-    d="
-      M147 37
-      Q181 57 184 101
-      Q183 145 147 168
-      Q164 151 168 132
-      Q174 101 166 72
-      Q161 51 147 37
-    "
-    fill="url(#blueMetal)"
-    stroke="#419cff"
-    stroke-width="1"
-  />
+<path
+  d="
+    M147 37
+    Q181 57 184 101
+    Q183 145 147 168
+    Q164 151 168 132
+    Q174 101 166 72
+    Q161 51 147 37
+  "
+  fill="url(#blueMetal)"
+  stroke="#419cff"
+  stroke-width="1"
+/>
 
+<!-- PURE BLACK TOP -->
 
-<!-- TOP BLACK TRIANGLE -->
+<path
+  d="
+    M151 57
+    L113 91
+    L158 91
+    Z
+  "
+  fill="#050505"
+/>
 
-  <path
-    d="
-      M151 57
-      L113 91
-      L158 91
-      Z
-    "
-    fill="url(#blackMetal)"
-  />
+<!-- PURE BLACK BOTTOM -->
 
-
-<!-- BOTTOM BLACK TRIANGLE -->
-
-  <path
-    d="
-      M113 112
-      L158 112
-      L148 148
-      Z
-    "
-    fill="url(#blackMetal)"
-  />
-
+<path
+  d="
+    M113 112
+    L158 112
+    L148 148
+    Z
+  "
+  fill="#050505"
+/>
 
 <!-- BLUE CENTER BAR -->
 
-  <path
-    d="
-      M74 96
-      L91 87
-      H151
-      Q157 87 157 94
-      V103
-      Q157 110 151 110
-      H91
-      L74 101
-      Z
-    "
-    fill="url(#blueMetal)"
-  />
+<path
+  d="
+    M74 96
+    L91 87
+    H151
+    Q157 87 157 94
+    V103
+    Q157 110 151 110
+    H91
+    L74 101
+    Z
+  "
+  fill="url(#blueMetal)"
+/>
 
 </g>
 
 </svg>
 
-
-
 <h1 class="company-name">
   EVOLUTION OPTICAL
 </h1>
-
 
 <div class="platform-name">
   PARTNER VOUCHER PLATFORM
 </div>
 
-
 <div class="header-line"></div>
-
 
 </header>
 
-
-
-<!-- =========================
-     WELCOME
-========================= -->
 
 <section class="welcome card">
 
@@ -1020,12 +861,9 @@ No PNG required
   aria-label="Eyeglasses"
 ></div>
 
-
 <div class="welcome-content">
 
-<h2>
-  Welcome
-</h2>
+<h2>Welcome</h2>
 
 <div class="title-line"></div>
 
@@ -1040,15 +878,7 @@ No PNG required
 </section>
 
 
-
-<!-- =========================
-     PORTALS
-========================= -->
-
 <section class="portals">
-
-
-<!-- ADMIN -->
 
 <a
   class="portal card"
@@ -1058,29 +888,19 @@ No PNG required
 <div class="portal-icon">
 
 <svg viewBox="0 0 48 48">
-
-<circle cx="24" cy="15" r="7"/>
-
-<circle cx="10" cy="20" r="5"/>
-
-<circle cx="38" cy="20" r="5"/>
-
-<path d="M12 40v-5c0-7 5-11 12-11s12 4 12 11v5"/>
-
-<path d="M2 38v-4c0-5 3-8 8-8"/>
-
-<path d="M46 38v-4c0-5-3-8-8-8"/>
-
+  <circle cx="24" cy="15" r="7"/>
+  <circle cx="10" cy="20" r="5"/>
+  <circle cx="38" cy="20" r="5"/>
+  <path d="M12 40v-5c0-7 5-11 12-11s12 4 12 11v5"/>
+  <path d="M2 38v-4c0-5 3-8 8-8"/>
+  <path d="M46 38v-4c0-5-3-8-8-8"/>
 </svg>
 
 </div>
 
-
 <div class="portal-info">
 
-<h3>
-  Admin
-</h3>
+<h3>Admin</h3>
 
 <p>
   Manage partners, branches,
@@ -1089,16 +909,10 @@ No PNG required
 
 </div>
 
-
-<div class="arrow">
-  ›
-</div>
+<div class="arrow">›</div>
 
 </a>
 
-
-
-<!-- PARTNER -->
 
 <a
   class="portal card"
@@ -1108,33 +922,21 @@ No PNG required
 <div class="portal-icon">
 
 <svg viewBox="0 0 48 48">
-
-<path d="M4 17l9-8 8 6"/>
-
-<path d="M44 17l-9-8-8 6"/>
-
-<path d="M13 27l9 9c2 2 5 2 7 0l10-10"/>
-
-<path d="M9 21l11 11"/>
-
-<path d="M39 21L28 32"/>
-
-<path d="M18 14l5-4c3-2 6-2 9 0l5 4"/>
-
-<path d="M7 14l6 7-7 7-5-8z"/>
-
-<path d="M41 14l-6 7 7 7 5-8z"/>
-
+  <path d="M4 17l9-8 8 6"/>
+  <path d="M44 17l-9-8-8 6"/>
+  <path d="M13 27l9 9c2 2 5 2 7 0l10-10"/>
+  <path d="M9 21l11 11"/>
+  <path d="M39 21L28 32"/>
+  <path d="M18 14l5-4c3-2 6-2 9 0l5 4"/>
+  <path d="M7 14l6 7-7 7-5-8z"/>
+  <path d="M41 14l-6 7 7 7 5-8z"/>
 </svg>
 
 </div>
 
-
 <div class="portal-info">
 
-<h3>
-  Partner
-</h3>
+<h3>Partner</h3>
 
 <p>
   Create QR vouchers,
@@ -1144,16 +946,10 @@ No PNG required
 
 </div>
 
-
-<div class="arrow">
-  ›
-</div>
+<div class="arrow">›</div>
 
 </a>
 
-
-
-<!-- STAFF -->
 
 <a
   class="portal card"
@@ -1163,31 +959,17 @@ No PNG required
 <div class="portal-icon">
 
 <svg viewBox="0 0 48 48">
-
-<path d="M24 4l16 6v12c0 11-6 18-16 22C14 40 8 33 8 22V10z"/>
-
-<rect
-  x="17"
-  y="22"
-  width="14"
-  height="12"
-  rx="2"
-/>
-
-<path d="M20 22v-4a4 4 0 018 0v4"/>
-
-<path d="M24 27v3"/>
-
+  <path d="M24 4l16 6v12c0 11-6 18-16 22C14 40 8 33 8 22V10z"/>
+  <rect x="17" y="22" width="14" height="12" rx="2"/>
+  <path d="M20 22v-4a4 4 0 018 0v4"/>
+  <path d="M24 27v3"/>
 </svg>
 
 </div>
 
-
 <div class="portal-info">
 
-<h3>
-  Staff
-</h3>
+<h3>Staff</h3>
 
 <p>
   Scan, verify and redeem
@@ -1197,101 +979,60 @@ No PNG required
 
 </div>
 
-
-<div class="arrow">
-  ›
-</div>
+<div class="arrow">›</div>
 
 </a>
 
-
 </section>
 
-
-
-<!-- =========================
-     FEATURES
-========================= -->
 
 <section class="features card">
 
-
 <div class="feature">
 
 <svg viewBox="0 0 48 48">
-
-<path d="M24 4l16 6v12c0 11-6 18-16 22C14 40 8 33 8 22V10z"/>
-
-<path d="M17 24l5 5 10-11"/>
-
+  <path d="M24 4l16 6v12c0 11-6 18-16 22C14 40 8 33 8 22V10z"/>
+  <path d="M17 24l5 5 10-11"/>
 </svg>
 
-<span>
-  Secure access
-</span>
+<span>Secure access</span>
 
 </div>
-
 
 
 <div class="feature">
 
 <svg viewBox="0 0 48 48">
-
-<rect x="5" y="5" width="14" height="14"/>
-
-<rect x="29" y="5" width="14" height="14"/>
-
-<rect x="5" y="29" width="14" height="14"/>
-
-<path d="M29 29h6v6h8"/>
-
-<path d="M29 43v-6"/>
-
-<path d="M37 43h6v-6"/>
-
+  <rect x="5" y="5" width="14" height="14"/>
+  <rect x="29" y="5" width="14" height="14"/>
+  <rect x="5" y="29" width="14" height="14"/>
+  <path d="M29 29h6v6h8"/>
+  <path d="M29 43v-6"/>
+  <path d="M37 43h6v-6"/>
 </svg>
 
-<span>
-  Voucher verification
-</span>
+<span>Voucher verification</span>
 
 </div>
-
 
 
 <div class="feature">
 
 <svg viewBox="0 0 48 48">
-
-<path d="M6 18h36"/>
-
-<path d="M9 18v24h30V18"/>
-
-<path d="M4 18l5-10h30l5 10"/>
-
-<path d="M18 42V29h12v13"/>
-
-<path d="M12 24h5"/>
-
-<path d="M31 24h5"/>
-
+  <path d="M6 18h36"/>
+  <path d="M9 18v24h30V18"/>
+  <path d="M4 18l5-10h30l5 10"/>
+  <path d="M18 42V29h12v13"/>
+  <path d="M12 24h5"/>
+  <path d="M31 24h5"/>
 </svg>
 
-<span>
-  Branch-controlled redemption
-</span>
+<span>Branch-controlled redemption</span>
 
 </div>
-
 
 </section>
 
-
-
-<!-- =========================
-     FOOTER
-========================= -->
 
 <footer class="footer">
 
@@ -1302,7 +1043,6 @@ Partner Voucher Platform
 <div class="footer-line"></div>
 
 </footer>
-
 
 </main>
 
