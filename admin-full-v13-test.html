@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1f3a">
+<title>Evolution Optical • Admin Portal</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#eef3f9;--card:#fff;--ink:#0b1c33;--muted:#6f7f93;--navy:#0b1f3a;
+  --blue:#2563eb;--green:#16a34a;--red:#dc2626;--purple:#7c3aed;--line:#dbe4ef;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:
+radial-gradient(circle at top left,#dcecff 0,transparent 34%),
+linear-gradient(180deg,#f6f9fd 0,#edf3f9 100%);
+color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+button,input,select{font:inherit}.hidden{display:none!important}
+.top{position:sticky;top:0;z-index:20;background:linear-gradient(135deg,#123d7a,#071a31 72%);
+color:#fff;padding:calc(18px + env(safe-area-inset-top)) 18px 18px;box-shadow:0 14px 34px #0b1f3a33}
+.topin{max-width:1100px;margin:auto;display:flex;align-items:center;gap:14px}.brand{flex:1}
+.brand h1{font-size:clamp(24px,4vw,36px);margin:0;font-weight:900;letter-spacing:.02em}
+.brand p{font-size:16px;color:#cbd8ea;margin:4px 0 0}.ghost{border:1px solid #ffffff50;background:#ffffff10;color:#fff;border-radius:18px;padding:12px 18px;font-weight:800}
+.wrap{width:min(1100px,calc(100% - 24px));margin:18px auto 96px}
+.card{background:rgba(255,255,255,.94);border:1px solid #ffffff;border-radius:28px;padding:22px;
+box-shadow:0 18px 48px #0f28451a, inset 0 1px 0 #fff;margin-bottom:18px}
+h2,h3{margin:0 0 8px;font-size:clamp(27px,4.2vw,38px);font-weight:900;letter-spacing:-.03em}
+h3{font-size:clamp(24px,3.5vw,32px)}.sub{color:var(--muted);font-size:17px;line-height:1.45;margin:0}
+.field{margin-top:14px}label{font-size:15px;font-weight:850;display:block;margin-bottom:7px}
+input,select{width:100%;border:1px solid var(--line);border-radius:18px;padding:14px 15px;min-height:54px;background:#fff;color:var(--ink)}
+.btn{border:0;border-radius:16px;padding:13px 16px;background:linear-gradient(145deg,#17385f,#071b31);color:#fff;font-weight:900;cursor:pointer;box-shadow:0 8px 18px #0b1f3a22}
+.btn.small{padding:11px 13px;font-size:14px}.btn.green{background:linear-gradient(145deg,#22c55e,#15803d)}.btn.red{background:linear-gradient(145deg,#ef4444,#b91c1c)}
+.btn.blue{background:linear-gradient(145deg,#3b82f6,#1d4ed8)}.btn.purple{background:linear-gradient(145deg,#8b5cf6,#6d28d9)}
+.btn.light{background:#f7fbff;color:#17447a;border:1px solid var(--line);box-shadow:none}.btn:disabled{opacity:.5}.loginbtn{width:100%;margin-top:15px;min-height:56px}
+.msg{margin-top:12px;padding:12px 14px;border-radius:14px;font-size:14px}.msg.ok{background:#ecfdf3;color:#166534}.msg.err{background:#fef2f2;color:#b91c1c}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.stat{position:relative;overflow:hidden;background:linear-gradient(160deg,#fff,#f6f9fd);border:1px solid #fff;border-radius:20px;padding:16px;box-shadow:0 12px 28px #16324f12}
+.stat:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(#3b82f6,#60a5fa)}
+.stat:nth-child(2):before{background:linear-gradient(#8b5cf6,#a78bfa)}.stat:nth-child(3):before{background:linear-gradient(#10b981,#34d399)}.stat:nth-child(4):before{background:linear-gradient(#f59e0b,#fb923c)}
+.stat span{display:block;color:var(--muted);font-size:13px}.stat strong{display:block;font-size:28px;margin-top:4px}
+.toolbar{display:flex;gap:10px;margin:14px 0;flex-wrap:wrap}.toolbar input{flex:1;min-width:220px}
+.partner-grid,.perf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.partner,.perf-card{border:1px solid #e6edf6;border-radius:22px;padding:16px;background:linear-gradient(160deg,#fff,#f8fbff);box-shadow:0 10px 26px #16324f12}
+.prow{display:flex;gap:10px;align-items:flex-start}.pinfo{flex:1}.pname{font-weight:950;font-size:20px;line-height:1.1}.pcode{color:#2059a6;font-size:13px;margin-top:4px;font-weight:800}
+.badge{font-size:12px;font-weight:900;border-radius:999px;padding:7px 10px;background:#dcfce7;color:#15803d}.badge.suspended{background:#fee2e2;color:#b91c1c}
+.nums,.perf-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.num,.pm{background:#f5f8fc;border:1px solid #e6edf6;border-radius:15px;padding:10px}
+.num span,.pm span{font-size:11px;color:var(--muted);display:block}.num b,.pm b{font-size:19px}
+.manage{width:100%;margin-top:12px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.actions input{grid-column:1/-1;min-height:48px}.actions .wide{grid-column:1/-1}
+.note{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.5}
+.create-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;margin-top:14px}.create-grid .wide{grid-column:1/-1}
+.claim-summary{margin-top:10px;padding:11px 12px;border-radius:14px;background:#f8fafc;border:1px solid var(--line);font-size:13px;color:#475569}
+.claim-panel{margin-top:12px;padding:14px;border:1px solid #dbe3ee;border-radius:16px;background:#fbfdff}.claim-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.claim-option{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff}.claim-option input{width:auto}.claim-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.hidden-box{margin:12px 0;padding:12px;border:1px dashed #b7c5d8;border-radius:16px;background:#f7fbff}.hidden-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+.hidden-item{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:13px}
+.perf-card h4{font-size:20px;margin:0 0 4px}.rate{margin-top:10px;color:var(--muted);font-size:13px}.voucher-toggle{width:100%;margin-top:10px}
+.partner-vouchers{margin-top:10px}.vrecord{border:1px solid var(--line);border-radius:15px;padding:12px;margin-top:8px;background:#fff}.vtop{display:flex;gap:10px;align-items:flex-start}.vcode{font-weight:900;font-size:14px;word-break:break-all}.vmeta{font-size:12px;color:var(--muted);line-height:1.5;margin-top:7px}
+.vstatus{font-size:10px;font-weight:900;border-radius:999px;padding:5px 8px;background:#dcfce7;color:#15803d;white-space:nowrap}.vstatus.redeemed{background:#eef2ff;color:#3730a3}.vstatus.expired{background:#fee2e2;color:#b91c1c}
+.bottomnav{position:fixed;left:14px;right:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:25;display:grid;grid-template-columns:repeat(6,1fr);gap:4px;background:#08203b;padding:8px;border-radius:22px;box-shadow:0 16px 30px #06172a55}
+.bottomnav button{border:0;background:transparent;color:#fff;font-weight:800;font-size:12px;padding:9px 4px;border-radius:14px}.bottomnav button.active{background:#1d4ed8}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}.partner-grid,.perf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.partner,.perf-card{padding:12px}.pname,.perf-card h4{font-size:18px}.nums,.perf-metrics{gap:6px}.num,.pm{padding:8px}.num b,.pm b{font-size:17px}}
+@media(max-width:540px){.create-grid,.claim-grid{grid-template-columns:1fr}.create-grid .wide{grid-column:auto}.hidden-list{grid-template-columns:1fr}.bottomnav button{font-size:11px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="topin"><div class="brand"><h1>EVOLUTION OPTICAL</h1><p>Admin Voucher Portal</p></div><button id="logout" class="ghost hidden">Logout</button></div></header>
+<main class="wrap">
+<section id="loginCard" class="card">
+<h2>Admin Login</h2><p class="sub">Sign in with an authorised Evolution Optical admin account.</p>
+<div class="field"><label>Email</label><input id="email" type="email" autocomplete="username"></div>
+<div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div>
+<button id="login" class="btn loginbtn">SIGN IN</button><div id="loginMsg"></div>
+</section>
+
+<div id="dashboard" class="hidden">
+<section class="card">
+<h2>Admin Dashboard</h2><p class="sub">Manage Partner voucher allocations from one place.</p>
+<div class="stats">
+<div class="stat"><span>Partners</span><strong id="totalPartners">—</strong></div>
+<div class="stat"><span>Total Limit</span><strong id="totalLimit">—</strong></div>
+<div class="stat"><span>Issued</span><strong id="totalIssued">—</strong></div>
+<div class="stat"><span>Remaining</span><strong id="totalRemaining">—</strong></div>
+</div>
+</section>
+
+<section class="card">
+<h3>Add New Partner</h3>
+<p class="sub">Create partner + voucher limit + branch permission in one place.</p>
+<div class="create-grid">
+<div class="field"><label>Partner Code</label><input id="newPartnerCode" placeholder="e.g. ABC001"></div>
+<div class="field"><label>Company / Partner Name</label><input id="newPartnerName" placeholder="Company name"></div>
+<div class="field"><label>Email</label><input id="newPartnerEmail" type="email" placeholder="partner@example.com"></div>
+<div class="field"><label>Temporary Password</label><input id="newPartnerPassword" type="password" placeholder="Minimum 6 characters"></div>
+<div class="field wide"><label>Initial Voucher Limit</label><input id="newPartnerLimit" type="number" min="0" step="1" value="100"></div>
+<div class="field wide"><label>Voucher Claim Branch Permission</label>
+<label class="claim-option"><input id="newPartnerAllBranches" type="checkbox" checked><span><b>All Evolution Optical branches</b><br><small>Untick to select specific branches.</small></span></label>
+<div id="newPartnerClaimBranches" class="claim-grid"></div></div>
+</div>
+<button id="createPartnerBtn" class="btn green" style="width:100%;margin-top:14px">+ Add Partner</button>
+<div id="createPartnerMsg"></div>
+</section>
+
+<section class="card">
+<h3>Partner Voucher Allocation</h3><p class="sub">Manage voucher limits, branch access and partner status.</p>
+<div class="toolbar"><input id="search" placeholder="Search company or partner code"><button id="refresh" class="btn small">Refresh</button></div>
+<button id="hiddenToggle" class="btn light" style="width:100%">Hidden Partners <span id="hiddenCount">0</span></button>
+<div id="hiddenBox" class="hidden-box hidden"><div id="hiddenPartners" class="hidden-list"></div></div>
+<div id="partnerMsg"></div><div id="partners" class="partner-grid"></div>
+</section>
+
+<section class="card">
+<h3>Partner Performance</h3><p class="sub">Current voucher usage and redemption performance by Partner.</p>
+<div class="toolbar"><button id="perfRefresh" class="btn small">Refresh Performance</button></div>
+<div id="performance"></div>
+</section>
+</div>
+</main>
+
+<nav class="bottomnav">
+<button class="active">Dashboard</button><button>Partners</button><button>Branches</button><button>Vouchers</button><button>Reports</button><button>Settings</button>
+</nav>
+
+<script>
+const SUPABASE_URL="https://hukihbcyyqhanaqrizvm.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_kpPFeGYpedq2auo01Zo50A_aiSjdeVh";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const $=id=>document.getElementById(id);
+let partners=[],vouchers=[],voucherBranches=[],branches=[],redemptions=[],claimBranchOptions=[];
+let hiddenIds=new Set(JSON.parse(localStorage.getItem("eo_admin_hidden_partners")||"[]"));
+const openManage=new Set(),openVoucherPartner=new Set();
+
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function msg(node,text,ok=false){if(!node)return;node.innerHTML=text?`<div class="msg ${ok?'ok':'err'}">${esc(text)}</div>`:""}
+function showLogin(){$("loginCard").classList.remove("hidden");$("dashboard").classList.add("hidden");$("logout").classList.add("hidden")}
+function showDash(){$("loginCard").classList.add("hidden");$("dashboard").classList.remove("hidden");$("logout").classList.remove("hidden")}
+
+async function signIn(){
+ msg($("loginMsg"),"");$("login").disabled=true;
+ const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+ $("login").disabled=false;if(error){msg($("loginMsg"),error.message);return} await authorize();
+}
+async function authorize(){
+ const {data:{user}}=await db.auth.getUser(); if(!user){showLogin();return}
+ const {data,error}=await db.from("partner_users").select("user_id,role,status").eq("user_id",user.id).eq("status","active").maybeSingle();
+ if(error||!data||String(data.role).toLowerCase()!=="admin"){await db.auth.signOut();showLogin();msg($("loginMsg"),"This account is not authorised as Admin.");return}
+ showDash();await ensureClaimBranchOptions();await loadPartners();await loadVouchers();
+}
+
+async function ensureClaimBranchOptions(){
+ if(claimBranchOptions.length)return claimBranchOptions;
+ const {data,error}=await db.from("branches").select("id,branch_code,branch_name,status").eq("status","active").order("branch_name");
+ if(error)throw error;claimBranchOptions=data||[];
+ const box=$("newPartnerClaimBranches");
+ if(box){box.innerHTML=claimBranchOptions.map(b=>`<label class="claim-option"><input class="newClaimBranch" type="checkbox" value="${esc(b.branch_code)}"><span>${esc(b.branch_name||b.branch_code)}</span></label>`).join("");syncNewPartnerClaimUI()}
+ return claimBranchOptions;
+}
+function syncNewPartnerClaimUI(){const all=$("newPartnerAllBranches")?.checked;document.querySelectorAll(".newClaimBranch").forEach(cb=>{cb.disabled=!!all;if(all)cb.checked=false});const box=$("newPartnerClaimBranches");if(box)box.style.opacity=all?".45":"1"}
+async function getPartnerClaimAccess(id){const {data,error}=await db.rpc("admin_get_partner_claim_access",{p_partner_id:id});if(error)throw error;return data||{}}
+async function savePartnerClaimAccess(id,all,codes){const {data,error}=await db.rpc("admin_set_partner_claim_access",{p_partner_id:id,p_all_branches:!!all,p_branch_codes:codes||[]});if(error)throw error;return data}
+
+async function loadPartners(){
+ msg($("partnerMsg"),"");
+ const {data,error}=await db.from("partners").select("id,partner_code,partner_name,voucher_limit,vouchers_issued,status").order("partner_name");
+ if(error){msg($("partnerMsg"),"Unable to load Partners: "+error.message);return}
+ partners=(data||[]).filter(p=>String(p.partner_code).toUpperCase()!=="ADMIN");
+ renderAll();
+}
+function activePartners(){return partners.filter(p=>!hiddenIds.has(String(p.id)))}
+function hiddenPartners(){return partners.filter(p=>hiddenIds.has(String(p.id)))}
+function persistHidden(){localStorage.setItem("eo_admin_hidden_partners",JSON.stringify([...hiddenIds]))}
+function updateStats(){const list=activePartners();const lim=list.reduce((a,p)=>a+(Number(p.voucher_limit)||0),0),issued=list.reduce((a,p)=>a+(Number(p.vouchers_issued)||0),0);$("totalPartners").textContent=list.length;$("totalLimit").textContent=lim;$("totalIssued").textContent=issued;$("totalRemaining").textContent=Math.max(0,lim-issued)}
+function renderHidden(){
+ const list=hiddenPartners();$("hiddenCount").textContent=list.length;
+ $("hiddenPartners").innerHTML=list.length?list.map(p=>`<div class="hidden-item"><span><b>${esc(p.partner_name)}</b><br><small>${esc(p.partner_code)}</small></span><button class="btn small green" onclick="showPartner('${p.id}')">Show</button></div>`).join(""):`<div class="sub">No hidden partners.</div>`;
+}
+function renderAll(){updateStats();renderHidden();renderPartners();renderPerformance()}
+
+function renderPartners(){
+ const q=$("search").value.trim().toLowerCase();
+ const list=activePartners().filter(p=>!q||`${p.partner_name} ${p.partner_code}`.toLowerCase().includes(q));
+ $("partners").innerHTML=list.length?list.map(p=>{
+  const lim=Number(p.voucher_limit)||0,issued=Number(p.vouchers_issued)||0,rem=Math.max(0,lim-issued),active=String(p.status).toLowerCase()==="active";
+  const open=openManage.has(String(p.id));
+  return `<div class="partner">
+   <div class="prow"><div class="pinfo"><div class="pname">${esc(p.partner_name)}</div><div class="pcode">${esc(p.partner_code)}</div></div><span class="badge ${active?'':'suspended'}">${esc(p.status||'unknown').toUpperCase()}</span></div>
+   <div class="nums"><div class="num"><span>Limit</span><b>${lim}</b></div><div class="num"><span>Issued</span><b>${issued}</b></div><div class="num"><span>Remaining</span><b>${rem}</b></div></div>
+   <button class="btn light manage" onclick="toggleManage('${p.id}')">Manage ${open?'▲':'▼'}</button>
+   <div id="manage-${p.id}" class="actions ${open?'':'hidden'}">
+    <input id="qty-${p.id}" type="number" min="0" step="1" placeholder="Enter quantity">
+    <button class="btn small blue" onclick="setLimit('${p.id}')">Set Total</button>
+    <button class="btn small green" onclick="addLimit('${p.id}')">+ Add</button>
+    <button class="btn small blue" onclick="toggleClaimEditor('${p.id}')">Claim Branches</button>
+    <button class="btn small blue" onclick="resetPartnerPassword('${p.id}')">Reset Password</button>
+    <button class="btn small ${active?'red':'green'}" onclick="togglePartnerStatus('${p.id}')">${active?'Suspend':'Reactivate'}</button>
+    <button class="btn small light wide" onclick="hidePartner('${p.id}')">Hide Partner</button>
+   </div>
+   <div id="claim-summary-${p.id}" class="claim-summary">Claim: loading…</div><div id="claim-panel-${p.id}" class="claim-panel hidden"></div>
+  </div>`;
+ }).join(""):`<p class="sub">No Partner found.</p>`;
+ ensureClaimBranchOptions().then(()=>list.forEach(p=>refreshClaimSummary(p.id))).catch(()=>{});
+}
+function toggleManage(id){openManage.has(String(id))?openManage.delete(String(id)):openManage.add(String(id));renderPartners()}
+function hidePartner(id){const p=partners.find(x=>String(x.id)===String(id));if(!p)return;if(!confirm(`Hide ${p.partner_name} from this Admin view?`))return;hiddenIds.add(String(id));persistHidden();openManage.delete(String(id));renderAll()}
+function showPartner(id){hiddenIds.delete(String(id));persistHidden();renderAll()}
+
+async function toggleClaimEditor(id){
+ const panel=$("claim-panel-"+id);if(!panel)return;
+ if(!panel.classList.contains("hidden")){panel.classList.add("hidden");return}
+ try{await ensureClaimBranchOptions();const access=await getPartnerClaimAccess(id),selected=new Set(access.branch_codes||[]);
+ panel.innerHTML=`<label class="claim-option"><input id="claim-all-${id}" type="checkbox" ${access.all_branches?'checked':''}><span><b>All Evolution Optical branches</b></span></label><div id="claim-grid-${id}" class="claim-grid">${claimBranchOptions.map(b=>`<label class="claim-option"><input class="claim-edit-${id}" type="checkbox" value="${esc(b.branch_code)}" ${selected.has(b.branch_code)?'checked':''}><span>${esc(b.branch_name||b.branch_code)}</span></label>`).join('')}</div><div class="claim-actions"><button class="btn small green" onclick="saveClaimEditor('${id}')">Save</button><button class="btn small" onclick="toggleClaimEditor('${id}')">Close</button></div><div id="claim-msg-${id}"></div>`;
+ panel.classList.remove("hidden");const allBox=$("claim-all-"+id),sync=()=>{const on=allBox.checked;panel.querySelectorAll('.claim-edit-'+id).forEach(x=>x.disabled=on);$("claim-grid-"+id).style.opacity=on?'.45':'1'};allBox.onchange=sync;sync();
+ }catch(e){msg($("partnerMsg"),"Unable to load claim branches: "+e.message)}
+}
+async function saveClaimEditor(id){const all=$("claim-all-"+id).checked,codes=[...document.querySelectorAll('.claim-edit-'+id+':checked')].map(x=>x.value);if(!all&&!codes.length){msg($("claim-msg-"+id),"Select at least one claim branch.");return}try{await savePartnerClaimAccess(id,all,codes);msg($("claim-msg-"+id),"Claim branch permission updated.",true);await refreshClaimSummary(id)}catch(e){msg($("claim-msg-"+id),e.message)}}
+async function refreshClaimSummary(id){const node=$("claim-summary-"+id);if(!node)return;try{const a=await getPartnerClaimAccess(id);if(a.all_branches){node.textContent="Claim: All Evolution Optical branches"}else{const names=claimBranchOptions.filter(b=>(a.branch_codes||[]).includes(b.branch_code)).map(b=>b.branch_name||b.branch_code);node.textContent="Claim: "+(names.join(", ")||"No branch assigned")}}catch(_){node.textContent="Claim permission unavailable"}}
+
+function voucherEffectiveStatus(v){
+ const raw=String(v.status||"VALID").toUpperCase();if(raw==="REDEEMED"||raw==="USED"||v.redeemed_at)return"REDEEMED";if(raw==="EXPIRED")return"EXPIRED";
+ if(v.expiry_date){const now=new Date(),exp=new Date(v.expiry_date+"T23:59:59");if(exp<now)return"EXPIRED"}return"VALID";
+}
+function shouldShowVoucher(v){
+ const st=voucherEffectiveStatus(v);
+ if(st!=="EXPIRED")return true;
+ return !!v.redeemed_at || String(v.status||"").toUpperCase()==="REDEEMED";
+}
+async function loadVouchers(){
+ const [voucherRes,vbRes,branchRes,redemptionRes]=await Promise.all([
+  db.from("vouchers").select("*").order("issued_at",{ascending:false}).limit(500),
+  db.from("voucher_branches").select("voucher_id,branch_id"),
+  db.from("branches").select("id,branch_code,branch_name,address,phone,status"),
+  db.from("redemptions").select("*")
+ ]);
+ if(voucherRes.error){vouchers=[];renderPerformance();return}
+ vouchers=voucherRes.data||[];voucherBranches=vbRes.data||[];branches=branchRes.data||[];redemptions=redemptionRes.data||[];renderPerformance();
+}
+function partnerVouchers(pid){return vouchers.filter(v=>String(v.partner_id||v.issued_by_partner_id)===String(pid)).filter(shouldShowVoucher)}
+function branchLabel(v){if(v.all_branches===true)return"All Evolution Optical branches";const ids=voucherBranches.filter(x=>x.voucher_id===v.id).map(x=>x.branch_id);const names=ids.map(id=>branches.find(b=>b.id===id)).filter(Boolean).map(b=>b.branch_name||b.branch_code).filter(Boolean);return names.length?names.join(", "):"Specific branch(es)"}
+function fmtDate(x){if(!x)return"—";const d=new Date(x);return isNaN(d)?esc(x):d.toLocaleString("en-MY",{year:"numeric",month:"short",day:"numeric"})}
+
+function renderPerformance(){
+ const box=$("performance"),list=activePartners();if(!box)return;if(!list.length){box.innerHTML='<p class="sub">No Partner data found.</p>';return}
+ box.innerHTML='<div class="perf-grid">'+list.map(p=>{
+  const pv=partnerVouchers(p.id);let redeemed=0,valid=0,expired=0;pv.forEach(v=>{const st=voucherEffectiveStatus(v);if(st==="REDEEMED")redeemed++;else if(st==="EXPIRED")expired++;else valid++});
+  const issued=Number(p.vouchers_issued)||pv.length,limit=Number(p.voucher_limit)||0,remaining=Math.max(0,limit-issued),rate=issued>0?((redeemed/issued)*100).toFixed(0):"0",open=openVoucherPartner.has(String(p.id));
+  return `<div class="perf-card"><div class="prow"><div class="pinfo"><h4>${esc(p.partner_name)}</h4><div class="pcode">${esc(p.partner_code)}</div></div><span class="badge">${esc(p.status||'active').toUpperCase()}</span></div>
+  <div class="perf-metrics"><div class="pm"><span>Issued</span><b>${issued}</b></div><div class="pm"><span>Redeemed</span><b>${redeemed}</b></div><div class="pm"><span>Redeem Rate</span><b>${rate}%</b></div></div>
+  <div class="rate">Remaining quota: <b>${remaining}</b></div>
+  <button class="btn light voucher-toggle" onclick="togglePartnerVouchers('${p.id}')">Vouchers ${open?'▲':'▼'}</button>
+  <div class="partner-vouchers ${open?'':'hidden'}">${renderPartnerVoucherRows(pv)}</div></div>`;
+ }).join("")+'</div>';
+}
+function togglePartnerVouchers(id){openVoucherPartner.has(String(id))?openVoucherPartner.delete(String(id)):openVoucherPartner.add(String(id));renderPerformance()}
+function renderPartnerVoucherRows(list){if(!list.length)return'<div class="sub" style="margin-top:8px">No visible vouchers.</div>';return list.map(v=>{const st=voucherEffectiveStatus(v);return `<div class="vrecord"><div class="vtop"><div style="flex:1"><div class="vcode">${esc(v.voucher_code||v.id||"Voucher")}</div></div><span class="vstatus ${st.toLowerCase()}">${st}</span></div><div class="vmeta"><b>Customer:</b> ${esc(v.customer_name||"—")}<br><b>Valid Until:</b> ${esc(v.expiry_date||"—")}<br><b>Redeem at:</b> ${esc(branchLabel(v))}<br><b>Issued:</b> ${fmtDate(v.issued_at)}</div></div>`}).join("")}
+
+async function createPartner(){
+ const btn=$("createPartnerBtn"),out=$("createPartnerMsg");msg(out,"");
+ const partner_code=$("newPartnerCode").value.trim().toUpperCase(),partner_name=$("newPartnerName").value.trim(),email=$("newPartnerEmail").value.trim().toLowerCase(),password=$("newPartnerPassword").value,voucher_limit=Number($("newPartnerLimit").value),claim_all=$("newPartnerAllBranches").checked,claim_codes=[...document.querySelectorAll(".newClaimBranch:checked")].map(x=>x.value);
+ if(!partner_code||!partner_name||!email||!password){msg(out,"Please complete all required fields.");return}if(password.length<6){msg(out,"Password must be at least 6 characters.");return}if(!Number.isInteger(voucher_limit)||voucher_limit<0){msg(out,"Voucher Limit must be 0 or more.");return}
+ if(!confirm(`Create ${partner_name} (${partner_code})?`))return;btn.disabled=true;btn.textContent="Creating...";
+ try{const {data,error}=await db.functions.invoke("create-partner",{body:{partner_code,partner_name,email,password,voucher_limit}});if(error)throw error;if(!data?.success)throw new Error(data?.error||"Create Partner failed.");
+ if(data.partner?.id)await savePartnerClaimAccess(data.partner.id,claim_all,claim_codes);
+ msg(out,`${partner_name} created successfully.`,true);["newPartnerCode","newPartnerName","newPartnerEmail","newPartnerPassword"].forEach(id=>$(id).value="");$("newPartnerLimit").value="100";$("newPartnerAllBranches").checked=true;syncNewPartnerClaimUI();await loadPartners();
+ }catch(e){msg(out,e.message||"Create Partner failed.")}finally{btn.disabled=false;btn.textContent="+ Add Partner"}
+}
+async function togglePartnerStatus(id){
+ const p=partners.find(x=>String(x.id)===String(id));if(!p)return;const isActive=String(p.status).toLowerCase()==="active",nextStatus=isActive?"suspended":"active",action=isActive?"Suspend":"Reactivate";if(!confirm(`${action} ${p.partner_name}?`))return;
+ const {error:partnerErr}=await db.from("partners").update({status:nextStatus}).eq("id",p.id);if(partnerErr){msg($("partnerMsg"),partnerErr.message);return}
+ const {error:userErr}=await db.from("partner_users").update({status:nextStatus==="active"?"active":"suspended"}).eq("partner_id",p.id).neq("role","admin");if(userErr){await db.from("partners").update({status:p.status}).eq("id",p.id);msg($("partnerMsg"),userErr.message);return}
+ await loadPartners();
+}
+async function resetPartnerPassword(id){
+ const p=partners.find(x=>String(x.id)===String(id));if(!p)return;const newPassword=prompt(`Enter a new password for ${p.partner_name}. Minimum 6 characters.`);if(newPassword===null)return;if(newPassword.length<6){msg($("partnerMsg"),"Minimum 6 characters.");return}
+ const confirmPassword=prompt("Enter the new password again.");if(confirmPassword!==newPassword){msg($("partnerMsg"),"Passwords do not match.");return}
+ const {data,error}=await db.functions.invoke("reset-partner-password",{body:{partner_id:p.id,new_password:newPassword}});if(error||!data?.success){msg($("partnerMsg"),data?.error||error?.message||"Password reset failed.");return}msg($("partnerMsg"),"Password reset successfully.",true);
+}
+async function setLimit(id){const p=partners.find(x=>String(x.id)===String(id)),input=$("qty-"+id),n=Number(input.value);if(!Number.isInteger(n)||n<0){msg($("partnerMsg"),"Enter a valid whole number.");return}if(n<(Number(p.vouchers_issued)||0)){msg($("partnerMsg"),"Cannot set below vouchers already issued.");return}if(!confirm(`Set ${p.partner_name} total voucher limit to ${n}?`))return;await updateLimit(p,n)}
+async function addLimit(id){const p=partners.find(x=>String(x.id)===String(id)),input=$("qty-"+id),add=Number(input.value);if(!Number.isInteger(add)||add<=0){msg($("partnerMsg"),"Enter a positive whole number.");return}const n=(Number(p.voucher_limit)||0)+add;if(!confirm(`Add ${add} vouchers to ${p.partner_name}?`))return;await updateLimit(p,n)}
+async function updateLimit(p,n){const {error}=await db.from("partners").update({voucher_limit:n}).eq("id",p.id);if(error){msg($("partnerMsg"),"Update failed: "+error.message);return}await loadPartners();msg($("partnerMsg"),`${p.partner_name} voucher limit updated to ${n}.`,true)}
+
+$("login").onclick=signIn;$("password").addEventListener("keydown",e=>{if(e.key==="Enter")signIn()});$("logout").onclick=async()=>{await db.auth.signOut();showLogin()};
+$("refresh").onclick=loadPartners;$("search").addEventListener("input",renderPartners);$("perfRefresh").onclick=renderPerformance;
+$("hiddenToggle").onclick=()=>{$("hiddenBox").classList.toggle("hidden")};$("createPartnerBtn").onclick=createPartner;$("newPartnerAllBranches").addEventListener("change",syncNewPartnerClaimUI);
+(async()=>{try{await ensureClaimBranchOptions()}catch(e){}const {data}=await db.auth.getSession();if(data.session)await authorize()})();
+</script>
+</body>
+</html>
