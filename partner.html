@@ -740,6 +740,279 @@ input:focus,select:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,
   .fv-thanks{font-size:11px}
 }
 
+
+/* ===== FINAL APPROVED VOUCHER DESIGN ===== */
+.approved-voucher{
+  width:min(100%,680px);
+  margin:0 auto;
+  padding:10px;
+  border-radius:24px;
+  background:linear-gradient(180deg,#dceeff 0%,#f8fbff 22%,#edf7ff 100%);
+  border:1px solid #9dc8f4;
+  box-shadow:0 18px 38px rgba(9,70,150,.14);
+  color:#0c2c67;
+}
+.approved-inner{
+  border:1.5px dashed #2d78d3;
+  border-radius:18px;
+  padding:14px;
+  background:
+    radial-gradient(circle at 15% 10%,rgba(121,187,255,.15),transparent 20%),
+    radial-gradient(circle at 88% 12%,rgba(149,201,250,.16),transparent 22%),
+    #f8fcff;
+}
+.av-head{
+  position:relative;
+  min-height:98px;
+  display:grid;
+  grid-template-columns:100px 1fr 100px;
+  align-items:start;
+  gap:8px;
+}
+.av-glasses svg{width:100%;height:auto}
+.av-brand{
+  text-align:center;
+  font-size:28px;
+  font-weight:950;
+  letter-spacing:.6px;
+  color:#0b2b66;
+  margin-top:4px;
+}
+.av-appreciation{
+  text-align:center;
+  color:#145dbb;
+  font-size:18px;
+  font-family:"Segoe Script","Brush Script MT",cursive;
+  margin-top:4px;
+}
+.av-offer{
+  margin-top:4px;
+  display:grid;
+  grid-template-columns:1.05fr 1.02fr .62fr;
+  align-items:center;
+  gap:0;
+  padding:12px 14px;
+  border-radius:18px;
+  color:#fff;
+  background:linear-gradient(90deg,#092b72 0%,#0b5eb8 56%,#1685d1 78%,#07377d 100%);
+  border:1px solid #0c5bb4;
+  box-shadow:0 9px 18px rgba(9,65,150,.2), inset 0 0 0 1px rgba(255,255,255,.22);
+}
+.av-free{
+  font-size:64px;
+  font-weight:950;
+  line-height:.9;
+  letter-spacing:.5px;
+  text-shadow:0 3px 5px rgba(0,0,0,.18);
+}
+.av-offer-copy{
+  border-left:1px solid rgba(255,255,255,.58);
+  padding-left:14px;
+  font-size:27px;
+  font-weight:950;
+  line-height:1.03;
+}
+.av-value{
+  background:#083274;
+  border-radius:14px;
+  padding:8px 6px;
+  text-align:center;
+}
+.av-value small{
+  display:block;
+  font-size:15px;
+  font-weight:850;
+  letter-spacing:.8px;
+}
+.av-value strong{
+  display:block;
+  font-size:39px;
+  line-height:1;
+  margin-top:5px;
+}
+.av-info{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  margin-top:10px;
+}
+.av-info-cell{
+  min-height:78px;
+  padding:10px 14px;
+  text-align:left;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border-bottom:1px solid #c6dcf5;
+}
+.av-info-cell:nth-child(odd){border-right:1px solid #c6dcf5}
+.av-icon{
+  width:52px;
+  height:52px;
+  flex:0 0 52px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  background:linear-gradient(145deg,#2984df,#0847a7);
+  font-size:25px;
+}
+.av-label{
+  display:inline-block;
+  padding:3px 9px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#1955ad,#2486d9);
+  color:white;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.3px;
+}
+.av-data{
+  display:block;
+  margin-top:5px;
+  color:#111;
+  font-size:18px;
+  font-weight:850;
+  word-break:break-word;
+}
+.av-main{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:12px;
+  align-items:stretch;
+}
+.av-gift{
+  min-height:300px;
+  border-radius:16px;
+  border:1px solid #b7d5f3;
+  background:
+    linear-gradient(180deg,rgba(233,245,255,.96),rgba(246,251,255,.96)),
+    radial-gradient(circle at 20% 85%,rgba(108,178,244,.16),transparent 28%);
+  display:grid;
+  place-items:center;
+  padding:18px;
+  position:relative;
+  overflow:hidden;
+}
+.av-gift:after{
+  content:"";
+  position:absolute;
+  left:-20px;
+  bottom:-28px;
+  width:190px;
+  height:95px;
+  border:5px solid rgba(58,133,207,.15);
+  border-radius:50%;
+  transform:rotate(8deg);
+}
+.av-gift-text{
+  position:relative;
+  z-index:1;
+  font-family:"Segoe Script","Brush Script MT",cursive;
+  color:#0d3a88;
+  font-size:37px;
+  line-height:1.1;
+  text-align:center;
+}
+.av-qr{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+#qrBox.approved-qr{
+  width:320px;
+  height:320px;
+  max-width:78vw;
+  max-height:78vw;
+  background:#fff;
+  border:4px solid #0c55b3;
+  border-radius:16px;
+  padding:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#qrBox.approved-qr img,
+#qrBox.approved-qr canvas{
+  width:100%!important;
+  height:100%!important;
+  image-rendering:pixelated;
+}
+.av-scan{
+  width:100%;
+  margin-top:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  color:#fff;
+  background:linear-gradient(90deg,#0c4cad,#147ed1);
+  text-align:center;
+  font-size:17px;
+  font-weight:900;
+  letter-spacing:.4px;
+}
+.av-footer{
+  margin-top:12px;
+  padding:15px 16px 10px;
+  border-radius:0 0 16px 16px;
+  background:linear-gradient(180deg,#0d55b8,#043a8b);
+  color:white;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.av-footer:before{
+  content:"";
+  position:absolute;
+  left:-10%;
+  top:-20px;
+  width:120%;
+  height:40px;
+  border-radius:50%;
+  background:rgba(94,174,246,.28);
+}
+.av-thanks{
+  position:relative;
+  z-index:1;
+  font-family:"Segoe Script","Brush Script MT",cursive;
+  font-size:22px;
+}
+.av-terms{
+  position:relative;
+  z-index:1;
+  margin-top:9px;
+  font-size:12px;
+  letter-spacing:.2px;
+}
+.share-note{font-size:12px;color:#64748b;line-height:1.4;margin-top:10px}
+
+@media(max-width:560px){
+  .approved-voucher{padding:7px;border-radius:18px}
+  .approved-inner{padding:8px;border-radius:14px}
+  .av-head{grid-template-columns:70px 1fr 70px;min-height:70px}
+  .av-brand{font-size:19px;margin-top:1px}
+  .av-appreciation{font-size:13px}
+  .av-offer{padding:8px 9px;border-radius:14px}
+  .av-free{font-size:46px}
+  .av-offer-copy{font-size:18px;padding-left:8px}
+  .av-value{padding:6px 4px}
+  .av-value small{font-size:10px}
+  .av-value strong{font-size:28px}
+  .av-info{margin-top:6px}
+  .av-info-cell{min-height:62px;padding:7px 8px;gap:7px}
+  .av-icon{width:40px;height:40px;flex-basis:40px;font-size:20px}
+  .av-label{font-size:8.5px;padding:2px 6px}
+  .av-data{font-size:13px;margin-top:3px}
+  .av-main{gap:7px;margin-top:7px}
+  .av-gift{min-height:220px;padding:10px}
+  .av-gift-text{font-size:27px}
+  #qrBox.approved-qr{width:220px;height:220px;max-width:50vw;max-height:50vw;padding:7px;border-width:3px}
+  .av-scan{font-size:11px;padding:6px 8px}
+  .av-footer{margin-top:8px;padding:10px 8px 7px}
+  .av-thanks{font-size:15px}
+  .av-terms{font-size:9px;margin-top:6px}
+}
+
 </style>
 </head>
 <body>
@@ -783,71 +1056,68 @@ input:focus,select:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,
 <h3>Voucher Generated</h3>
 
 
-<div class="final-voucher">
-  <div class="final-voucher-inner">
 
-    <div class="fv-top">
-      <div class="fv-glasses">
-        <svg viewBox="0 0 160 70"><g fill="none" stroke="#174b94" stroke-width="4"><path d="M7 32 Q21 8 56 14 Q76 18 77 37 Q77 57 53 61 Q20 62 10 43Z"/><path d="M83 37 Q84 18 104 14 Q139 8 153 32 L150 43 Q140 62 107 61 Q83 57 83 37Z"/><path d="M77 35 Q80 31 83 35"/><path d="M5 30 L0 23 M155 30 L160 23"/></g></svg>
+<div class="approved-voucher">
+  <div class="approved-inner">
+
+    <div class="av-head">
+      <div class="av-glasses">
+        <svg viewBox="0 0 160 70"><g fill="none" stroke="#102d61" stroke-width="4"><path d="M7 32 Q21 8 56 14 Q76 18 77 37 Q77 57 53 61 Q20 62 10 43Z"/><path d="M83 37 Q84 18 104 14 Q139 8 153 32 L150 43 Q140 62 107 61 Q83 57 83 37Z"/><path d="M77 35 Q80 31 83 35"/><path d="M5 30 L0 23 M155 30 L160 23"/></g></svg>
       </div>
-
       <div>
-        <div class="fv-brand">EVOLUTION OPTICAL SDN BHD</div>
-        <div class="fv-appreciation">Appreciation for your support</div>
+        <div class="av-brand">EVOLUTION OPTICAL SDN BHD</div>
+        <div class="av-appreciation">♡ — Appreciation for your support — ♡</div>
       </div>
-
-      <div class="fv-glasses">
-        <svg viewBox="0 0 160 70"><g fill="none" stroke="#174b94" stroke-width="4"><path d="M7 32 Q21 8 56 14 Q76 18 77 37 Q77 57 53 61 Q20 62 10 43Z"/><path d="M83 37 Q84 18 104 14 Q139 8 153 32 L150 43 Q140 62 107 61 Q83 57 83 37Z"/><path d="M77 35 Q80 31 83 35"/><path d="M5 30 L0 23 M155 30 L160 23"/></g></svg>
-      </div>
-    </div>
-
-    <div class="fv-offer">
-      <div class="fv-free">FREE</div>
-      <div class="fv-offer-mid">SPECTACLE WITH<br>FREE GLASSES</div>
-      <div class="fv-value"><small>VALUE</small><strong>RM60</strong></div>
-    </div>
-
-    <div class="fv-info">
-      <div class="fv-cell">
-        <span class="fv-label">PARTNER</span>
-        <span class="fv-data" id="giftPartner">Partner</span>
-      </div>
-      <div class="fv-cell">
-        <span class="fv-label">CUSTOMER</span>
-        <span class="fv-data" id="giftCustomer">Customer</span>
-      </div>
-      <div class="fv-cell">
-        <span class="fv-label">VALID UNTIL</span>
-        <span class="fv-data" id="giftExpiry"></span>
-      </div>
-      <div class="fv-cell">
-        <span class="fv-label">VOUCHER CODE</span>
-        <span class="fv-data" id="resultCode"></span>
+      <div class="av-glasses">
+        <svg viewBox="0 0 160 70"><g fill="none" stroke="#36507f" stroke-width="3"><path d="M7 32 Q21 8 56 14 Q76 18 77 37 Q77 57 53 61 Q20 62 10 43Z"/><path d="M83 37 Q84 18 104 14 Q139 8 153 32 L150 43 Q140 62 107 61 Q83 57 83 37Z"/><path d="M77 35 Q80 31 83 35"/><path d="M5 30 L0 23 M155 30 L160 23"/></g></svg>
       </div>
     </div>
 
-    <div class="fv-bottom">
-      <div class="fv-locations">
-        <div class="fv-loc-title">REDEEMABLE AT</div>
-        <div id="giftLocations" class="fv-loc-grid"></div>
-      </div>
+    <div class="av-offer">
+      <div class="av-free">FREE</div>
+      <div class="av-offer-copy">SPECTACLE<br>WITH<br>FREE GLASSES</div>
+      <div class="av-value"><small>VALUE</small><strong>RM60</strong></div>
+    </div>
 
-      <div class="fv-qr-panel">
-        <div id="qrBox" class="final-qr"></div>
-        <div class="fv-scan">SCAN TO REDEEM</div>
+    <div class="av-info">
+      <div class="av-info-cell">
+        <div class="av-icon">🤝</div>
+        <div><span class="av-label">PARTNER</span><span class="av-data" id="giftPartner">Partner</span></div>
+      </div>
+      <div class="av-info-cell">
+        <div class="av-icon">♙</div>
+        <div><span class="av-label">CUSTOMER</span><span class="av-data" id="giftCustomer">Customer</span></div>
+      </div>
+      <div class="av-info-cell">
+        <div class="av-icon">▣</div>
+        <div><span class="av-label">VALID DATE</span><span class="av-data" id="giftExpiry"></span></div>
+      </div>
+      <div class="av-info-cell">
+        <div class="av-icon">🎁</div>
+        <div><span class="av-label">VOUCHER CODE</span><span class="av-data" id="resultCode"></span></div>
       </div>
     </div>
 
-    <div class="fv-footer">
-      <div class="fv-thanks">Thank you for your support!</div>
-      <div>T&amp;C APPLY &nbsp; | &nbsp; VALID FOR 30 DAYS FROM DATE OF ISSUE ONLY.</div>
+    <div class="av-main">
+      <div class="av-gift">
+        <div class="av-gift-text">A little gift<br>just for you<br>♡</div>
+      </div>
+      <div class="av-qr">
+        <div id="qrBox" class="approved-qr"></div>
+        <div class="av-scan">▣ &nbsp; SCAN TO REDEEM</div>
+      </div>
+    </div>
+
+    <div class="av-footer">
+      <div class="av-thanks">♡ &nbsp; Thank you for your support! &nbsp; ♡</div>
+      <div class="av-terms">T&amp;C APPLY</div>
     </div>
   </div>
 </div>
 
 <button id="shareBtn" class="btn" style="margin-top:14px">SHARE VOUCHER</button>
 <div id="shareMsg" class="msg hidden"></div>
-<p class="share-note">WhatsApp sharing includes the voucher image plus the assigned redemption locations and telephone numbers.</p>
+<p class="share-note">WhatsApp sharing includes the personalized voucher image and voucher details.</p>
 </section>
 </div>
 
@@ -919,14 +1189,7 @@ function renderOffer(type){
     el("offerTitle").textContent="SPECIAL PARTNER";el("offerSub").textContent="VOUCHER";el("offerValue").textContent="";
   }
 }
-function renderLocations(details){
-  el("giftLocations").innerHTML=details.map(o=>`
-    <div class="fv-loc">
-      <div class="fv-loc-name">${cleanOutletName(o.name)}</div>
-      <div class="fv-loc-phone">☎ ${o.phone}</div>
-    </div>
-  `).join("");
-}
+function renderLocations(details){ /* Locations remain controlled by Admin but are not printed on the voucher. */ }
 
 async function createVoucher(){
   hideMsg(el("createMsg"));
@@ -944,10 +1207,9 @@ async function createVoucher(){
   currentVoucher={voucher_id:result.voucher_id,voucher_code:result.voucher_code,voucher_type:voucherType,customer_name:customerName,customer_phone:phone,expiry_date:result.expiry_date,partner_name:currentPartnerName,all_branches:allBranches,branch_codes:branchCodes,outlet:selectedOutletSummary(allBranches,branchCodes)};
   showMsg(el("createMsg"),`Voucher ${result.voucher_code} created successfully.`,"ok");
   el("giftCustomer").textContent=customerName;el("giftPartner").textContent=currentPartnerName;el("giftExpiry").textContent=result.expiry_date;el("resultCode").textContent=result.voucher_code;
-  renderLocations(currentVoucher.outlet.details);
 
   const qrBox=el("qrBox");qrBox.innerHTML="";
-  new QRCode(qrBox,{text:result.voucher_code,width:420,height:420,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
+  new QRCode(qrBox,{text:result.voucher_code,width:480,height:480,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
   el("voucherResultCard").classList.remove("hidden");
   setTimeout(()=>el("voucherResultCard").scrollIntoView({behavior:"smooth",block:"start"}),100);
   await loadPartner();
@@ -957,12 +1219,11 @@ async function shareVoucher(){
   hideMsg(el("shareMsg"));if(!currentVoucher){showMsg(el("shareMsg"),"Please generate a voucher first.");return}
   shareBtn.disabled=true;shareBtn.textContent="PREPARING…";
   try{
-    const voucherNode=document.querySelector(".final-voucher");
+    const voucherNode=document.querySelector(".approved-voucher");
     if(!voucherNode) throw new Error("Voucher preview not found.");
     const canvas=await html2canvas(voucherNode,{scale:2,backgroundColor:"#eef7ff",useCORS:true});
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png",1));if(!blob)throw new Error("Could not create voucher image.");
     const file=new File([blob],`${currentVoucher.voucher_code.replace(/[^a-z0-9_-]/gi,"_")}.png`,{type:"image/png"});
-    const outletText=currentVoucher.outlet.details.map(o=>`📍 ${cleanOutletName(o.name)}\nTel: ${o.phone}`).join("\n\n");
     const shareText=`Hi ${currentVoucher.customer_name} 👋\nA little gift just for you 🎁\n\n${currentVoucher.voucher_type}\nFrom: ${currentVoucher.partner_name}\nVoucher: ${currentVoucher.voucher_code}\nValid until: ${currentVoucher.expiry_date}\n\n${outletText}\n\nPlease show this QR voucher when redeeming.`;
     if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Evolution Optical Redemption QR",text:shareText,files:[file]});showMsg(el("shareMsg"),"Share menu opened. Choose WhatsApp to send the Redemption QR.","ok")}
     else if(navigator.share){await navigator.share({title:"Evolution Optical Redemption QR",text:shareText});showMsg(el("shareMsg"),"Your device shared the voucher text. Image sharing is not supported by this browser.","ok")}
