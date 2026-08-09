@@ -43,6 +43,13 @@ button,input{font:inherit}.hidden{display:none!important}.shell{display:grid;gri
 .branchChoice input{width:auto}
 .branchActions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 @media(max-width:700px){.branchTop{grid-template-columns:1fr}.branchGrid{grid-template-columns:1fr}}
+
+.focusFlash{animation:focusFlash 1.4s ease}
+@keyframes focusFlash{
+  0%{box-shadow:0 0 0 0 rgba(37,99,235,0),var(--shadow)}
+  30%{box-shadow:0 0 0 5px rgba(37,99,235,.14),var(--shadow)}
+  100%{box-shadow:var(--shadow)}
+}
 .mobile-nav{display:none}
 @media(max-width:900px){.shell{display:block}.sidebar{display:none}.topbar{height:62px;padding:0 13px}.content{padding:12px 10px 86px}.hero{padding:16px}.hero h2{font-size:21px}.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.claimgrid{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}.actions input{grid-column:1/-1}.mobile-nav{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:7px 4px calc(7px + env(safe-area-inset-bottom));z-index:9}.mobile-nav button{border:0;background:transparent;font-size:9px;color:#64748b}.mobile-nav b{display:block;color:#2563eb;font-size:16px;margin-bottom:2px}}
 </style>
@@ -86,7 +93,7 @@ button,input{font:inherit}.hidden{display:none!important}.shell{display:grid;gri
       <div class="quick">
         <button type="button" class="q qbtn" data-action="partners"><b>Partner Allocation</b><small>Update total voucher limit directly.</small></button>
         <button type="button" class="q qbtn" data-action="branches"><b>Branch Access</b><small>Assign all branches or selected branches.</small></button>
-        <button type="button" class="q qbtn" data-action="partners"><b>Partner Status</b><small>Suspend or reactivate an account.</small></button>
+        <button type="button" class="q qbtn" data-action="status"><b>Partner Status</b><small>Suspend or reactivate an account.</small></button>
         <button type="button" class="q qbtn" data-action="refresh"><b>Live Refresh</b><small>Reload current partner and branch data.</small></button>
       </div>
     </div>
@@ -187,7 +194,6 @@ async function openBranchManager(){
   const panel=$("branchManager");
   panel.classList.remove("hidden");
   renderBranchPartnerOptions();
-  panel.scrollIntoView({behavior:"smooth",block:"start"});
   if(!$("branchPartnerSelect").value && partners.length){
     const first=partners.find(p=>String(p.status).toLowerCase()==="active");
     if(first){
@@ -334,15 +340,56 @@ async function saveAccess(p,body){
   message($("partnerMsg"),`${p.partner_name} branch access updated.`,true);
 }
 
+
+function jumpTo(node){
+  if(!node)return;
+  node.classList.remove("focusFlash");
+  void node.offsetWidth;
+  node.classList.add("focusFlash");
+  const y=node.getBoundingClientRect().top+window.pageYOffset-78;
+  window.scrollTo({top:y,behavior:"smooth"});
+}
 document.querySelectorAll(".qbtn").forEach(btn=>{
   btn.onclick=async()=>{
     const action=btn.dataset.action;
-    if(action==="refresh"){ await refreshAll(); return; }
-    if(action==="branches"){ await openBranchManager(); return; }
-    $("partnerManagement")?.scrollIntoView({behavior:"smooth",block:"start"});
+
+    if(action==="refresh"){
+      btn.disabled=true;
+      try{
+        await refreshAll();
+        message($("partnerMsg"),"Live data refreshed.",true);
+      }finally{
+        btn.disabled=false;
+      }
+      return;
+    }
+
+    if(action==="branches"){
+      await openBranchManager();
+      setTimeout(()=>jumpTo($("branchManager")),80);
+      return;
+    }
+
+    if(action==="partners"){
+      const target=$("partnerManagement");
+      jumpTo(target);
+      setTimeout(()=>{
+        const firstInput=target?.querySelector(".limitInput");
+        firstInput?.focus({preventScroll:true});
+      },500);
+      return;
+    }
+
+    if(action==="status"){
+      const target=$("partnerManagement");
+      jumpTo(target);
+      setTimeout(()=>{
+        const firstStatus=target?.querySelector(".toggleStatus");
+        firstStatus?.focus({preventScroll:true});
+      },500);
+    }
   };
 });
-
 $("branchPartnerSelect").onchange=loadBranchManagerAccess;
 $("closeBranchManager").onclick=()=>$("branchManager").classList.add("hidden");
 $("login").onclick=login;$("password").onkeydown=e=>{if(e.key==="Enter")login()};
