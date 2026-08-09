@@ -205,6 +205,223 @@ input:focus,select:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,
   .heart-icon{width:34px;height:34px}.smile{font-size:29px}
   .location-name{font-size:11px}.location-address{font-size:9px}.location-phone{font-size:10px}
 }
+
+/* ===== COMPACT WHATSAPP VOUCHER PATCH =====
+   Shorter overall card, larger readable location text.
+   Keeps QR large and square.
+*/
+@media(max-width:520px){
+  .voucher{
+    padding:9px 8px 9px;
+  }
+
+  .gift-top{
+    min-height:64px;
+    grid-template-columns:52px 1fr 52px;
+  }
+
+  .ribbon{
+    transform:scale(.58);
+  }
+
+  .heart3d{
+    transform:rotate(-45deg) scale(.58);
+    margin-top:10px;
+  }
+
+  .vlogo{
+    width:48px;
+    height:48px;
+  }
+
+  .vbrand{
+    font-size:13px;
+    letter-spacing:3px;
+    margin-top:0;
+  }
+
+  .vbrand-sub{
+    font-size:7px;
+    letter-spacing:4px;
+  }
+
+  .gift-script{
+    font-size:22px;
+    line-height:1;
+    margin:4px 0 2px;
+  }
+
+  .hi{
+    font-size:17px;
+    margin-top:5px;
+  }
+
+  .tagline{
+    font-size:10.5px;
+    margin:3px 0 7px;
+  }
+
+  .offer-card{
+    padding:8px 7px 8px;
+    border-radius:18px;
+  }
+
+  .offer-head{
+    gap:6px;
+  }
+
+  .offer-left{
+    padding-right:5px;
+  }
+
+  .received{
+    font-size:8px;
+  }
+
+  .offer-title{
+    font-size:15px;
+  }
+
+  .offer-sub{
+    font-size:9px;
+  }
+
+  .offer-value{
+    font-size:41px;
+    margin:1px 0;
+  }
+
+  .qr-label{
+    font-size:10px;
+    padding:3px 9px;
+  }
+
+  .partner-from{
+    font-size:9px;
+    padding-left:4px;
+  }
+
+  .partner-from b{
+    font-size:13px;
+    margin-top:2px;
+  }
+
+  .gift-box{
+    font-size:30px;
+    margin-top:4px;
+  }
+
+  .qr-area{
+    margin:7px auto 4px;
+    max-width:335px;
+  }
+
+  #qrBox{
+    width:290px;
+    height:290px;
+    max-width:84vw;
+    max-height:84vw;
+    padding:8px;
+    border-radius:15px;
+  }
+
+  .voucher-code{
+    font-size:11px;
+    margin-top:3px;
+  }
+
+  .glasses-deco{
+    right:-17px;
+    top:31px;
+    width:50px;
+    opacity:.62;
+  }
+
+  .glasses-deco.left{
+    left:-19px;
+    top:92px;
+    width:53px;
+  }
+
+  .meta-strip{
+    margin:5px auto 5px;
+    padding:5px 6px;
+    gap:6px;
+    font-size:9.5px;
+  }
+
+  .meta-sep{
+    height:15px;
+  }
+
+  .smile-strip{
+    grid-template-columns:30px 1fr 34px;
+    gap:7px;
+    padding:6px 8px;
+    margin-top:5px;
+    font-size:10.5px;
+    border-radius:12px;
+  }
+
+  .heart-icon{
+    width:29px;
+    height:29px;
+    font-size:16px;
+  }
+
+  .smile{
+    font-size:23px;
+  }
+
+  .locations{
+    margin-top:6px;
+  }
+
+  .locations-title{
+    font-size:14px;
+    margin-bottom:0;
+  }
+
+  .location-row{
+    grid-template-columns:30px 1fr;
+    gap:7px;
+    padding:6px 1px;
+  }
+
+  .pin{
+    width:28px;
+    height:28px;
+    font-size:16px;
+  }
+
+  /* Deliberately larger than before for WhatsApp readability */
+  .location-name{
+    font-size:13px;
+    line-height:1.15;
+  }
+
+  .location-address{
+    font-size:11.5px;
+    line-height:1.22;
+    margin-top:1px;
+  }
+
+  .location-phone{
+    font-size:12px;
+    line-height:1.15;
+    margin-top:2px;
+  }
+
+  .vfooter{
+    font-size:10px;
+    margin-top:4px;
+  }
+}
+
+/* Slightly larger text when shared at desktop/tablet size too */
+.location-address{font-size:12px;line-height:1.28}
+.location-phone{font-size:13px}
+
 </style>
 </head>
 <body>
