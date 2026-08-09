@@ -28,7 +28,7 @@ button,input{font:inherit}.hidden{display:none!important}.shell{display:grid;gri
 .toolbar{display:flex;gap:8px;align-items:center;margin-top:13px;flex-wrap:wrap}.search{flex:1;min-width:220px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}.smallbtn{border:1px solid var(--line);background:#fff;border-radius:11px;padding:9px 11px;font-weight:800;color:#334155}.smallbtn.blue{background:#2563eb;color:#fff;border-color:#2563eb}.smallbtn.green{background:#16a34a;color:#fff;border-color:#16a34a}.smallbtn.red{background:#dc2626;color:#fff;border-color:#dc2626}
 .partnerlist{display:grid;gap:10px;margin-top:12px}.partner{padding:14px}.prow{display:flex;align-items:flex-start;gap:10px}.pinfo{flex:1}.pname{font-size:14px;font-weight:900}.pcode{font-size:10px;color:var(--muted);margin-top:3px}.badge{font-size:9px;font-weight:900;border-radius:999px;padding:4px 8px;background:#ecfdf3;color:#166534}.badge.suspended{background:#fef2f2;color:#b91c1c}
 .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:11px}.num{background:#f8fafc;border-radius:11px;padding:8px}.num span{display:block;font-size:9px;color:var(--muted)}.num b{font-size:14px}.actions{display:grid;grid-template-columns:1fr auto auto;gap:7px;margin-top:11px}.actions input{border:1px solid var(--line);border-radius:11px;padding:9px;min-width:0}
-.claim{margin-top:10px;padding:11px;border:1px solid var(--line);border-radius:12px;background:#fbfdff}.claim summary{cursor:pointer;font-size:11px;font-weight:850}.claimgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:9px}.claimopt{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;font-size:10px}.claimopt input{width:auto}.claimbuttons{display:flex;gap:7px;margin-top:8px}
+.claim{margin-top:10px;padding:0;border:1px solid var(--line);border-radius:12px;background:#fbfdff;overflow:hidden}.claimToggle{width:100%;border:0;background:linear-gradient(145deg,#fff,#f4f8fd);padding:12px;text-align:left;font-size:11px;font-weight:850;color:#0f172a;display:flex;justify-content:space-between;align-items:center}.claimToggle .chev{transition:.18s ease}.claim.open .claimToggle .chev{transform:rotate(180deg)}.claimBody{display:none;padding:11px;border-top:1px solid var(--line)}.claim.open .claimBody{display:block}.claimgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:9px}.claimopt{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;font-size:10px}.claimopt input{width:auto}.claimbuttons{display:flex;gap:7px;margin-top:8px}
 .field{margin-top:12px}.field label{display:block;font-size:11px;font-weight:800;margin-bottom:5px}.field input{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;background:#fff}.loginbtn{width:100%;margin-top:14px}.msg{margin-top:10px;padding:10px 11px;border-radius:11px;font-size:11px}.msg.ok{background:#ecfdf3;color:#166534}.msg.err{background:#fef2f2;color:#b91c1c}
 .mobile-nav{display:none}
 @media(max-width:900px){.shell{display:block}.sidebar{display:none}.topbar{height:62px;padding:0 13px}.content{padding:12px 10px 86px}.hero{padding:16px}.hero h2{font-size:21px}.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.claimgrid{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}.actions input{grid-column:1/-1}.mobile-nav{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:7px 4px calc(7px + env(safe-area-inset-bottom));z-index:9}.mobile-nav button{border:0;background:transparent;font-size:9px;color:#64748b}.mobile-nav b{display:block;color:#2563eb;font-size:16px;margin-bottom:2px}}
@@ -157,7 +157,10 @@ function renderPartners(){
       <div class="prow"><div class="pinfo"><div class="pname">${esc(p.partner_name)}</div><div class="pcode">${esc(p.partner_code)}</div></div><span class="badge ${suspended?"suspended":""}">${suspended?"SUSPENDED":"ACTIVE"}</span></div>
       <div class="nums"><div class="num"><span>Limit</span><b>${limit}</b></div><div class="num"><span>Issued</span><b>${issued}</b></div><div class="num"><span>Remaining</span><b>${remaining}</b></div></div>
       <div class="actions"><input class="limitInput" type="number" min="${issued}" step="1" value="${limit}"><button class="smallbtn blue setLimit">Set Total</button><button class="smallbtn ${suspended?"green":"red"} toggleStatus">${suspended?"Reactivate":"Suspend"}</button></div>
-      <details class="claim"><summary>Voucher Claim Branch Permission</summary><div class="claimBody">Loading…</div></details>
+      <div class="claim">
+        <button type="button" class="claimToggle">Voucher Claim Branch Permission <span class="chev">⌄</span></button>
+        <div class="claimBody">Loading…</div>
+      </div>
     </article>`;
   }).join(""):`<div class="sub">No partners found.</div>`;
   bindPartnerActions();
@@ -167,7 +170,21 @@ function bindPartnerActions(){
     const id=card.dataset.id,p=partners.find(x=>x.id===id);
     card.querySelector(".setLimit").onclick=()=>setLimit(p,card);
     card.querySelector(".toggleStatus").onclick=()=>toggleStatus(p);
-    card.querySelector(".claim").ontoggle=e=>{if(e.currentTarget.open)loadAccess(p,card)}
+    const claim=card.querySelector(".claim");
+    const claimToggle=card.querySelector(".claimToggle");
+    claimToggle.onclick=async()=>{
+      const opening=!claim.classList.contains("open");
+      claim.classList.toggle("open",opening);
+      if(opening && !claim.dataset.loaded){
+        claimToggle.disabled=true;
+        try{
+          await loadAccess(p,card);
+          claim.dataset.loaded="1";
+        }finally{
+          claimToggle.disabled=false;
+        }
+      }
+    };
   });
 }
 async function setLimit(p,card){
@@ -186,9 +203,14 @@ async function toggleStatus(p){
 }
 async function loadAccess(p,card){
   const body=card.querySelector(".claimBody");
+  body.innerHTML='<div class="sub">Loading branch access…</div>';
   const {data,error}=await db.rpc("admin_get_partner_claim_access",{p_partner_id:p.id});
-  if(error){body.innerHTML=`<div class="msg err">${esc(error.message)}</div>`;return}
-  const all=!!data?.all_branches,codes=data?.branch_codes||[];
+  if(error){
+    body.innerHTML=`<div class="msg err">Unable to load Branch Access: ${esc(error.message)}</div>`;
+    return;
+  }
+  const payload=Array.isArray(data)?(data[0]||{}):(data||{});
+  const all=!!payload.all_branches,codes=payload.branch_codes||[];
   accessCache.set(p.id,{all,codes});
   body.innerHTML=`<label class="claimopt"><input type="checkbox" class="allBranches" ${all?"checked":""}><b>All Evolution Optical branches</b></label>
     <div class="claimgrid">${branches.map(b=>`<label class="claimopt"><input type="checkbox" class="branchCheck" value="${esc(b.branch_code)}" ${all?"disabled":""} ${codes.includes(b.branch_code)?"checked":""}>${esc(String(b.branch_name).replace(/\s*\(HQ\)\s*/gi," ").trim())}</label>`).join("")}</div>
@@ -203,6 +225,7 @@ async function saveAccess(p,body){
   if(!all&&!codes.length)return message($("partnerMsg"),"Select at least one branch, or choose All Evolution Optical branches.");
   const {error}=await db.rpc("admin_set_partner_claim_access",{p_partner_id:p.id,p_all_branches:all,p_branch_codes:codes});
   if(error)return message($("partnerMsg"),error.message);
+  accessCache.set(p.id,{all,codes});
   message($("partnerMsg"),`${p.partner_name} branch access updated.`,true);
 }
 $("login").onclick=login;$("password").onkeydown=e=>{if(e.key==="Enter")login()};
