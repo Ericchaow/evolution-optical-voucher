@@ -422,6 +422,87 @@ input:focus,select:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,
 .location-address{font-size:12px;line-height:1.28}
 .location-phone{font-size:13px}
 
+
+/* ===== FINAL TIGHTENING PATCH ===== */
+@media(max-width:520px){
+  .voucher{
+    padding:7px 7px 8px;
+  }
+
+  .gift-top{
+    min-height:58px;
+    grid-template-columns:48px 1fr 48px;
+  }
+
+  .vlogo{
+    width:44px;
+    height:44px;
+  }
+
+  .vbrand{
+    font-size:12px;
+    letter-spacing:2.7px;
+  }
+
+  .vbrand-sub{
+    font-size:6.5px;
+    letter-spacing:3.6px;
+  }
+
+  .gift-script{
+    margin:2px 0 1px;
+    font-size:21px;
+  }
+
+  .hi{
+    margin-top:3px;
+    font-size:16px;
+  }
+
+  .tagline{
+    margin:2px 0 5px;
+    font-size:10px;
+  }
+
+  .offer-card{
+    padding:7px 6px;
+  }
+
+  .qr-area{
+    margin:5px auto 3px;
+  }
+
+  #qrBox{
+    width:282px;
+    height:282px;
+    max-width:83vw;
+    max-height:83vw;
+  }
+
+  .meta-strip{
+    margin:4px auto;
+  }
+
+  .smile-strip{
+    margin-top:4px;
+    padding-top:5px;
+    padding-bottom:5px;
+  }
+
+  .locations{
+    margin-top:5px;
+  }
+
+  .location-row{
+    padding-top:5px;
+    padding-bottom:5px;
+  }
+
+  .vfooter{
+    margin-top:3px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -471,19 +552,61 @@ input:focus,select:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,
   <div>
     <div class="vlogo-wrap">
       <svg class="vlogo" viewBox="0 0 200 200" aria-label="Evolution Optical">
-        <defs>
-          <linearGradient id="evoGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#d65cff"/>
-            <stop offset="38%" stop-color="#7b66ff"/>
-            <stop offset="72%" stop-color="#3f8dff"/>
-            <stop offset="100%" stop-color="#27d8ef"/>
-          </linearGradient>
-        </defs>
-        <path d="M146 31 A76 76 0 1 0 151 158" fill="none" stroke="url(#evoGrad)" stroke-width="14" stroke-linecap="round"/>
-        <path d="M148 39 Q171 61 174 100 Q172 139 149 158" fill="none" stroke="url(#evoGrad)" stroke-width="12" stroke-linecap="round"/>
-        <path d="M68 101 L108 75 H145 L123 94 H157 L174 101 L157 108 H123 L145 127 H108 Z" fill="url(#evoGrad)"/>
-        <path d="M174 91 L191 101 L174 111 Z" fill="url(#evoGrad)"/>
-      </svg>
+  <defs>
+    <linearGradient id="evoGradFinal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d65cff"/>
+      <stop offset="36%" stop-color="#8d68ff"/>
+      <stop offset="70%" stop-color="#438cff"/>
+      <stop offset="100%" stop-color="#28d9ef"/>
+    </linearGradient>
+  </defs>
+
+  <!-- circular evolution ring -->
+  <path
+    d="M145 31
+       A76 76 0 1 0 151 158"
+    fill="none"
+    stroke="url(#evoGradFinal)"
+    stroke-width="14"
+    stroke-linecap="round"
+  />
+
+  <!-- slim right arc -->
+  <path
+    d="M149 40
+       Q171 61 174 100
+       Q172 139 149 158"
+    fill="none"
+    stroke="url(#evoGradFinal)"
+    stroke-width="12"
+    stroke-linecap="round"
+  />
+
+  <!-- centre forward arrow / optical mark -->
+  <path
+    d="M69 101
+       L108 76
+       H145
+       L124 94
+       H157
+       L176 101
+       L157 108
+       H124
+       L145 126
+       H108
+       Z"
+    fill="url(#evoGradFinal)"
+  />
+
+  <!-- right protrusion -->
+  <path
+    d="M174 91
+       L192 101
+       L174 111
+       Z"
+    fill="url(#evoGradFinal)"
+  />
+</svg>
     </div>
     <div class="vbrand">EVOLUTION</div><div class="vbrand-sub">OPTICAL</div>
   </div>
