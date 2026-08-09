@@ -320,6 +320,25 @@ input::placeholder{color:#97a6b8}
   .create-grid .wide{grid-column:auto}
   .bottomnav button{font-size:9px}
 }
+
+/* V14 — functional bottom navigation */
+.app-view{display:none}
+.app-view.active{display:block}
+.nav-stack{display:grid;gap:10px}
+.branch-admin-list,.settings-list{display:grid;gap:8px;margin-top:12px}
+.branch-admin-row,.settings-row{
+  display:flex;align-items:center;gap:10px;padding:11px 12px;
+  border:1px solid var(--line);border-radius:13px;
+  background:linear-gradient(145deg,#fff,#f5f9fd)
+}
+.branch-admin-row>div,.settings-row>div{flex:1;min-width:0}
+.branch-admin-row b,.settings-row b{display:block;font-size:13px}
+.branch-admin-row small,.settings-row small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.bottomnav button{cursor:pointer}
+@media(max-width:720px){
+  .branch-admin-row,.settings-row{padding:10px}
+}
+
 </style>
 </head>
 
@@ -342,6 +361,7 @@ input::placeholder{color:#97a6b8}
 </section>
 
 <div id="dashboard" class="hidden">
+  <div id="view-dashboard" class="app-view active">
   <section class="card">
     <h2>Admin Dashboard</h2>
     <p class="sub">Manage Partner voucher allocations from one place.</p>
@@ -361,6 +381,9 @@ input::placeholder{color:#97a6b8}
     <button id="openPartnerModal" class="btn blue">+ Add Partner</button>
   </section>
 
+  </div>
+
+  <div id="view-partners" class="app-view">
   <section class="card">
     <h3>Partner Voucher Allocation</h3>
     <p class="sub">Set a new total, add more vouchers, control claim branches, status and visibility.</p>
@@ -375,6 +398,10 @@ input::placeholder{color:#97a6b8}
     <p class="note">“Set Total” replaces the Partner's total voucher limit. “Add” increases the existing limit. The total limit cannot be set below vouchers already issued.</p>
   </section>
 
+  </section>
+  </div>
+
+  <div id="view-reports" class="app-view">
   <section class="card">
     <h3>Partner Performance</h3>
     <p class="sub">Current voucher usage and redemption performance by Partner.</p>
@@ -382,6 +409,10 @@ input::placeholder{color:#97a6b8}
     <div id="performance"></div>
   </section>
 
+  </section>
+  </div>
+
+  <div id="view-vouchers" class="app-view">
   <section class="card">
     <h3>Voucher Records</h3>
     <p class="sub">View vouchers issued by Partners and filter by current status.</p>
@@ -411,6 +442,33 @@ input::placeholder{color:#97a6b8}
     </div>
     <div id="voucherRecords"></div>
   </section>
+  </div>
+
+  <div id="view-branches" class="app-view">
+    <section class="card">
+      <h3>Branches</h3>
+      <p class="sub">Active Evolution Optical branches. Partner claim permissions are managed from each Partner's Manage → Claim Branches.</p>
+      <div class="toolbar"><button id="branchRefresh" class="btn small">Refresh Branches</button></div>
+      <div id="branchAdminList" class="branch-admin-list"></div>
+    </section>
+  </div>
+
+  <div id="view-settings" class="app-view">
+    <section class="card">
+      <h3>Settings</h3>
+      <p class="sub">Admin display and maintenance controls.</p>
+      <div class="settings-list">
+        <div class="settings-row">
+          <div><b>Hidden Partners</b><small>Partners hidden from this Admin view only.</small></div>
+          <button id="settingsHiddenBtn" class="btn small light">Open</button>
+        </div>
+        <div class="settings-row">
+          <div><b>Refresh All Data</b><small>Reload Partners, vouchers, branches and performance.</small></div>
+          <button id="settingsRefreshAll" class="btn small blue">Refresh</button>
+        </div>
+      </div>
+    </section>
+  </div>
 </div>
 </main>
 
@@ -441,9 +499,13 @@ input::placeholder{color:#97a6b8}
   </section>
 </div>
 
-<nav class="bottomnav">
-  <button class="active">Dashboard</button><button>Partners</button><button>Branches</button>
-  <button>Vouchers</button><button>Reports</button><button>Settings</button>
+<nav class="bottomnav" id="bottomNav">
+  <button class="active" data-view="dashboard">Dashboard</button>
+  <button data-view="partners">Partners</button>
+  <button data-view="branches">Branches</button>
+  <button data-view="vouchers">Vouchers</button>
+  <button data-view="reports">Reports</button>
+  <button data-view="settings">Settings</button>
 </nav>
 
 <script>
@@ -575,6 +637,7 @@ function updateStats(){
 function renderHiddenPartners(){
   const list=partners.filter(isHiddenPartner);
   $("hiddenCount").textContent=list.length;
+  renderSettingsState();
   $("hiddenPartners").innerHTML=list.length?list.map(p=>`
     <div class="hidden-row">
       <div><b>${esc(p.partner_name)}</b><small>${esc(p.partner_code)}</small></div>
@@ -788,6 +851,7 @@ async function loadVouchers(){
   updateVoucherStats();
   renderVouchers();
   renderPerformance();
+  renderBranchAdminList();
 }
 
 function partnerNameFor(v){
@@ -1223,6 +1287,80 @@ $("voucherDateTo").addEventListener("change",renderVouchers);
 $("clearVoucherFilters").onclick=clearVoucherFilters;
 $("exportVoucherExcel").onclick=exportVoucherExcel;
 $("perfRefresh").onclick=renderPerformance;
+
+
+function setView(name){
+  document.querySelectorAll(".app-view").forEach(v=>v.classList.remove("active"));
+  const target=$("view-"+name);
+  if(target)target.classList.add("active");
+
+  document.querySelectorAll("#bottomNav button").forEach(b=>{
+    b.classList.toggle("active",b.dataset.view===name);
+  });
+
+  window.scrollTo({top:0,behavior:"smooth"});
+
+  if(name==="branches")renderBranchAdminList();
+  if(name==="settings")renderSettingsState();
+}
+
+function renderBranchAdminList(){
+  const box=$("branchAdminList");
+  if(!box)return;
+  const list=(branches.length?branches:claimBranchOptions).filter(b=>String(b.status||"active").toLowerCase()==="active");
+  box.innerHTML=list.length?list.map(b=>`
+    <div class="branch-admin-row">
+      <div>
+        <b>${esc(b.branch_name||b.branch_code||"Branch")}</b>
+        <small>${esc(b.branch_code||"")}${b.address?` · ${esc(b.address)}`:""}</small>
+      </div>
+    </div>`).join(""):`<div class="sub">No active branches found.</div>`;
+}
+
+function renderSettingsState(){
+  const btn=$("settingsHiddenBtn");
+  if(btn)btn.textContent=`Open (${hiddenCodes.size})`;
+}
+
+async function refreshAllData(){
+  try{
+    await ensureClaimBranchOptions();
+    await loadPartners();
+    await loadVouchers();
+    renderBranchAdminList();
+    renderSettingsState();
+    msg($("partnerMsg"),"All Admin data refreshed.",true);
+  }catch(e){
+    msg($("partnerMsg"),e?.message||"Refresh failed.");
+  }
+}
+
+document.querySelectorAll("#bottomNav button").forEach(btn=>{
+  btn.addEventListener("click",()=>setView(btn.dataset.view));
+});
+
+$("branchRefresh").onclick=async()=>{
+  claimBranchOptions=[];
+  try{
+    await ensureClaimBranchOptions();
+    const {data,error}=await db.from("branches")
+      .select("id,branch_code,branch_name,address,phone,status")
+      .order("branch_name");
+    if(error)throw error;
+    branches=data||[];
+    renderBranchAdminList();
+  }catch(e){
+    $("branchAdminList").innerHTML=`<div class="msg err">${esc(e.message||e)}</div>`;
+  }
+};
+
+$("settingsHiddenBtn").onclick=()=>{
+  setView("partners");
+  $("hiddenBox").classList.remove("hidden");
+  setTimeout(()=>$("hiddenBox").scrollIntoView({behavior:"smooth",block:"start"}),60);
+};
+
+$("settingsRefreshAll").onclick=refreshAllData;
 
 (async()=>{
   try{await ensureClaimBranchOptions()}catch(e){msg($("createPartnerMsg"),"Unable to load Claim Branches: "+e.message)}
