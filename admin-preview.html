@@ -24,7 +24,7 @@ button,input{font:inherit}.hidden{display:none!important}.shell{display:grid;gri
 .card{padding:18px}.hero{padding:21px 22px;display:flex;align-items:center;justify-content:space-between;gap:18px}.hero h2{margin:0;font-size:27px}.hero p{margin:6px 0 0;color:var(--muted);font-size:13px}.primary{border:0;border-radius:13px;padding:11px 15px;background:linear-gradient(90deg,#2d63f3,#4a83ff);color:#fff;font-weight:850;box-shadow:0 11px 20px rgba(45,99,243,.24),inset 0 1px 0 rgba(255,255,255,.5)}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}.stat{padding:16px 17px;position:relative;overflow:hidden}.stat:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent,#3b82f6)}.stat small{display:block;color:var(--muted);font-size:10px;font-weight:800}.stat strong{display:block;font-size:27px;margin-top:6px}.stat em{display:block;font-style:normal;color:#16a34a;font-size:10px;margin-top:4px}
 .grid{display:grid;grid-template-columns:1.08fr .92fr;gap:14px;margin-top:14px}.card h3{margin:0;font-size:16px}.sub{color:var(--muted);font-size:11px;margin:4px 0 0}
-.quick{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:13px}.q{border:1px solid #e7edf5;background:linear-gradient(145deg,#fff,#f1f6fc);border-radius:15px;padding:13px;box-shadow:7px 7px 16px rgba(78,101,137,.08),-5px -5px 14px rgba(255,255,255,.92)}.q b{display:block;font-size:12px}.q small{display:block;color:var(--muted);font-size:10px;line-height:1.4;margin-top:4px}
+.quick{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:13px}.q{border:1px solid #e7edf5;background:linear-gradient(145deg,#fff,#f1f6fc);border-radius:15px;padding:13px;text-align:left;color:inherit;box-shadow:7px 7px 16px rgba(78,101,137,.08),-5px -5px 14px rgba(255,255,255,.92)}.q b{display:block;font-size:12px}.q small{display:block;color:var(--muted);font-size:10px;line-height:1.4;margin-top:4px}
 .toolbar{display:flex;gap:8px;align-items:center;margin-top:13px;flex-wrap:wrap}.search{flex:1;min-width:220px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}.smallbtn{border:1px solid var(--line);background:#fff;border-radius:11px;padding:9px 11px;font-weight:800;color:#334155}.smallbtn.blue{background:#2563eb;color:#fff;border-color:#2563eb}.smallbtn.green{background:#16a34a;color:#fff;border-color:#16a34a}.smallbtn.red{background:#dc2626;color:#fff;border-color:#dc2626}
 .partnerlist{display:grid;gap:10px;margin-top:12px}.partner{padding:14px}.prow{display:flex;align-items:flex-start;gap:10px}.pinfo{flex:1}.pname{font-size:14px;font-weight:900}.pcode{font-size:10px;color:var(--muted);margin-top:3px}.badge{font-size:9px;font-weight:900;border-radius:999px;padding:4px 8px;background:#ecfdf3;color:#166534}.badge.suspended{background:#fef2f2;color:#b91c1c}
 .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:11px}.num{background:#f8fafc;border-radius:11px;padding:8px}.num span{display:block;font-size:9px;color:var(--muted)}.num b{font-size:14px}.actions{display:grid;grid-template-columns:1fr auto auto;gap:7px;margin-top:11px}.actions input{border:1px solid var(--line);border-radius:11px;padding:9px;min-width:0}
@@ -71,10 +71,10 @@ button,input{font:inherit}.hidden{display:none!important}.shell{display:grid;gri
   <section class="grid">
     <div class="card"><h3>Quick Actions</h3><p class="sub">Phase 1 live controls</p>
       <div class="quick">
-        <div class="q"><b>Partner Allocation</b><small>Update total voucher limit directly.</small></div>
-        <div class="q"><b>Branch Access</b><small>Assign all branches or selected branches.</small></div>
-        <div class="q"><b>Partner Status</b><small>Suspend or reactivate an account.</small></div>
-        <div class="q"><b>Live Refresh</b><small>Reload current partner and branch data.</small></div>
+        <button type="button" class="q qbtn" data-action="partners"><b>Partner Allocation</b><small>Update total voucher limit directly.</small></button>
+        <button type="button" class="q qbtn" data-action="branches"><b>Branch Access</b><small>Assign all branches or selected branches.</small></button>
+        <button type="button" class="q qbtn" data-action="partners"><b>Partner Status</b><small>Suspend or reactivate an account.</small></button>
+        <button type="button" class="q qbtn" data-action="refresh"><b>Live Refresh</b><small>Reload current partner and branch data.</small></button>
       </div>
     </div>
     <div class="card"><h3>Phase 1 Scope</h3><p class="sub">Safe functional preview</p>
@@ -86,7 +86,7 @@ button,input{font:inherit}.hidden{display:none!important}.shell{display:grid;gri
     </div>
   </section>
 
-  <section class="card" style="margin-top:14px">
+  <section id="partnerManagement" class="card" style="margin-top:14px">
     <h3>Partner Management</h3><p class="sub">Search, update quota, status and redemption branch access.</p>
     <div class="toolbar"><input id="search" class="search" placeholder="Search company or partner code"><button id="refreshPartners" class="smallbtn blue">Refresh</button></div>
     <div id="partnerMsg"></div><div id="partnerList" class="partnerlist"></div>
@@ -228,6 +228,23 @@ async function saveAccess(p,body){
   accessCache.set(p.id,{all,codes});
   message($("partnerMsg"),`${p.partner_name} branch access updated.`,true);
 }
+
+document.querySelectorAll(".qbtn").forEach(btn=>{
+  btn.onclick=async()=>{
+    const action=btn.dataset.action;
+    if(action==="refresh"){ await refreshAll(); return; }
+    const target=$("partnerManagement");
+    target?.scrollIntoView({behavior:"smooth",block:"start"});
+    if(action==="branches"){
+      message($("partnerMsg"),"Branch Access is managed inside each Partner card. Tap “Voucher Claim Branch Permission” under the Partner you want to edit.",true);
+      setTimeout(()=>{
+        const first=document.querySelector(".partner .claimToggle");
+        if(first) first.focus();
+      },450);
+    }
+  };
+});
+
 $("login").onclick=login;$("password").onkeydown=e=>{if(e.key==="Enter")login()};
 $("logout").onclick=async()=>{await db.auth.signOut();showLogin()};
 $("refreshAll").onclick=refreshAll;$("refreshPartners").onclick=refreshAll;$("search").oninput=renderPartners;
