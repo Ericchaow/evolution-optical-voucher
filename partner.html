@@ -1013,6 +1013,45 @@ input:focus,select:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,
   .av-terms{font-size:9px;margin-top:6px}
 }
 
+
+/* ===== TEST001 DELETE TEST VOUCHER ===== */
+.test-delete-card{
+  border:1px solid #fecaca;
+  background:#fff7f7;
+}
+.test-delete-card h3{color:#991b1b}
+.test-delete-note{
+  margin:0;
+  color:#7f1d1d;
+  font-size:13px;
+  line-height:1.45;
+}
+.test-delete-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  margin-top:12px;
+}
+.test-delete-row input{
+  margin:0;
+  min-height:50px;
+}
+.danger-btn{
+  border:0;
+  border-radius:14px;
+  background:#b91c1c;
+  color:white;
+  min-height:50px;
+  padding:12px 16px;
+  font-weight:850;
+  white-space:nowrap;
+}
+.danger-btn:disabled{opacity:.55}
+@media(max-width:520px){
+  .test-delete-row{grid-template-columns:1fr}
+  .danger-btn{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -1043,6 +1082,20 @@ input:focus,select:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,
 <div class="field"><label>Expiry Date</label><input id="expiryDate" type="date"></div>
 <div class="field"><label>Claim Branches (assigned by Evolution Optical Admin)</label><div id="assignedClaimBranches" class="branch"><div><b>Loading assigned branches…</b><small>Partner cannot change this setting.</small></div></div></div>
 <button id="createBtn" class="btn">GENERATE QR VOUCHER</button><div id="createMsg" class="msg hidden"></div>
+</section>
+
+
+<section id="testDeleteCard" class="card test-delete-card hidden">
+  <h3>Delete Test Voucher</h3>
+  <p class="test-delete-note">
+    TEST001 only. Delete an unredeemed test voucher by voucher code.
+    The test issued count will be restored automatically.
+  </p>
+  <div class="test-delete-row">
+    <input id="deleteVoucherCode" placeholder="e.g. EO-20260809-XXXXXX" autocomplete="off">
+    <button id="deleteVoucherBtn" class="danger-btn">DELETE TEST VOUCHER</button>
+  </div>
+  <div id="deleteVoucherMsg" class="msg hidden"></div>
 </section>
 
 <section class="card">
@@ -1117,7 +1170,7 @@ input:focus,select:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,
 
 <button id="shareBtn" class="btn" style="margin-top:14px">SHARE VOUCHER</button>
 <div id="shareMsg" class="msg hidden"></div>
-<p class="share-note">WhatsApp sharing includes the personalized voucher image plus the Admin-assigned redemption branch names and telephone numbers.</p>
+<p class="share-note">WhatsApp sharing includes the personalized voucher image and voucher details.</p>
 </section>
 </div>
 
@@ -1130,7 +1183,7 @@ const SUPABASE_ANON_KEY="sb_publishable_kpPFeGYpedq2auo01Zo50A_aiSjdeVh";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const el=id=>document.getElementById(id);
 const loginCard=el("loginCard"),dashboard=el("dashboard"),logoutBtn=el("logoutBtn"),createBtn=el("createBtn"),shareBtn=el("shareBtn");
-let currentVoucher=null,currentPartnerName="Partner",partnerClaimAll=true,partnerClaimCodes=[],partnerClaimNames=[];
+let currentVoucher=null,currentPartnerName="Partner",currentPartnerCode="",partnerClaimAll=true,partnerClaimCodes=[],partnerClaimNames=[];
 
 const OUTLETS={
   MINES:{name:"The Mines",address:"L3-56, The Mines Shopping Mall, Level 3, Seri Kembangan",phone:"012-4732881"},
@@ -1174,11 +1227,11 @@ async function loadPartner(){
   if(error||!data||!data.partners){await supabaseClient.auth.signOut();showLogin();showMsg(el("loginMsg"),"This account is not linked to an active Partner.");return}
   const p=data.partners;
   if(String(p.status||"").toLowerCase()!=="active"){await supabaseClient.auth.signOut();showLogin();showMsg(el("loginMsg"),"This Partner account is currently suspended. Please contact Evolution Optical.");return}
-  currentPartnerName=p.partner_name||"Partner";el("partnerName").textContent=currentPartnerName;el("partnerCode").textContent=`${p.partner_code} • Partner Portal`;el("roleText").textContent=data.role;el("limit").textContent=p.voucher_limit;el("issued").textContent=p.vouchers_issued;el("remaining").textContent=Math.max(0,p.voucher_limit-p.vouchers_issued);
+  currentPartnerName=p.partner_name||"Partner";currentPartnerCode=p.partner_code||"";el("testDeleteCard")?.classList.toggle("hidden", currentPartnerCode!=="TEST001");el("partnerName").textContent=currentPartnerName;el("partnerCode").textContent=`${p.partner_code} • Partner Portal`;el("roleText").textContent=data.role;el("limit").textContent=p.voucher_limit;el("issued").textContent=p.vouchers_issued;el("remaining").textContent=Math.max(0,p.voucher_limit-p.vouchers_issued);
   try{await loadMyClaimAccess()}catch(e){showMsg(el("loginMsg"),"Unable to load assigned Claim Branches: "+e.message);return}
   loginCard.classList.add("hidden");dashboard.classList.remove("hidden");logoutBtn.classList.remove("hidden");
 }
-function showLogin(){loginCard.classList.remove("hidden");dashboard.classList.add("hidden");logoutBtn.classList.add("hidden")}
+function showLogin(){loginCard.classList.remove("hidden");dashboard.classList.add("hidden");logoutBtn.classList.add("hidden");el("testDeleteCard")?.classList.add("hidden")}
 
 function renderOffer(type){
   if(String(type).toLowerCase().includes("rm60")){
@@ -1224,28 +1277,61 @@ async function shareVoucher(){
     const canvas=await html2canvas(voucherNode,{scale:2,backgroundColor:"#eef7ff",useCORS:true});
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png",1));if(!blob)throw new Error("Could not create voucher image.");
     const file=new File([blob],`${currentVoucher.voucher_code.replace(/[^a-z0-9_-]/gi,"_")}.png`,{type:"image/png"});
-
-    // WhatsApp text keeps the voucher image clean, but includes
-    // the Admin-assigned redemption branches + telephone numbers.
-    const outletText = (currentVoucher.outlet?.details || [])
-      .map(o => `📍 ${cleanOutletName(o.name)}\n☎ ${o.phone}`)
-      .join("\n\n");
-
-    const shareText=`Hi ${currentVoucher.customer_name} 👋
-A little gift just for you 🎁
-
-FREE SPECTACLE WITH FREE GLASSES
-Value RM60
-Partner: ${currentVoucher.partner_name}
-Voucher: ${currentVoucher.voucher_code}
-Valid Date: ${currentVoucher.expiry_date}
-
-${outletText ? `Redeem at:\n${outletText}\n\n` : ""}Please show this QR voucher when redeeming.`;
+    const shareText=`Hi ${currentVoucher.customer_name} 👋\nA little gift just for you 🎁\n\n${currentVoucher.voucher_type}\nFrom: ${currentVoucher.partner_name}\nVoucher: ${currentVoucher.voucher_code}\nValid until: ${currentVoucher.expiry_date}\n\n${outletText}\n\nPlease show this QR voucher when redeeming.`;
     if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Evolution Optical Redemption QR",text:shareText,files:[file]});showMsg(el("shareMsg"),"Share menu opened. Choose WhatsApp to send the Redemption QR.","ok")}
     else if(navigator.share){await navigator.share({title:"Evolution Optical Redemption QR",text:shareText});showMsg(el("shareMsg"),"Your device shared the voucher text. Image sharing is not supported by this browser.","ok")}
     else{window.open("https://wa.me/?text="+encodeURIComponent(shareText),"_blank");showMsg(el("shareMsg"),"WhatsApp opened with the voucher details.","ok")}
   }catch(err){if(err?.name==="AbortError")showMsg(el("shareMsg"),"Sharing cancelled.");else showMsg(el("shareMsg"),err?.message||"Unable to share the voucher.")}
   finally{shareBtn.disabled=false;shareBtn.textContent="SHARE VOUCHER"}
+}
+
+
+async function deleteTestVoucher(){
+  const msg=el("deleteVoucherMsg");
+  hideMsg(msg);
+
+  if(currentPartnerCode!=="TEST001"){
+    showMsg(msg,"This function is only available for TEST001.");
+    return;
+  }
+
+  const code=el("deleteVoucherCode").value.trim();
+  if(!code){
+    showMsg(msg,"Please enter the test voucher code.");
+    return;
+  }
+
+  if(!confirm(`Delete test voucher ${code}? This cannot be undone.`)){
+    return;
+  }
+
+  const btn=el("deleteVoucherBtn");
+  btn.disabled=true;
+  btn.textContent="DELETING…";
+
+  try{
+    const {data,error}=await supabaseClient.rpc("delete_my_test_voucher",{
+      p_voucher_code:code
+    });
+
+    if(error){
+      showMsg(msg,error.message||"Unable to delete test voucher.");
+      return;
+    }
+
+    el("deleteVoucherCode").value="";
+    showMsg(msg,`Test voucher ${code} deleted. Issued count restored.`,"ok");
+
+    if(currentVoucher?.voucher_code===code){
+      currentVoucher=null;
+      el("voucherResultCard")?.classList.add("hidden");
+    }
+
+    await loadPartner();
+  }finally{
+    btn.disabled=false;
+    btn.textContent="DELETE TEST VOUCHER";
+  }
 }
 
 async function changeMyPassword(){
@@ -1268,6 +1354,7 @@ el("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
 createBtn.addEventListener("click",createVoucher);
 shareBtn.addEventListener("click",shareVoucher);
 el("changePasswordBtn").addEventListener("click",changeMyPassword);
+el("deleteVoucherBtn")?.addEventListener("click",deleteTestVoucher);
 logoutBtn.addEventListener("click",async()=>{await supabaseClient.auth.signOut();showLogin()});
 (async function init(){const {data}=await supabaseClient.auth.getSession();if(data?.session)await loadPartner()})();
 </script>
