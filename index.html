@@ -1,93 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover"
+>
+
 <meta name="theme-color" content="#03172b">
 
 <title>Evolution Optical Partner Voucher Platform</title>
 
+
 <style>
+
+/* =========================
+   COLORS
+========================= */
+
 :root{
+
   --navy:#03172b;
   --navy2:#082a4a;
   --navy3:#0d3559;
 
   --gold:#d8a84b;
+  --gold-mid:#c58b2e;
+  --gold-dark:#805319;
   --gold-light:#ffe3a1;
 
-  --black:#050505;
-  --text:#ffffff;
+  --white:#ffffff;
   --muted:#c9d2dc;
 }
 
-*{box-sizing:border-box}
 
-html,body{
+/* =========================
+   RESET
+========================= */
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
   margin:0;
   padding:0;
   min-height:100%;
 }
 
+
+/* =========================
+   BODY
+========================= */
+
 body{
+
   min-height:100vh;
-  color:var(--text);
+
+  color:white;
 
   font-family:
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     Roboto,
+    Helvetica,
     Arial,
     sans-serif;
 
   background:
-    radial-gradient(circle at 50% -10%, #1a537f 0%, transparent 34%),
-    radial-gradient(circle at 12% 40%, #0d3a63 0%, transparent 28%),
-    radial-gradient(circle at 92% 68%, #0a3154 0%, transparent 30%),
-    linear-gradient(145deg,#020b16 0%,#03172b 44%,#020c19 100%);
+
+    radial-gradient(
+      circle at 50% -10%,
+      #1a537f 0%,
+      transparent 34%
+    ),
+
+    radial-gradient(
+      circle at 12% 40%,
+      #0d3a63 0%,
+      transparent 28%
+    ),
+
+    radial-gradient(
+      circle at 92% 68%,
+      #0a3154 0%,
+      transparent 30%
+    ),
+
+    linear-gradient(
+      145deg,
+      #020b16 0%,
+      #03172b 44%,
+      #020c19 100%
+    );
 }
 
-/* ======================
+
+/* =========================
    MAIN
-====================== */
+========================= */
 
 .app{
+
   width:min(820px,100%);
+
   margin:auto;
 
   padding:
     calc(14px + env(safe-area-inset-top))
     14px
     calc(34px + env(safe-area-inset-bottom));
+
 }
 
-/* ======================
+
+/* =========================
    HEADER
-====================== */
+========================= */
 
 .header{
+
   text-align:center;
+
   position:relative;
-  padding:4px 5px 30px;
+
+  padding:
+    5px
+    5px
+    31px;
+
 }
 
-/* ======================
+
+/* =========================
    LOGO
-====================== */
+========================= */
 
 .logo{
-  width:116px;
-  height:116px;
+
+  width:122px;
+  height:122px;
+
   display:block;
-  margin:0 auto 8px;
+
+  margin:
+    0 auto
+    9px;
 
   filter:
-    drop-shadow(0 7px 10px rgba(0,0,0,.95))
-    drop-shadow(0 0 10px rgba(32,118,228,.22));
+
+    drop-shadow(
+      0 10px 12px
+      rgba(0,0,0,.9)
+    )
+
+    drop-shadow(
+      0 0 9px
+      rgba(216,168,75,.22)
+    );
+
+  transform:
+    perspective(500px)
+    rotateX(2deg);
+
 }
 
+
+/* =========================
+   COMPANY NAME
+========================= */
+
 .company-name{
+
   margin:0;
 
   font-family:
@@ -95,33 +183,83 @@ body{
     "Times New Roman",
     serif;
 
-  font-size:clamp(27px,7vw,43px);
-  font-weight:600;
-  letter-spacing:3px;
+  font-size:
+    clamp(
+      27px,
+      7vw,
+      43px
+    );
 
-  color:var(--gold-light);
+  font-weight:700;
+
+  letter-spacing:
+    3px;
+
+  color:
+    #ffe3a1;
 
   text-shadow:
-    0 2px 0 #7b551d,
-    0 5px 9px rgba(0,0,0,.85),
-    0 0 14px rgba(218,168,75,.18);
+
+    0 1px 0
+    #fff0b5,
+
+    0 2px 0
+    #c78d32,
+
+    0 4px 0
+    #765018,
+
+    0 7px 10px
+    rgba(0,0,0,.8),
+
+    0 0 16px
+    rgba(216,168,75,.18);
+
 }
+
+
+/* =========================
+   PLATFORM NAME
+========================= */
 
 .platform-name{
-  margin-top:9px;
-  color:#efc771;
 
-  font-size:12px;
-  font-weight:600;
-  letter-spacing:3.5px;
+  margin-top:
+    10px;
+
+  color:
+    #efc771;
+
+  font-size:
+    12px;
+
+  font-weight:
+    600;
+
+  letter-spacing:
+    3.5px;
+
 }
 
+
+/* =========================
+   HEADER LINE
+========================= */
+
 .header-line{
-  width:78%;
-  height:2px;
-  margin:18px auto 0;
+
+  width:
+    78%;
+
+  height:
+    2px;
+
+  margin:
+    19px auto
+    0;
 
   background:
+
     linear-gradient(
       90deg,
       transparent,
@@ -134,138 +272,248 @@ body{
     );
 
   box-shadow:
-    0 0 6px #a36f20,
-    0 0 16px rgba(255,198,83,.5);
 
-  position:relative;
+    0 0 6px
+    #a36f20,
+
+    0 0 16px
+    rgba(255,198,83,.5);
+
+  position:
+    relative;
+
 }
+
 
 .header-line::after{
+
   content:"";
-  position:absolute;
-  left:50%;
-  top:-2px;
 
-  transform:translateX(-50%);
+  position:
+    absolute;
 
-  width:54px;
-  height:4px;
+  left:
+    50%;
 
-  background:#ffd56f;
+  top:
+    -2px;
 
-  box-shadow:
-    0 0 8px #ffd56f,
-    0 0 18px rgba(255,196,70,.8);
-}
+  transform:
+    translateX(-50%);
 
-/* ======================
-   CARD BASE
-====================== */
+  width:
+    54px;
 
-.card{
-  position:relative;
+  height:
+    4px;
 
   background:
+    #ffd56f;
+
+  box-shadow:
+
+    0 0 8px
+    #ffd56f,
+
+    0 0 18px
+    rgba(255,196,70,.8);
+
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+.card{
+
+  position:
+    relative;
+
+  background:
+
     linear-gradient(
       145deg,
-      rgba(17,58,95,.98),
+      rgba(18,61,100,.98),
       rgba(5,30,54,.98) 58%,
       rgba(2,18,34,.99)
     );
 
-  border:1px solid rgba(219,166,67,.78);
+  border:
 
-  border-radius:20px;
+    1px solid
+    rgba(219,166,67,.82);
+
+  border-radius:
+    21px;
 
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.16),
-    inset 0 -10px 22px rgba(0,0,0,.18),
-    0 2px 0 rgba(0,0,0,.65),
-    0 12px 24px rgba(0,0,0,.48),
-    0 22px 42px rgba(0,0,0,.26),
-    0 0 15px rgba(216,168,75,.08);
 
-  overflow:hidden;
+    inset 0 1px 0
+    rgba(255,255,255,.18),
+
+    inset 0 -12px 25px
+    rgba(0,0,0,.22),
+
+    0 2px 0
+    rgba(0,0,0,.7),
+
+    0 12px 25px
+    rgba(0,0,0,.48),
+
+    0 24px 44px
+    rgba(0,0,0,.28),
+
+    0 0 16px
+    rgba(216,168,75,.10);
+
+  overflow:
+    hidden;
+
 }
+
 
 .card::before{
+
   content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
+
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  pointer-events:
+    none;
 
   background:
+
     linear-gradient(
       120deg,
-      rgba(255,255,255,.09),
-      transparent 20%,
-      transparent 74%,
-      rgba(218,168,75,.06)
+      rgba(255,255,255,.10),
+      transparent 21%,
+      transparent 75%,
+      rgba(218,168,75,.07)
     );
+
 }
 
-/* ======================
+
+/* =========================
    WELCOME
-====================== */
+========================= */
 
 .welcome{
-  display:grid;
-  grid-template-columns:48% 52%;
 
-  min-height:220px;
-  margin-bottom:12px;
+  display:
+    grid;
+
+  grid-template-columns:
+    48% 52%;
+
+  min-height:
+    220px;
+
+  margin-bottom:
+    12px;
+
 }
+
 
 .welcome-image{
-  min-height:220px;
+
+  min-height:
+    220px;
 
   background-image:
+
     linear-gradient(
-      rgba(1,17,31,.05),
-      rgba(1,17,31,.12)
+      rgba(1,17,31,.03),
+      rgba(1,17,31,.14)
     ),
+
     url("welcome-glasses.jpg");
 
-  background-size:cover;
-  background-position:center;
+  background-size:
+    cover;
+
+  background-position:
+    center;
 
   box-shadow:
-    inset -14px 0 24px rgba(0,0,0,.24);
+
+    inset -16px 0 25px
+    rgba(0,0,0,.26);
+
 }
+
 
 .welcome-content{
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
 
-  padding:26px 24px;
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  justify-content:
+    center;
+
+  padding:
+    26px
+    24px;
+
 }
 
+
 .welcome-content h2{
-  margin:0;
+
+  margin:
+    0;
 
   font-family:
     Georgia,
     "Times New Roman",
     serif;
 
-  font-size:38px;
-  font-weight:600;
+  font-size:
+    38px;
 
-  color:var(--gold-light);
+  font-weight:
+    700;
+
+  color:
+    var(--gold-light);
 
   text-shadow:
-    0 2px 0 #6f4b19,
-    0 5px 9px rgba(0,0,0,.7);
+
+    0 1px 0
+    #fff0b4,
+
+    0 3px 0
+    #a86f21,
+
+    0 6px 10px
+    rgba(0,0,0,.75);
+
 }
 
-.title-line{
-  width:57px;
-  height:3px;
 
-  margin:13px 0 16px;
+.title-line{
+
+  width:
+    57px;
+
+  height:
+    3px;
+
+  margin:
+    13px
+    0
+    16px;
 
   background:
+
     linear-gradient(
       90deg,
       #b47a27,
@@ -273,271 +521,508 @@ body{
     );
 
   box-shadow:
-    0 0 8px rgba(216,168,75,.55);
+
+    0 0 8px
+    rgba(216,168,75,.55);
+
 }
+
 
 .welcome-content p{
-  margin:0;
-  color:#f0f3f7;
 
-  font-size:16px;
-  line-height:1.55;
+  margin:
+    0;
 
-  text-shadow:0 2px 4px rgba(0,0,0,.35);
+  color:
+    #f0f3f7;
+
+  font-size:
+    16px;
+
+  line-height:
+    1.55;
+
+  text-shadow:
+
+    0 2px 4px
+    rgba(0,0,0,.35);
+
 }
 
-/* ======================
-   PORTAL
-====================== */
+
+/* =========================
+   PORTALS
+========================= */
 
 .portals{
-  display:grid;
-  gap:11px;
+
+  display:
+    grid;
+
+  gap:
+    11px;
+
 }
 
+
 .portal{
-  min-height:122px;
 
-  display:grid;
-  grid-template-columns:88px 1fr 54px;
-  align-items:center;
+  min-height:
+    122px;
 
-  padding:14px 18px;
+  display:
+    grid;
 
-  color:white;
-  text-decoration:none;
+  grid-template-columns:
+    88px
+    1fr
+    54px;
+
+  align-items:
+    center;
+
+  padding:
+    14px
+    18px;
+
+  color:
+    white;
+
+  text-decoration:
+    none;
 
   transition:
     transform .16s ease,
     filter .16s ease,
     box-shadow .16s ease;
+
 }
+
 
 .portal:hover{
-  filter:brightness(1.07);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.18),
-    inset 0 -10px 22px rgba(0,0,0,.18),
-    0 2px 0 rgba(0,0,0,.65),
-    0 15px 30px rgba(0,0,0,.55),
-    0 0 20px rgba(216,168,75,.12);
-}
-
-.portal:active{
-  transform:translateY(2px) scale(.99);
-}
-
-/* ======================
-   ICON BUTTON
-====================== */
-
-.portal-icon{
-  width:70px;
-  height:70px;
-
-  display:grid;
-  place-items:center;
-
-  border-radius:50%;
-
-  background:
-    radial-gradient(
-      circle at 35% 25%,
-      #1c568b,
-      #092b4e 46%,
-      #02111f 78%
-    );
-
-  border:1px solid rgba(229,183,89,.86);
-
-  box-shadow:
-    inset 0 2px 3px rgba(255,255,255,.13),
-    inset 0 -8px 16px rgba(0,0,0,.6),
-    0 2px 0 #02080d,
-    0 7px 13px rgba(0,0,0,.7),
-    0 0 10px rgba(216,168,75,.14);
-}
-
-.portal-icon svg{
-  width:39px;
-  height:39px;
-
-  stroke:var(--gold-light);
-  fill:none;
-
-  stroke-width:1.8;
-  stroke-linecap:round;
-  stroke-linejoin:round;
 
   filter:
-    drop-shadow(0 2px 2px rgba(0,0,0,.65));
+    brightness(1.08);
+
+  box-shadow:
+
+    inset 0 1px 0
+    rgba(255,255,255,.20),
+
+    inset 0 -12px 22px
+    rgba(0,0,0,.20),
+
+    0 3px 0
+    rgba(0,0,0,.65),
+
+    0 17px 32px
+    rgba(0,0,0,.55),
+
+    0 0 22px
+    rgba(216,168,75,.15);
+
 }
 
-/* ======================
+
+.portal:active{
+
+  transform:
+    translateY(2px)
+    scale(.99);
+
+}
+
+
+/* =========================
+   PORTAL ICON
+========================= */
+
+.portal-icon{
+
+  width:
+    70px;
+
+  height:
+    70px;
+
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  border-radius:
+    50%;
+
+  background:
+
+    radial-gradient(
+      circle at 35% 24%,
+      #1b527f,
+      #092b4e 47%,
+      #02111f 80%
+    );
+
+  border:
+
+    1px solid
+    rgba(229,183,89,.90);
+
+  box-shadow:
+
+    inset 0 2px 3px
+    rgba(255,255,255,.15),
+
+    inset 0 -8px 16px
+    rgba(0,0,0,.62),
+
+    0 2px 0
+    #02080d,
+
+    0 8px 14px
+    rgba(0,0,0,.72),
+
+    0 0 12px
+    rgba(216,168,75,.16);
+
+}
+
+
+.portal-icon svg{
+
+  width:
+    39px;
+
+  height:
+    39px;
+
+  stroke:
+    var(--gold-light);
+
+  fill:
+    none;
+
+  stroke-width:
+    1.8;
+
+  stroke-linecap:
+    round;
+
+  stroke-linejoin:
+    round;
+
+  filter:
+
+    drop-shadow(
+      0 2px 2px
+      rgba(0,0,0,.65)
+    );
+
+}
+
+
+/* =========================
    PORTAL INFO
-====================== */
+========================= */
 
 .portal-info{
-  display:grid;
-  grid-template-columns:minmax(125px,37%) 1fr;
-  gap:18px;
-  align-items:center;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    minmax(125px,37%)
+    1fr;
+
+  gap:
+    18px;
+
+  align-items:
+    center;
+
 }
 
+
 .portal-info h3{
-  margin:0;
+
+  margin:
+    0;
 
   font-family:
     Georgia,
     "Times New Roman",
     serif;
 
-  font-size:29px;
-  font-weight:600;
+  font-size:
+    29px;
 
-  color:var(--gold-light);
+  font-weight:
+    700;
+
+  color:
+    var(--gold-light);
 
   text-shadow:
-    0 2px 0 #704b18,
-    0 4px 7px rgba(0,0,0,.7);
+
+    0 1px 0
+    #fff0b4,
+
+    0 3px 0
+    #9b681f,
+
+    0 5px 8px
+    rgba(0,0,0,.72);
+
 }
+
 
 .portal-info p{
-  margin:0;
-  color:#eef2f6;
 
-  font-size:15px;
-  line-height:1.4;
+  margin:
+    0;
+
+  color:
+    #eef2f6;
+
+  font-size:
+    15px;
+
+  line-height:
+    1.4;
+
 }
 
-/* ======================
-   ARROW BUTTON
-====================== */
+
+/* =========================
+   ARROW
+========================= */
 
 .arrow{
-  width:45px;
-  height:45px;
 
-  justify-self:end;
+  width:
+    45px;
 
-  display:grid;
-  place-items:center;
+  height:
+    45px;
 
-  border-radius:50%;
+  justify-self:
+    end;
 
-  border:1px solid var(--gold);
+  display:
+    grid;
 
-  color:var(--gold-light);
+  place-items:
+    center;
 
-  font-family:Arial,sans-serif;
-  font-size:29px;
-  font-weight:700;
+  border-radius:
+    50%;
+
+  border:
+
+    1px solid
+    var(--gold);
+
+  color:
+    var(--gold-light);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size:
+    29px;
+
+  font-weight:
+    700;
 
   background:
+
     radial-gradient(
       circle at 35% 24%,
-      #184b7a,
+      #174b78,
       #052540 64%,
       #021522
     );
 
   box-shadow:
-    inset 0 1px 2px rgba(255,255,255,.13),
-    inset 0 -5px 10px rgba(0,0,0,.55),
-    0 2px 0 #02080d,
-    0 6px 12px rgba(0,0,0,.62),
-    0 0 8px rgba(216,168,75,.18);
+
+    inset 0 1px 2px
+    rgba(255,255,255,.15),
+
+    inset 0 -5px 10px
+    rgba(0,0,0,.58),
+
+    0 2px 0
+    #02080d,
+
+    0 7px 13px
+    rgba(0,0,0,.65),
+
+    0 0 9px
+    rgba(216,168,75,.20);
+
 }
 
-/* ======================
+
+/* =========================
    FEATURES
-====================== */
+========================= */
 
 .features{
-  margin-top:12px;
 
-  padding:16px 7px;
+  margin-top:
+    12px;
 
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
+  padding:
+    16px
+    7px;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
 }
+
 
 .feature{
-  min-height:60px;
 
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
+  min-height:
+    60px;
 
-  padding:5px 11px;
+  display:
+    flex;
+
+  justify-content:
+    center;
+
+  align-items:
+    center;
+
+  gap:
+    10px;
+
+  padding:
+    5px
+    11px;
 
   border-right:
-    1px solid rgba(218,168,75,.42);
+
+    1px solid
+    rgba(218,168,75,.45);
+
 }
+
 
 .feature:last-child{
-  border-right:none;
+
+  border-right:
+    none;
+
 }
+
 
 .feature svg{
-  width:31px;
-  height:31px;
 
-  flex:0 0 31px;
+  width:
+    31px;
 
-  stroke:var(--gold-light);
-  fill:none;
+  height:
+    31px;
 
-  stroke-width:1.8;
-  stroke-linecap:round;
-  stroke-linejoin:round;
+  flex:
+    0 0 31px;
+
+  stroke:
+    var(--gold-light);
+
+  fill:
+    none;
+
+  stroke-width:
+    1.8;
+
+  stroke-linecap:
+    round;
+
+  stroke-linejoin:
+    round;
 
   filter:
-    drop-shadow(0 2px 2px rgba(0,0,0,.55));
+
+    drop-shadow(
+      0 2px 2px
+      rgba(0,0,0,.55)
+    );
+
 }
+
 
 .feature span{
-  color:var(--gold-light);
+
+  color:
+    var(--gold-light);
 
   font-family:
     Georgia,
     "Times New Roman",
     serif;
 
-  font-size:14px;
-  line-height:1.25;
+  font-size:
+    14px;
 
-  text-shadow:0 2px 4px rgba(0,0,0,.5);
+  line-height:
+    1.25;
+
+  text-shadow:
+
+    0 2px 4px
+    rgba(0,0,0,.5);
+
 }
 
-/* ======================
+
+/* =========================
    FOOTER
-====================== */
+========================= */
 
 .footer{
-  text-align:center;
 
-  margin-top:20px;
+  text-align:
+    center;
 
-  color:#d7b56c;
+  margin-top:
+    21px;
+
+  color:
+    #d7b56c;
 
   font-family:
     Georgia,
     "Times New Roman",
     serif;
 
-  font-size:13px;
+  font-size:
+    13px;
+
 }
 
-.footer-line{
-  width:72%;
-  height:1px;
 
-  margin:15px auto 0;
+.footer-line{
+
+  width:
+    72%;
+
+  height:
+    1px;
+
+  margin:
+    15px auto
+    0;
 
   background:
+
     linear-gradient(
       90deg,
       transparent,
@@ -548,162 +1033,336 @@ body{
     );
 
   box-shadow:
-    0 0 7px rgba(255,193,67,.5);
+
+    0 0 7px
+    rgba(255,193,67,.5);
+
 }
 
-/* ======================
+
+/* =========================
    MOBILE
-====================== */
+========================= */
 
 @media(max-width:600px){
 
   .logo{
-    width:100px;
-    height:100px;
+
+    width:
+      102px;
+
+    height:
+      102px;
+
   }
+
 
   .company-name{
-    font-size:clamp(25px,7.3vw,34px);
-    letter-spacing:2px;
+
+    font-size:
+      clamp(
+        25px,
+        7.3vw,
+        34px
+      );
+
+    letter-spacing:
+      2px;
+
   }
+
 
   .platform-name{
-    font-size:11px;
-    letter-spacing:2.5px;
+
+    font-size:
+      11px;
+
+    letter-spacing:
+      2.5px;
+
   }
+
 
   .welcome{
-    min-height:205px;
-    grid-template-columns:45% 55%;
+
+    min-height:
+      205px;
+
+    grid-template-columns:
+      45% 55%;
+
   }
+
 
   .welcome-image{
-    min-height:205px;
+
+    min-height:
+      205px;
+
   }
+
 
   .welcome-content{
-    padding:20px 17px;
+
+    padding:
+      20px
+      17px;
+
   }
+
 
   .welcome-content h2{
-    font-size:31px;
+
+    font-size:
+      31px;
+
   }
+
 
   .welcome-content p{
-    font-size:14px;
+
+    font-size:
+      14px;
+
   }
 
+
   .portal{
-    min-height:116px;
+
+    min-height:
+      116px;
 
     grid-template-columns:
       72px
       1fr
       42px;
 
-    padding:12px 13px;
+    padding:
+      12px
+      13px;
+
   }
+
 
   .portal-icon{
-    width:59px;
-    height:59px;
+
+    width:
+      59px;
+
+    height:
+      59px;
+
   }
+
 
   .portal-icon svg{
-    width:32px;
-    height:32px;
+
+    width:
+      32px;
+
+    height:
+      32px;
+
   }
+
 
   .portal-info{
-    display:block;
+
+    display:
+      block;
+
   }
+
 
   .portal-info h3{
-    font-size:25px;
-    margin-bottom:6px;
+
+    font-size:
+      25px;
+
+    margin-bottom:
+      6px;
+
   }
+
 
   .portal-info p{
-    font-size:13px;
+
+    font-size:
+      13px;
+
   }
+
 
   .arrow{
-    width:38px;
-    height:38px;
-    font-size:25px;
+
+    width:
+      38px;
+
+    height:
+      38px;
+
+    font-size:
+      25px;
+
   }
+
 
   .features{
-    padding:13px 3px;
+
+    padding:
+      13px
+      3px;
+
   }
+
 
   .feature{
-    display:block;
-    text-align:center;
-    padding:4px 5px;
+
+    display:
+      block;
+
+    text-align:
+      center;
+
+    padding:
+      4px
+      5px;
+
   }
+
 
   .feature svg{
-    width:27px;
-    height:27px;
-    margin-bottom:5px;
+
+    width:
+      27px;
+
+    height:
+      27px;
+
+    margin-bottom:
+      5px;
+
   }
 
+
   .feature span{
-    display:block;
-    font-size:10px;
+
+    display:
+      block;
+
+    font-size:
+      10px;
+
   }
+
 }
+
+
+/* =========================
+   SMALL MOBILE
+========================= */
 
 @media(max-width:390px){
 
   .welcome{
-    grid-template-columns:1fr;
+
+    grid-template-columns:
+      1fr;
+
   }
+
 
   .welcome-image{
-    height:150px;
-    min-height:150px;
+
+    height:
+      150px;
+
+    min-height:
+      150px;
+
   }
+
 
   .welcome-content{
-    padding:18px 20px 22px;
+
+    padding:
+      18px
+      20px
+      22px;
+
   }
 
+
   .portal{
+
     grid-template-columns:
       65px
       1fr
       36px;
+
   }
+
 
   .portal-icon{
-    width:54px;
-    height:54px;
+
+    width:
+      54px;
+
+    height:
+      54px;
+
   }
+
 
   .portal-info h3{
-    font-size:23px;
+
+    font-size:
+      23px;
+
   }
+
 
   .portal-info p{
-    font-size:12px;
+
+    font-size:
+      12px;
+
   }
 
+
   .arrow{
-    width:33px;
-    height:33px;
-    font-size:22px;
+
+    width:
+      33px;
+
+    height:
+      33px;
+
+    font-size:
+      22px;
+
   }
+
 }
+
 </style>
+
 </head>
+
 
 <body>
 
 <main class="app">
 
+
+<!-- =========================
+     HEADER
+========================= -->
+
 <header class="header">
+
+
+<!-- GOLD 3D LOGO -->
 
 <svg
   class="logo"
@@ -714,39 +1373,118 @@ body{
 
 <defs>
 
-  <linearGradient
-    id="blueMetal"
-    x1="0"
-    y1="0"
-    x2="1"
-    y2="1"
-  >
-    <stop offset="0%" stop-color="#3d9cff"/>
-    <stop offset="45%" stop-color="#0757bb"/>
-    <stop offset="100%" stop-color="#003b87"/>
-  </linearGradient>
 
-  <filter
-    id="shadow"
-    x="-40%"
-    y="-40%"
-    width="180%"
-    height="180%"
-  >
-    <feDropShadow
-      dx="0"
-      dy="6"
-      stdDeviation="5"
-      flood-color="#000"
-      flood-opacity=".9"
-    />
-  </filter>
+<!-- GOLD METAL -->
+
+<linearGradient
+  id="goldMetal"
+  x1="0"
+  y1="0"
+  x2="1"
+  y2="1"
+>
+
+<stop
+  offset="0%"
+  stop-color="#fff6cf"
+/>
+
+<stop
+  offset="16%"
+  stop-color="#ffe7a0"
+/>
+
+<stop
+  offset="38%"
+  stop-color="#e6b85b"
+/>
+
+<stop
+  offset="58%"
+  stop-color="#b87922"
+/>
+
+<stop
+  offset="76%"
+  stop-color="#f0c86e"
+/>
+
+<stop
+  offset="100%"
+  stop-color="#8a5517"
+/>
+
+</linearGradient>
+
+
+<!-- BRIGHT GOLD -->
+
+<linearGradient
+  id="goldBright"
+  x1="0"
+  y1="0"
+  x2="0"
+  y2="1"
+>
+
+<stop
+  offset="0%"
+  stop-color="#fff9dc"
+/>
+
+<stop
+  offset="30%"
+  stop-color="#ffd978"
+/>
+
+<stop
+  offset="65%"
+  stop-color="#d89b32"
+/>
+
+<stop
+  offset="100%"
+  stop-color="#8e5818"
+/>
+
+</linearGradient>
+
+
+<!-- SHADOW -->
+
+<filter
+  id="goldShadow"
+  x="-50%"
+  y="-50%"
+  width="200%"
+  height="200%"
+>
+
+<feDropShadow
+  dx="0"
+  dy="7"
+  stdDeviation="6"
+  flood-color="#000000"
+  flood-opacity=".88"
+/>
+
+<feDropShadow
+  dx="0"
+  dy="0"
+  stdDeviation="3"
+  flood-color="#e8b452"
+  flood-opacity=".35"
+/>
+
+</filter>
 
 </defs>
 
-<g filter="url(#shadow)">
 
-<!-- PURE BLACK OUTER CIRCLE -->
+<g filter="url(#goldShadow)">
+
+
+<!-- LEFT OUTER RING -->
 
 <path
   d="
@@ -756,9 +1494,13 @@ body{
     A78 78 0 0 0 80 176
   "
   fill="none"
-  stroke="#050505"
+  stroke="url(#goldMetal)"
   stroke-width="18"
+  stroke-linecap="butt"
 />
+
+
+<!-- TOP RING -->
 
 <path
   d="
@@ -766,9 +1508,12 @@ body{
     A78 78 0 0 1 149 43
   "
   fill="none"
-  stroke="#050505"
+  stroke="url(#goldMetal)"
   stroke-width="18"
 />
+
+
+<!-- BOTTOM RING -->
 
 <path
   d="
@@ -776,11 +1521,12 @@ body{
     A78 78 0 0 0 146 159
   "
   fill="none"
-  stroke="#050505"
+  stroke="url(#goldMetal)"
   stroke-width="18"
 />
 
-<!-- BLUE RIGHT ARC -->
+
+<!-- RIGHT ARC -->
 
 <path
   d="
@@ -791,12 +1537,13 @@ body{
     Q174 101 166 72
     Q161 51 147 37
   "
-  fill="url(#blueMetal)"
-  stroke="#419cff"
-  stroke-width="1"
+  fill="url(#goldMetal)"
+  stroke="#fff0b8"
+  stroke-width="1.5"
 />
 
-<!-- PURE BLACK TOP -->
+
+<!-- TOP TRIANGLE -->
 
 <path
   d="
@@ -805,10 +1552,13 @@ body{
     L158 91
     Z
   "
-  fill="#050505"
+  fill="url(#goldMetal)"
+  stroke="#fff1bd"
+  stroke-width="1.2"
 />
 
-<!-- PURE BLACK BOTTOM -->
+
+<!-- BOTTOM TRIANGLE -->
 
 <path
   d="
@@ -817,10 +1567,13 @@ body{
     L148 148
     Z
   "
-  fill="#050505"
+  fill="url(#goldMetal)"
+  stroke="#fff1bd"
+  stroke-width="1.2"
 />
 
-<!-- BLUE CENTER BAR -->
+
+<!-- CENTER BAR -->
 
 <path
   d="
@@ -834,217 +1587,532 @@ body{
     L74 101
     Z
   "
-  fill="url(#blueMetal)"
+  fill="url(#goldBright)"
+  stroke="#fff3c4"
+  stroke-width="1.3"
+/>
+
+
+<!-- TOP HIGHLIGHT -->
+
+<path
+  d="
+    M49 63
+    Q67 35 95 31
+  "
+  fill="none"
+  stroke="rgba(255,255,255,.58)"
+  stroke-width="2.2"
+  stroke-linecap="round"
+/>
+
+
+<!-- CENTER HIGHLIGHT -->
+
+<path
+  d="
+    M92 91
+    H145
+  "
+  fill="none"
+  stroke="rgba(255,255,255,.52)"
+  stroke-width="1.8"
+  stroke-linecap="round"
 />
 
 </g>
 
 </svg>
 
+
 <h1 class="company-name">
-  EVOLUTION OPTICAL
+EVOLUTION OPTICAL
 </h1>
 
+
 <div class="platform-name">
-  PARTNER VOUCHER PLATFORM
+PARTNER VOUCHER PLATFORM
 </div>
 
+
 <div class="header-line"></div>
+
 
 </header>
 
 
+
+<!-- =========================
+     WELCOME
+========================= -->
+
 <section class="welcome card">
+
 
 <div
   class="welcome-image"
   aria-label="Eyeglasses"
 ></div>
 
+
 <div class="welcome-content">
 
-<h2>Welcome</h2>
+
+<h2>
+Welcome
+</h2>
+
 
 <div class="title-line"></div>
 
+
 <p>
-  Select your portal below.
-  Access will be based on your
-  assigned account role.
+
+Select your portal below.
+Access will be based on your
+assigned account role.
+
 </p>
 
+
 </div>
+
 
 </section>
 
 
+
+<!-- =========================
+     PORTALS
+========================= -->
+
 <section class="portals">
+
+
+
+<!-- ADMIN -->
 
 <a
   class="portal card"
   href="admin.html"
 >
 
+
 <div class="portal-icon">
 
+
 <svg viewBox="0 0 48 48">
-  <circle cx="24" cy="15" r="7"/>
-  <circle cx="10" cy="20" r="5"/>
-  <circle cx="38" cy="20" r="5"/>
-  <path d="M12 40v-5c0-7 5-11 12-11s12 4 12 11v5"/>
-  <path d="M2 38v-4c0-5 3-8 8-8"/>
-  <path d="M46 38v-4c0-5-3-8-8-8"/>
+
+<circle
+  cx="24"
+  cy="15"
+  r="7"
+/>
+
+<circle
+  cx="10"
+  cy="20"
+  r="5"
+/>
+
+<circle
+  cx="38"
+  cy="20"
+  r="5"
+/>
+
+<path
+  d="
+    M12 40
+    v-5
+    c0-7 5-11 12-11
+    s12 4 12 11
+    v5
+  "
+/>
+
+<path
+  d="
+    M2 38
+    v-4
+    c0-5 3-8 8-8
+  "
+/>
+
+<path
+  d="
+    M46 38
+    v-4
+    c0-5-3-8-8-8
+  "
+/>
+
 </svg>
 
+
 </div>
+
 
 <div class="portal-info">
 
-<h3>Admin</h3>
+
+<h3>
+Admin
+</h3>
+
 
 <p>
-  Manage partners, branches,
-  staff, vouchers and reports.
+
+Manage partners,
+branches,
+staff,
+vouchers and reports.
+
 </p>
+
 
 </div>
 
-<div class="arrow">›</div>
+
+<div class="arrow">
+›
+</div>
+
 
 </a>
 
+
+
+<!-- PARTNER -->
 
 <a
   class="portal card"
   href="partner.html"
 >
 
+
 <div class="portal-icon">
 
+
 <svg viewBox="0 0 48 48">
-  <path d="M4 17l9-8 8 6"/>
-  <path d="M44 17l-9-8-8 6"/>
-  <path d="M13 27l9 9c2 2 5 2 7 0l10-10"/>
-  <path d="M9 21l11 11"/>
-  <path d="M39 21L28 32"/>
-  <path d="M18 14l5-4c3-2 6-2 9 0l5 4"/>
-  <path d="M7 14l6 7-7 7-5-8z"/>
-  <path d="M41 14l-6 7 7 7 5-8z"/>
+
+<path
+  d="M4 17l9-8 8 6"
+/>
+
+<path
+  d="M44 17l-9-8-8 6"
+/>
+
+<path
+  d="
+    M13 27
+    l9 9
+    c2 2 5 2 7 0
+    l10-10
+  "
+/>
+
+<path
+  d="M9 21l11 11"
+/>
+
+<path
+  d="M39 21L28 32"
+/>
+
+<path
+  d="
+    M18 14
+    l5-4
+    c3-2 6-2 9 0
+    l5 4
+  "
+/>
+
+<path
+  d="M7 14l6 7-7 7-5-8z"
+/>
+
+<path
+  d="M41 14l-6 7 7 7 5-8z"
+/>
+
 </svg>
 
+
 </div>
+
 
 <div class="portal-info">
 
-<h3>Partner</h3>
+
+<h3>
+Partner
+</h3>
+
 
 <p>
-  Create QR vouchers,
-  manage allocations and
-  view issued vouchers.
+
+Create QR vouchers,
+manage allocations
+and view issued vouchers.
+
 </p>
+
 
 </div>
 
-<div class="arrow">›</div>
+
+<div class="arrow">
+›
+</div>
+
 
 </a>
 
+
+
+<!-- STAFF -->
 
 <a
   class="portal card"
   href="staff.html"
 >
 
+
 <div class="portal-icon">
 
+
 <svg viewBox="0 0 48 48">
-  <path d="M24 4l16 6v12c0 11-6 18-16 22C14 40 8 33 8 22V10z"/>
-  <rect x="17" y="22" width="14" height="12" rx="2"/>
-  <path d="M20 22v-4a4 4 0 018 0v4"/>
-  <path d="M24 27v3"/>
+
+<path
+  d="
+    M24 4
+    l16 6
+    v12
+    c0 11-6 18-16 22
+    C14 40 8 33 8 22
+    V10
+    z
+  "
+/>
+
+<rect
+  x="17"
+  y="22"
+  width="14"
+  height="12"
+  rx="2"
+/>
+
+<path
+  d="
+    M20 22
+    v-4
+    a4 4 0 0 1 8 0
+    v4
+  "
+/>
+
+<path
+  d="M24 27v3"
+/>
+
 </svg>
 
+
 </div>
+
 
 <div class="portal-info">
 
-<h3>Staff</h3>
+
+<h3>
+Staff
+</h3>
+
 
 <p>
-  Scan, verify and redeem
-  customer vouchers at
-  Evolution Optical branches.
+
+Scan,
+verify and redeem
+customer vouchers at
+Evolution Optical branches.
+
 </p>
+
 
 </div>
 
-<div class="arrow">›</div>
+
+<div class="arrow">
+›
+</div>
+
 
 </a>
 
+
 </section>
 
+
+
+<!-- =========================
+     FEATURES
+========================= -->
 
 <section class="features card">
 
-<div class="feature">
-
-<svg viewBox="0 0 48 48">
-  <path d="M24 4l16 6v12c0 11-6 18-16 22C14 40 8 33 8 22V10z"/>
-  <path d="M17 24l5 5 10-11"/>
-</svg>
-
-<span>Secure access</span>
-
-</div>
 
 
 <div class="feature">
 
+
 <svg viewBox="0 0 48 48">
-  <rect x="5" y="5" width="14" height="14"/>
-  <rect x="29" y="5" width="14" height="14"/>
-  <rect x="5" y="29" width="14" height="14"/>
-  <path d="M29 29h6v6h8"/>
-  <path d="M29 43v-6"/>
-  <path d="M37 43h6v-6"/>
+
+<path
+  d="
+    M24 4
+    l16 6
+    v12
+    c0 11-6 18-16 22
+    C14 40 8 33 8 22
+    V10
+    z
+  "
+/>
+
+<path
+  d="M17 24l5 5 10-11"
+/>
+
 </svg>
 
-<span>Voucher verification</span>
+
+<span>
+Secure access
+</span>
+
 
 </div>
+
 
 
 <div class="feature">
 
+
 <svg viewBox="0 0 48 48">
-  <path d="M6 18h36"/>
-  <path d="M9 18v24h30V18"/>
-  <path d="M4 18l5-10h30l5 10"/>
-  <path d="M18 42V29h12v13"/>
-  <path d="M12 24h5"/>
-  <path d="M31 24h5"/>
+
+<rect
+  x="5"
+  y="5"
+  width="14"
+  height="14"
+/>
+
+<rect
+  x="29"
+  y="5"
+  width="14"
+  height="14"
+/>
+
+<rect
+  x="5"
+  y="29"
+  width="14"
+  height="14"
+/>
+
+<path
+  d="M29 29h6v6h8"
+/>
+
+<path
+  d="M29 43v-6"
+/>
+
+<path
+  d="M37 43h6v-6"
+/>
+
 </svg>
 
-<span>Branch-controlled redemption</span>
+
+<span>
+Voucher verification
+</span>
+
 
 </div>
+
+
+
+<div class="feature">
+
+
+<svg viewBox="0 0 48 48">
+
+<path
+  d="M6 18h36"
+/>
+
+<path
+  d="M9 18v24h30V18"
+/>
+
+<path
+  d="M4 18l5-10h30l5 10"
+/>
+
+<path
+  d="M18 42V29h12v13"
+/>
+
+<path
+  d="M12 24h5"
+/>
+
+<path
+  d="M31 24h5"
+/>
+
+</svg>
+
+
+<span>
+Branch-controlled redemption
+</span>
+
+
+</div>
+
 
 </section>
 
 
+
+<!-- =========================
+     FOOTER
+========================= -->
+
 <footer class="footer">
+
 
 Evolution Optical
 &nbsp; • &nbsp;
 Partner Voucher Platform
 
+
 <div class="footer-line"></div>
 
+
 </footer>
+
 
 </main>
 
 </body>
+
 </html>
