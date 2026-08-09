@@ -1057,6 +1057,198 @@ svg{
   }
 }
 
+
+/* =========================
+   COMPACT MOBILE HOME
+   Shorter main page while preserving all links/functions.
+========================= */
+@media(max-width:600px){
+
+  .app{
+    padding-top:calc(6px + env(safe-area-inset-top));
+    padding-bottom:calc(14px + env(safe-area-inset-bottom));
+  }
+
+  .header{
+    padding:0 2px 15px;
+  }
+
+  .logo{
+    width:72px;
+    height:72px;
+    margin-bottom:3px;
+  }
+
+  .company-name{
+    font-size:clamp(21px,6.5vw,28px);
+    line-height:1;
+  }
+
+  .platform-name{
+    margin-top:6px;
+    font-size:9px;
+    letter-spacing:1.7px;
+  }
+
+  .header-line{
+    margin-top:10px;
+  }
+
+  .welcome{
+    min-height:126px;
+    margin-bottom:8px;
+    grid-template-columns:minmax(0,38%) minmax(0,62%);
+  }
+
+  .welcome-image{
+    min-height:126px;
+  }
+
+  .welcome-content{
+    padding:12px 13px;
+  }
+
+  .welcome-content h2{
+    font-size:24px;
+  }
+
+  .title-line{
+    height:2px;
+    margin:7px 0 8px;
+  }
+
+  .welcome-content p{
+    font-size:11.5px;
+    line-height:1.32;
+  }
+
+  .portals{
+    gap:7px;
+  }
+
+  .portal{
+    min-height:82px;
+    grid-template-columns:48px minmax(0,1fr) 29px;
+    gap:7px;
+    padding:8px 9px;
+  }
+
+  .portal-icon{
+    width:43px;
+    height:43px;
+  }
+
+  .portal-icon svg{
+    width:24px;
+    height:24px;
+  }
+
+  .portal-info h3{
+    font-size:19px;
+    margin-bottom:3px;
+  }
+
+  .portal-info p{
+    font-size:10.5px;
+    line-height:1.25;
+  }
+
+  .arrow{
+    width:27px;
+    height:27px;
+    font-size:19px;
+  }
+
+  .features{
+    margin-top:8px;
+    min-height:0;
+    padding:7px 2px;
+  }
+
+  .feature{
+    min-height:42px;
+    padding:2px 3px;
+  }
+
+  .feature svg{
+    width:20px;
+    height:20px;
+    margin-bottom:2px;
+  }
+
+  .feature span{
+    font-size:8px;
+    line-height:1.1;
+  }
+
+  .footer{
+    margin-top:10px;
+    font-size:9.5px;
+  }
+
+  .footer-line{
+    margin-top:8px;
+  }
+}
+
+/* Keep the compact two-column Welcome card even on narrow phones. */
+@media(max-width:480px){
+  .welcome{
+    grid-template-columns:minmax(0,38%) minmax(0,62%);
+  }
+
+  .welcome-image{
+    height:auto;
+    min-height:126px;
+    background-position:center;
+  }
+
+  .welcome-content{
+    padding:11px 12px;
+  }
+
+  .welcome-content h2{
+    font-size:23px;
+  }
+}
+
+@media(max-width:360px){
+  .logo{
+    width:66px;
+    height:66px;
+  }
+
+  .company-name{
+    font-size:20px;
+  }
+
+  .welcome{
+    min-height:118px;
+  }
+
+  .welcome-image{
+    min-height:118px;
+  }
+
+  .portal{
+    min-height:78px;
+    grid-template-columns:44px minmax(0,1fr) 27px;
+  }
+
+  .portal-icon{
+    width:40px;
+    height:40px;
+  }
+
+  .portal-info h3{
+    font-size:18px;
+  }
+
+  .portal-info p{
+    font-size:10px;
+  }
+}
+
 </style>
 </head>
 
@@ -1237,7 +1429,7 @@ svg{
 />
 
 
-<!-- SLIM RIGHT ARC -->
+<!-- SLIM RIGHT ARC + RESTORED PROTRUSION -->
 
 <path
   d="
@@ -1251,6 +1443,32 @@ svg{
   fill="url(#goldMetal)"
   stroke="#fff0b8"
   stroke-width="1.2"
+/>
+
+<!-- RIGHT 3D PROTRUSION -->
+<path
+  d="
+    M169 88
+    Q186 92 190 101
+    Q186 110 169 114
+    Q172 101 169 88
+    Z
+  "
+  fill="url(#goldBright)"
+  stroke="#fff3c4"
+  stroke-width="1.2"
+/>
+
+<!-- PROTRUSION HIGHLIGHT -->
+<path
+  d="
+    M174 93
+    Q183 96 186 101
+  "
+  fill="none"
+  stroke="rgba(255,255,255,.65)"
+  stroke-width="1.4"
+  stroke-linecap="round"
 />
 
 
