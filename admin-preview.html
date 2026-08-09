@@ -3,399 +3,180 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#081a2f">
+<meta name="theme-color" content="#0a1d35">
 <title>Evolution Optical • Admin Modern Preview</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{
-  --bg:#eef3f9;--ink:#0b1220;--muted:#6b7280;--line:#e6ebf2;--navy:#081a2f;--navy2:#0d2746;
-  --blue:#2563eb;--cyan:#39c6ff;--green:#16a34a;--red:#dc2626;--amber:#f59e0b;
-  --shadow:0 18px 42px rgba(24,39,66,.12),0 6px 14px rgba(26,50,86,.06),inset 0 1px 0 rgba(255,255,255,.82);
+html,body{margin:0;width:100%;height:100%;background:#eef3f9;overflow:hidden}
+#adminFrame{width:100%;height:100%;border:0;display:block;background:#eef3f9}
+#loading{
+  position:fixed;inset:0;display:grid;place-items:center;
+  background:radial-gradient(circle at 80% 0%,rgba(96,165,250,.15),transparent 30%),#eef3f9;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#0f172a;z-index:10
 }
-*{box-sizing:border-box}html,body{margin:0;background:radial-gradient(circle at 80% 0%,rgba(96,165,250,.12),transparent 30%),var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-button,input{font:inherit}.hidden{display:none!important}.shell{display:grid;grid-template-columns:245px 1fr;min-height:100vh}
-.sidebar{position:sticky;top:0;height:100vh;padding:20px 15px;background:linear-gradient(180deg,var(--navy),var(--navy2));color:#fff}
-.brand{display:flex;align-items:center;gap:11px;padding:4px 8px 24px}.brandmark{width:45px;height:45px;border-radius:15px;background:linear-gradient(135deg,#8b5cf6,#4f7cff,#22d3ee);position:relative}.brandmark:before{content:"";position:absolute;inset:10px;border:3px solid #fff;border-left-color:transparent;border-radius:50%}.brand b{font-size:14px;letter-spacing:.8px}.brand small{display:block;color:#a7c7ef;margin-top:3px;font-size:11px}
-.nav{display:grid;gap:6px}.nav button{border:0;background:transparent;color:#c9dcf2;text-align:left;padding:11px 12px;border-radius:13px;font-weight:750}.nav button.active{background:linear-gradient(90deg,rgba(84,135,255,.20),rgba(50,184,255,.08));color:#fff}.nav span{display:inline-grid;place-items:center;width:29px;height:29px;border-radius:9px;background:rgba(255,255,255,.06);margin-right:10px}
-.sidefoot{position:absolute;left:15px;right:15px;bottom:18px;border:1px solid rgba(255,255,255,.08);border-radius:15px;padding:11px;background:rgba(255,255,255,.05);font-size:11px;color:#9fc2e7}
-.main{min-width:0}.topbar{height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(248,250,252,.78);backdrop-filter:blur(18px);border-bottom:1px solid rgba(226,232,240,.8);position:sticky;top:0;z-index:5}.topbar h1{margin:0;font-size:19px}.topbar p{margin:3px 0 0;color:var(--muted);font-size:11px}
-.user{display:flex;align-items:center;gap:9px}.avatar{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#dbeafe,#bfdbfe);display:grid;place-items:center;color:#1d4ed8;font-weight:900}.ghost{border:1px solid var(--line);background:#fff;border-radius:11px;padding:9px 11px;font-weight:750;color:#334155}
-.content{max-width:1180px;margin:auto;padding:24px}.loginwrap{max-width:450px;margin:8vh auto}.card,.hero,.stat,.partner{background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(245,248,252,.92));border:1px solid rgba(255,255,255,.95);box-shadow:var(--shadow);border-radius:21px}
-.card{padding:18px}.hero{padding:21px 22px;display:flex;align-items:center;justify-content:space-between;gap:18px}.hero h2{margin:0;font-size:27px}.hero p{margin:6px 0 0;color:var(--muted);font-size:13px}.primary{border:0;border-radius:13px;padding:11px 15px;background:linear-gradient(90deg,#2d63f3,#4a83ff);color:#fff;font-weight:850;box-shadow:0 11px 20px rgba(45,99,243,.24),inset 0 1px 0 rgba(255,255,255,.5)}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}.stat{padding:16px 17px;position:relative;overflow:hidden}.stat:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent,#3b82f6)}.stat small{display:block;color:var(--muted);font-size:10px;font-weight:800}.stat strong{display:block;font-size:27px;margin-top:6px}.stat em{display:block;font-style:normal;color:#16a34a;font-size:10px;margin-top:4px}
-.grid{display:grid;grid-template-columns:1.08fr .92fr;gap:14px;margin-top:14px}.card h3{margin:0;font-size:16px}.sub{color:var(--muted);font-size:11px;margin:4px 0 0}
-.quick{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:13px}.q{border:1px solid #e7edf5;background:linear-gradient(145deg,#fff,#f1f6fc);border-radius:15px;padding:13px;text-align:left;color:inherit;box-shadow:7px 7px 16px rgba(78,101,137,.08),-5px -5px 14px rgba(255,255,255,.92)}.q b{display:block;font-size:12px}.q small{display:block;color:var(--muted);font-size:10px;line-height:1.4;margin-top:4px}
-.toolbar{display:flex;gap:8px;align-items:center;margin-top:13px;flex-wrap:wrap}.search{flex:1;min-width:220px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}.smallbtn{border:1px solid var(--line);background:#fff;border-radius:11px;padding:9px 11px;font-weight:800;color:#334155}.smallbtn.blue{background:#2563eb;color:#fff;border-color:#2563eb}.smallbtn.green{background:#16a34a;color:#fff;border-color:#16a34a}.smallbtn.red{background:#dc2626;color:#fff;border-color:#dc2626}
-.partnerlist{display:grid;gap:10px;margin-top:12px}.partner{padding:14px}.prow{display:flex;align-items:flex-start;gap:10px}.pinfo{flex:1}.pname{font-size:14px;font-weight:900}.pcode{font-size:10px;color:var(--muted);margin-top:3px}.badge{font-size:9px;font-weight:900;border-radius:999px;padding:4px 8px;background:#ecfdf3;color:#166534}.badge.suspended{background:#fef2f2;color:#b91c1c}
-.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:11px}.num{background:#f8fafc;border-radius:11px;padding:8px}.num span{display:block;font-size:9px;color:var(--muted)}.num b{font-size:14px}.actions{display:grid;grid-template-columns:1fr auto auto;gap:7px;margin-top:11px}.actions input{border:1px solid var(--line);border-radius:11px;padding:9px;min-width:0}
-.claim{margin-top:10px;padding:0;border:1px solid var(--line);border-radius:12px;background:#fbfdff;overflow:hidden}.claimToggle{width:100%;border:0;background:linear-gradient(145deg,#fff,#f4f8fd);padding:12px;text-align:left;font-size:11px;font-weight:850;color:#0f172a;display:flex;justify-content:space-between;align-items:center}.claimToggle .chev{transition:.18s ease}.claim.open .claimToggle .chev{transform:rotate(180deg)}.claimBody{display:none;padding:11px;border-top:1px solid var(--line)}.claim.open .claimBody{display:block}.claimgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:9px}.claimopt{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;font-size:10px}.claimopt input{width:auto}.claimbuttons{display:flex;gap:7px;margin-top:8px}
-.field{margin-top:12px}.field label{display:block;font-size:11px;font-weight:800;margin-bottom:5px}.field input{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;background:#fff}.loginbtn{width:100%;margin-top:14px}.msg{margin-top:10px;padding:10px 11px;border-radius:11px;font-size:11px}.msg.ok{background:#ecfdf3;color:#166534}.msg.err{background:#fef2f2;color:#b91c1c}
-
-.branchManager{margin-top:14px}
-.branchManager.hidden{display:none}
-.branchTop{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
-.branchTop select{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;background:#fff}
-.branchAccessBox{margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,#fff,#f4f8fd);box-shadow:7px 7px 16px rgba(78,101,137,.08),-5px -5px 14px rgba(255,255,255,.92)}
-.branchAccessBox h4{margin:0 0 4px;font-size:13px}
-.branchAccessBox p{margin:0;color:var(--muted);font-size:10px}
-.branchGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
-.branchChoice{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:9px;font-size:10px}
-.branchChoice input{width:auto}
-.branchActions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-@media(max-width:700px){.branchTop{grid-template-columns:1fr}.branchGrid{grid-template-columns:1fr}}
-
-.focusFlash{animation:focusFlash 1.4s ease}
-@keyframes focusFlash{
-  0%{box-shadow:0 0 0 0 rgba(37,99,235,0),var(--shadow)}
-  30%{box-shadow:0 0 0 5px rgba(37,99,235,.14),var(--shadow)}
-  100%{box-shadow:var(--shadow)}
+#loading .box{
+  background:linear-gradient(145deg,#fff,#f2f6fb);border:1px solid rgba(255,255,255,.95);
+  border-radius:22px;padding:24px 28px;text-align:center;
+  box-shadow:0 22px 48px rgba(24,39,66,.14),0 7px 16px rgba(26,50,86,.07),inset 0 1px 0 rgba(255,255,255,.85)
 }
-.mobile-nav{display:none}
-@media(max-width:900px){.shell{display:block}.sidebar{display:none}.topbar{height:62px;padding:0 13px}.content{padding:12px 10px 86px}.hero{padding:16px}.hero h2{font-size:21px}.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.claimgrid{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}.actions input{grid-column:1/-1}.mobile-nav{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:7px 4px calc(7px + env(safe-area-inset-bottom));z-index:9}.mobile-nav button{border:0;background:transparent;font-size:9px;color:#64748b}.mobile-nav b{display:block;color:#2563eb;font-size:16px;margin-bottom:2px}}
+#loading b{display:block;font-size:16px}#loading small{display:block;color:#64748b;margin-top:5px}
 </style>
 </head>
 <body>
-<div class="shell">
-<aside class="sidebar">
-  <div class="brand"><div class="brandmark"></div><div><b>EVOLUTION OPTICAL</b><small>Admin Portal Preview</small></div></div>
-  <div class="nav">
-    <button class="active"><span>⌂</span>Dashboard</button>
-    <button><span>◫</span>Partners</button>
-    <button><span>⌖</span>Branches</button>
-    <button><span>▣</span>Vouchers</button>
-  </div>
-  <div class="sidefoot">Live test version • Production admin.html is untouched</div>
-</aside>
-<div class="main">
-<header class="topbar"><div><h1>Admin Dashboard</h1><p id="today"></p></div><div class="user"><div class="avatar">EO</div><button id="logout" class="ghost hidden">Logout</button></div></header>
-<main class="content">
-
-<section id="loginCard" class="loginwrap card">
-  <h2 style="margin:0">Admin Login</h2><p class="sub">Sign in with your existing Evolution Optical admin account.</p>
-  <div class="field"><label>Email</label><input id="email" type="email" autocomplete="username"></div>
-  <div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div>
-  <button id="login" class="primary loginbtn">SIGN IN</button>
-  <div id="loginMsg"></div>
-</section>
-
-<div id="dashboard" class="hidden">
-  <section class="hero"><div><h2>Good evening 👋</h2><p>Live dashboard using your existing Supabase data. Partner management below is functional.</p></div><button id="refreshAll" class="primary">↻ Refresh</button></section>
-
-  <section class="stats">
-    <div class="stat" style="--accent:#3b82f6"><small>ACTIVE PARTNERS</small><strong id="kPartners">—</strong><em>Current database</em></div>
-    <div class="stat" style="--accent:#22c6f4"><small>TOTAL LIMIT</small><strong id="kLimit">—</strong><em>All partners</em></div>
-    <div class="stat" style="--accent:#16a34a"><small>VOUCHERS ISSUED</small><strong id="kIssued">—</strong><em>All partners</em></div>
-    <div class="stat" style="--accent:#8b5cf6"><small>REMAINING</small><strong id="kRemaining">—</strong><em>Available quota</em></div>
-  </section>
-
-  <section class="grid">
-    <div class="card"><h3>Quick Actions</h3><p class="sub">Phase 1 live controls</p>
-      <div class="quick">
-        <button type="button" class="q qbtn" data-action="partners"><b>Partner Allocation</b><small>Update total voucher limit directly.</small></button>
-        <button type="button" class="q qbtn" data-action="branches"><b>Branch Access</b><small>Assign all branches or selected branches.</small></button>
-        <button type="button" class="q qbtn" data-action="status"><b>Partner Status</b><small>Suspend or reactivate an account.</small></button>
-        <button type="button" class="q qbtn" data-action="refresh"><b>Live Refresh</b><small>Reload current partner and branch data.</small></button>
-      </div>
-    </div>
-    <div class="card"><h3>Phase 1 Scope</h3><p class="sub">Safe functional preview</p>
-      <div class="quick" style="grid-template-columns:1fr">
-        <div class="q"><b>✓ Real login</b><small>Uses your current Supabase Auth admin account.</small></div>
-        <div class="q"><b>✓ Real partner data</b><small>Reads current quotas, issued counts and statuses.</small></div>
-        <div class="q"><b>✓ Real branch permissions</b><small>Uses existing admin claim-access RPCs.</small></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="branchManager" class="card branchManager hidden">
-    <h3>Branch Access Manager</h3>
-    <p class="sub">Choose a Partner, then assign where their vouchers can be redeemed.</p>
-    <div class="branchTop">
-      <div class="field">
-        <label>Partner</label>
-        <select id="branchPartnerSelect"></select>
-      </div>
-      <button id="closeBranchManager" class="smallbtn">Close</button>
-    </div>
-    <div id="branchManagerMsg"></div>
-    <div id="branchAccessBox" class="branchAccessBox">
-      <div class="sub">Choose a Partner to load branch access.</div>
-    </div>
-  </section>
-
-  <section id="partnerManagement" class="card" style="margin-top:14px">
-    <h3>Partner Management</h3><p class="sub">Search, update quota, status and redemption branch access.</p>
-    <div class="toolbar"><input id="search" class="search" placeholder="Search company or partner code"><button id="refreshPartners" class="smallbtn blue">Refresh</button></div>
-    <div id="partnerMsg"></div><div id="partnerList" class="partnerlist"></div>
-  </section>
-</div>
-</main>
-</div>
-</div>
-
-<nav class="mobile-nav"><button><b>⌂</b>Home</button><button><b>◫</b>Partners</button><button><b>⌖</b>Branches</button><button><b>▣</b>Vouchers</button></nav>
+<div id="loading"><div class="box"><b>EVOLUTION OPTICAL</b><small>Loading Modern Admin Preview…</small></div></div>
+<iframe id="adminFrame" src="admin.html" title="Evolution Optical Admin"></iframe>
 
 <script>
-const SUPABASE_URL="https://hukihbcyyqhanaqrizvm.supabase.co";
-const SUPABASE_ANON_KEY="sb_publishable_kpPFeGYpedq2auo01Zo50A_aiSjdeVh";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-const $=id=>document.getElementById(id);
-let partners=[],branches=[],accessCache=new Map();
+const frame=document.getElementById("adminFrame");
+const loading=document.getElementById("loading");
 
-$("today").textContent=new Intl.DateTimeFormat("en-MY",{weekday:"long",day:"numeric",month:"short",year:"numeric"}).format(new Date());
+const modernCSS=`
+:root{
+  --bg:#eef3f9!important;
+  --card:rgba(255,255,255,.94)!important;
+  --ink:#0b1220!important;
+  --muted:#64748b!important;
+  --navy:#0a1d35!important;
+  --line:#e3eaf2!important;
+  --blue:#2563eb!important;
+  --green:#15803d!important;
+  --greenbg:#ecfdf3!important;
+  --red:#dc2626!important;
+  --redbg:#fef2f2!important;
+}
+html,body{
+  background:
+    radial-gradient(circle at 86% 0%,rgba(73,137,255,.14),transparent 30%),
+    radial-gradient(circle at 10% 20%,rgba(59,130,246,.06),transparent 28%),
+    #eef3f9!important;
+}
+body{min-height:100vh}
+.top{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.035),transparent 55%),
+    linear-gradient(135deg,#08192f,#0e2b4e)!important;
+  box-shadow:0 12px 30px rgba(5,24,48,.20),inset 0 -1px 0 rgba(255,255,255,.06)!important;
+  padding-top:calc(18px + env(safe-area-inset-top))!important;
+  padding-bottom:18px!important;
+}
+.topin{max-width:1080px!important}
+.brand h1{letter-spacing:.8px!important;font-weight:900!important}
+.brand p{color:#a9c8e8!important}
+.ghost{
+  background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.05))!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 8px 18px rgba(0,0,0,.10)!important;
+}
+.wrap{width:min(1080px,calc(100% - 24px))!important;margin-top:20px!important}
+.card{
+  background:linear-gradient(145deg,rgba(255,255,255,.97),rgba(244,248,252,.94))!important;
+  border:1px solid rgba(255,255,255,.92)!important;
+  border-radius:22px!important;
+  box-shadow:
+    0 20px 42px rgba(31,52,82,.11),
+    0 7px 16px rgba(31,52,82,.055),
+    inset 0 1px 0 rgba(255,255,255,.9)!important;
+  backdrop-filter:blur(14px)!important;
+}
+h2,h3{color:#0b1c33!important;letter-spacing:-.2px}
+.sub{color:#68778b!important}
+input,select{
+  background:linear-gradient(145deg,#fff,#f8fafc)!important;
+  border:1px solid #dbe4ee!important;
+  box-shadow:inset 2px 2px 6px rgba(58,78,106,.045),inset -2px -2px 6px rgba(255,255,255,.95)!important;
+  outline:none!important;
+  transition:.15s ease!important;
+}
+input:focus,select:focus{
+  border-color:#7ba8f7!important;
+  box-shadow:0 0 0 4px rgba(37,99,235,.10),inset 1px 1px 4px rgba(58,78,106,.04)!important;
+}
+.btn{
+  background:linear-gradient(145deg,#112842,#081a2f)!important;
+  box-shadow:0 9px 18px rgba(8,26,47,.18),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 5px rgba(0,0,0,.12)!important;
+  transition:transform .12s ease,box-shadow .12s ease!important;
+}
+.btn:active{transform:translateY(1px)!important;box-shadow:inset 0 3px 8px rgba(0,0,0,.18),0 4px 9px rgba(8,26,47,.12)!important}
+.btn.blue{
+  background:linear-gradient(145deg,#4b82ff,#2459e6)!important;
+  box-shadow:0 9px 18px rgba(37,99,235,.23),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+.btn.green{
+  background:linear-gradient(145deg,#20a758,#13783f)!important;
+  box-shadow:0 9px 18px rgba(21,128,61,.20),inset 0 1px 0 rgba(255,255,255,.28)!important;
+}
+.btn.red{
+  background:linear-gradient(145deg,#ef5252,#ba1f1f)!important;
+  box-shadow:0 9px 18px rgba(220,38,38,.18),inset 0 1px 0 rgba(255,255,255,.22)!important;
+}
+.stats{gap:12px!important}
+.stat,.vstat{
+  position:relative!important;overflow:hidden!important;
+  background:linear-gradient(145deg,#fff,#f2f7fc)!important;
+  border:1px solid rgba(255,255,255,.95)!important;
+  box-shadow:8px 8px 18px rgba(72,95,128,.09),-5px -5px 14px rgba(255,255,255,.9),inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+.stat:before,.vstat:before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(#60a5fa,#2563eb);border-radius:4px
+}
+.stat strong,.vstat b{color:#0b1c33!important}
+.partner,.perf-card,.vrecord,.claim-panel{
+  background:linear-gradient(145deg,#fff,#f5f8fc)!important;
+  border:1px solid #e3eaf2!important;
+  box-shadow:0 11px 24px rgba(37,57,87,.075),inset 0 1px 0 rgba(255,255,255,.9)!important;
+}
+.partner{border-radius:18px!important}
+.num,.pm,.claim-summary{
+  background:linear-gradient(145deg,#fbfdff,#eef4fa)!important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.85)!important;
+}
+.badge,.vstatus{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 4px 10px rgba(0,0,0,.04)!important;
+}
+.claim-option{
+  background:linear-gradient(145deg,#fff,#f8fbff)!important;
+  border-color:#e0e8f1!important;
+  box-shadow:0 5px 12px rgba(40,62,93,.045)!important;
+}
+.toolbar{gap:10px!important}
+.note{color:#718096!important}
+#loginCard{max-width:520px!important;margin:6vh auto 0!important}
+#loginCard:before{
+  content:"";display:block;width:54px;height:54px;margin:0 auto 14px;border-radius:17px;
+  background:linear-gradient(135deg,#8b5cf6,#4f7cff 48%,#22d3ee);
+  box-shadow:0 13px 24px rgba(53,104,236,.22),inset 0 1px 0 rgba(255,255,255,.4)
+}
+#loginCard h2{text-align:center!important}
+#loginCard .sub{text-align:center!important}
+@media(max-width:620px){
+  .wrap{width:min(100% - 14px,1080px)!important;margin-top:9px!important}
+  .card{padding:14px!important;border-radius:18px!important;margin-bottom:10px!important;box-shadow:0 11px 24px rgba(31,52,82,.09),inset 0 1px 0 rgba(255,255,255,.88)!important}
+  .top{padding-left:12px!important;padding-right:12px!important}
+  .brand h1{font-size:18px!important}.brand p{font-size:11px!important}
+  .stats{gap:7px!important}.stat{padding:10px!important}.stat strong{font-size:20px!important}
+  .partner{padding:12px!important}
+  .actions{gap:7px!important}
+  .btn.small{min-height:40px!important}
+  .vfilters{gap:7px!important}
+}
+`;
 
-function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function message(node,text,ok=false){node.innerHTML=text?`<div class="msg ${ok?"ok":"err"}">${esc(text)}</div>`:""}
-function showLogin(){ $("loginCard").classList.remove("hidden");$("dashboard").classList.add("hidden");$("logout").classList.add("hidden") }
-function showDash(){ $("loginCard").classList.add("hidden");$("dashboard").classList.remove("hidden");$("logout").classList.remove("hidden") }
-
-async function login(){
-  message($("loginMsg"),"");$("login").disabled=true;
-  const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
-  $("login").disabled=false;
-  if(error)return message($("loginMsg"),error.message);
-  await authorize();
-}
-async function authorize(){
-  const {data:{user}}=await db.auth.getUser();
-  if(!user)return showLogin();
-  const {data,error}=await db.from("partner_users").select("user_id,role,status").eq("user_id",user.id).eq("status","active").maybeSingle();
-  if(error||!data||String(data.role).toLowerCase()!=="admin"){
-    await db.auth.signOut();showLogin();return message($("loginMsg"),"This account is not an active Admin account.");
-  }
-  showDash();await refreshAll();
-}
-async function refreshAll(){
-  message($("partnerMsg"),"");
-  const [p,b]=await Promise.all([
-    db.from("partners").select("id,partner_code,partner_name,voucher_limit,vouchers_issued,status,created_at").order("created_at",{ascending:false}),
-    db.from("branches").select("id,branch_code,branch_name,status").eq("status","active").order("branch_name")
-  ]);
-  if(p.error)return message($("partnerMsg"),p.error.message);
-  partners=p.data||[];branches=b.data||[];accessCache.clear();
-  renderStats();renderPartners();renderBranchPartnerOptions();
-}
-function renderStats(){
-  const active=partners.filter(p=>String(p.status).toLowerCase()==="active");
-  const limit=partners.reduce((s,p)=>s+(Number(p.voucher_limit)||0),0);
-  const issued=partners.reduce((s,p)=>s+(Number(p.vouchers_issued)||0),0);
-  $("kPartners").textContent=active.length;$("kLimit").textContent=limit;$("kIssued").textContent=issued;$("kRemaining").textContent=Math.max(0,limit-issued);
-}
-
-function renderBranchPartnerOptions(){
-  const sel=$("branchPartnerSelect");
-  if(!sel)return;
-  const current=sel.value;
-  sel.innerHTML='<option value="">Select Partner</option>'+partners
-    .filter(p=>String(p.status).toLowerCase()==="active")
-    .map(p=>`<option value="${p.id}">${esc(p.partner_name)} (${esc(p.partner_code)})</option>`).join("");
-  if(current && partners.some(p=>p.id===current)) sel.value=current;
-}
-async function openBranchManager(){
-  const panel=$("branchManager");
-  panel.classList.remove("hidden");
-  renderBranchPartnerOptions();
-  if(!$("branchPartnerSelect").value && partners.length){
-    const first=partners.find(p=>String(p.status).toLowerCase()==="active");
-    if(first){
-      $("branchPartnerSelect").value=first.id;
-      await loadBranchManagerAccess();
+frame.addEventListener("load",()=>{
+  try{
+    const doc=frame.contentDocument;
+    if(!doc) throw new Error("No document");
+    let style=doc.getElementById("modernPremium3D");
+    if(!style){
+      style=doc.createElement("style");
+      style.id="modernPremium3D";
+      style.textContent=modernCSS;
+      doc.head.appendChild(style);
     }
+    loading.style.display="none";
+  }catch(err){
+    loading.querySelector("small").textContent="Preview must be opened from the same GitHub Pages site.";
   }
-}
-async function loadBranchManagerAccess(){
-  const pid=$("branchPartnerSelect").value;
-  const box=$("branchAccessBox");
-  if(!pid){
-    box.innerHTML='<div class="sub">Choose a Partner to load branch access.</div>';
-    return;
-  }
-  const p=partners.find(x=>x.id===pid);
-  box.innerHTML='<div class="sub">Loading branch access…</div>';
-  const {data,error}=await db.rpc("admin_get_partner_claim_access",{p_partner_id:pid});
-  if(error){
-    box.innerHTML=`<div class="msg err">Unable to load Branch Access: ${esc(error.message)}</div>`;
-    return;
-  }
-  const payload=Array.isArray(data)?(data[0]||{}):(data||{});
-  const all=!!payload.all_branches;
-  const codes=payload.branch_codes||[];
-  box.innerHTML=`
-    <h4>${esc(p?.partner_name||"Partner")}</h4>
-    <p>${esc(p?.partner_code||"")}</p>
-    <label class="branchChoice" style="margin-top:12px">
-      <input id="managerAllBranches" type="checkbox" ${all?"checked":""}>
-      <b>All Evolution Optical branches</b>
-    </label>
-    <div class="branchGrid">
-      ${branches.map(b=>`<label class="branchChoice">
-        <input class="managerBranchCheck" type="checkbox" value="${esc(b.branch_code)}"
-          ${all?"disabled":""} ${codes.includes(b.branch_code)?"checked":""}>
-        ${esc(String(b.branch_name).replace(/\s*\(HQ\)\s*/gi," ").trim())}
-      </label>`).join("")}
-    </div>
-    <div class="branchActions">
-      <button id="managerSaveAccess" class="smallbtn blue">Save Branch Access</button>
-    </div>`;
-  const allBox=$("managerAllBranches");
-  allBox.onchange=()=>document.querySelectorAll(".managerBranchCheck").forEach(x=>x.disabled=allBox.checked);
-  $("managerSaveAccess").onclick=saveBranchManagerAccess;
-}
-async function saveBranchManagerAccess(){
-  const pid=$("branchPartnerSelect").value;
-  const p=partners.find(x=>x.id===pid);
-  const all=$("managerAllBranches").checked;
-  const codes=[...document.querySelectorAll(".managerBranchCheck:checked")].map(x=>x.value);
-  if(!all&&!codes.length){
-    return message($("branchManagerMsg"),"Select at least one branch, or choose All Evolution Optical branches.");
-  }
-  const {error}=await db.rpc("admin_set_partner_claim_access",{
-    p_partner_id:pid,p_all_branches:all,p_branch_codes:codes
-  });
-  if(error)return message($("branchManagerMsg"),error.message);
-  message($("branchManagerMsg"),`${p?.partner_name||"Partner"} branch access updated.`,true);
-}
-
-function filteredPartners(){
-  const q=$("search").value.trim().toLowerCase();
-  return !q?partners:partners.filter(p=>String(p.partner_name).toLowerCase().includes(q)||String(p.partner_code).toLowerCase().includes(q));
-}
-function renderPartners(){
-  const rows=filteredPartners();
-  $("partnerList").innerHTML=rows.length?rows.map(p=>{
-    const limit=Number(p.voucher_limit)||0,issued=Number(p.vouchers_issued)||0,remaining=Math.max(0,limit-issued);
-    const suspended=String(p.status).toLowerCase()!=="active";
-    return `<article class="partner" data-id="${p.id}">
-      <div class="prow"><div class="pinfo"><div class="pname">${esc(p.partner_name)}</div><div class="pcode">${esc(p.partner_code)}</div></div><span class="badge ${suspended?"suspended":""}">${suspended?"SUSPENDED":"ACTIVE"}</span></div>
-      <div class="nums"><div class="num"><span>Limit</span><b>${limit}</b></div><div class="num"><span>Issued</span><b>${issued}</b></div><div class="num"><span>Remaining</span><b>${remaining}</b></div></div>
-      <div class="actions"><input class="limitInput" type="number" min="${issued}" step="1" value="${limit}"><button class="smallbtn blue setLimit">Set Total</button><button class="smallbtn ${suspended?"green":"red"} toggleStatus">${suspended?"Reactivate":"Suspend"}</button></div>
-      <div class="claim">
-        <button type="button" class="claimToggle">Voucher Claim Branch Permission <span class="chev">⌄</span></button>
-        <div class="claimBody">Loading…</div>
-      </div>
-    </article>`;
-  }).join(""):`<div class="sub">No partners found.</div>`;
-  bindPartnerActions();
-}
-function bindPartnerActions(){
-  document.querySelectorAll(".partner").forEach(card=>{
-    const id=card.dataset.id,p=partners.find(x=>x.id===id);
-    card.querySelector(".setLimit").onclick=()=>setLimit(p,card);
-    card.querySelector(".toggleStatus").onclick=()=>toggleStatus(p);
-    const claim=card.querySelector(".claim");
-    const claimToggle=card.querySelector(".claimToggle");
-    claimToggle.onclick=async()=>{
-      const opening=!claim.classList.contains("open");
-      claim.classList.toggle("open",opening);
-      if(opening && !claim.dataset.loaded){
-        claimToggle.disabled=true;
-        try{
-          await loadAccess(p,card);
-          claim.dataset.loaded="1";
-        }finally{
-          claimToggle.disabled=false;
-        }
-      }
-    };
-  });
-}
-async function setLimit(p,card){
-  const input=card.querySelector(".limitInput"),value=Number(input.value);
-  if(!Number.isInteger(value)||value<Number(p.vouchers_issued||0))return message($("partnerMsg"),`Total limit cannot be below issued vouchers (${p.vouchers_issued}).`);
-  const {error}=await db.from("partners").update({voucher_limit:value}).eq("id",p.id);
-  if(error)return message($("partnerMsg"),error.message);
-  message($("partnerMsg"),`${p.partner_name} total limit updated to ${value}.`,true);await refreshAll();
-}
-async function toggleStatus(p){
-  const next=String(p.status).toLowerCase()==="active"?"suspended":"active";
-  if(!confirm(`${next==="suspended"?"Suspend":"Reactivate"} ${p.partner_name}?`))return;
-  const {error}=await db.from("partners").update({status:next}).eq("id",p.id);
-  if(error)return message($("partnerMsg"),error.message);
-  message($("partnerMsg"),`${p.partner_name} is now ${next}.`,true);await refreshAll();
-}
-async function loadAccess(p,card){
-  const body=card.querySelector(".claimBody");
-  body.innerHTML='<div class="sub">Loading branch access…</div>';
-  const {data,error}=await db.rpc("admin_get_partner_claim_access",{p_partner_id:p.id});
-  if(error){
-    body.innerHTML=`<div class="msg err">Unable to load Branch Access: ${esc(error.message)}</div>`;
-    return;
-  }
-  const payload=Array.isArray(data)?(data[0]||{}):(data||{});
-  const all=!!payload.all_branches,codes=payload.branch_codes||[];
-  accessCache.set(p.id,{all,codes});
-  body.innerHTML=`<label class="claimopt"><input type="checkbox" class="allBranches" ${all?"checked":""}><b>All Evolution Optical branches</b></label>
-    <div class="claimgrid">${branches.map(b=>`<label class="claimopt"><input type="checkbox" class="branchCheck" value="${esc(b.branch_code)}" ${all?"disabled":""} ${codes.includes(b.branch_code)?"checked":""}>${esc(String(b.branch_name).replace(/\s*\(HQ\)\s*/gi," ").trim())}</label>`).join("")}</div>
-    <div class="claimbuttons"><button class="smallbtn blue saveAccess">Save Branch Access</button></div>`;
-  const allBox=body.querySelector(".allBranches");
-  allBox.onchange=()=>body.querySelectorAll(".branchCheck").forEach(x=>x.disabled=allBox.checked);
-  body.querySelector(".saveAccess").onclick=()=>saveAccess(p,body);
-}
-async function saveAccess(p,body){
-  const all=body.querySelector(".allBranches").checked;
-  const codes=[...body.querySelectorAll(".branchCheck:checked")].map(x=>x.value);
-  if(!all&&!codes.length)return message($("partnerMsg"),"Select at least one branch, or choose All Evolution Optical branches.");
-  const {error}=await db.rpc("admin_set_partner_claim_access",{p_partner_id:p.id,p_all_branches:all,p_branch_codes:codes});
-  if(error)return message($("partnerMsg"),error.message);
-  accessCache.set(p.id,{all,codes});
-  message($("partnerMsg"),`${p.partner_name} branch access updated.`,true);
-}
-
-
-function jumpTo(node){
-  if(!node)return;
-  node.classList.remove("focusFlash");
-  void node.offsetWidth;
-  node.classList.add("focusFlash");
-  const y=node.getBoundingClientRect().top+window.pageYOffset-78;
-  window.scrollTo({top:y,behavior:"smooth"});
-}
-document.querySelectorAll(".qbtn").forEach(btn=>{
-  btn.onclick=async()=>{
-    const action=btn.dataset.action;
-
-    if(action==="refresh"){
-      btn.disabled=true;
-      try{
-        await refreshAll();
-        message($("partnerMsg"),"Live data refreshed.",true);
-      }finally{
-        btn.disabled=false;
-      }
-      return;
-    }
-
-    if(action==="branches"){
-      await openBranchManager();
-      setTimeout(()=>jumpTo($("branchManager")),80);
-      return;
-    }
-
-    if(action==="partners"){
-      const target=$("partnerManagement");
-      jumpTo(target);
-      setTimeout(()=>{
-        const firstInput=target?.querySelector(".limitInput");
-        firstInput?.focus({preventScroll:true});
-      },500);
-      return;
-    }
-
-    if(action==="status"){
-      const target=$("partnerManagement");
-      jumpTo(target);
-      setTimeout(()=>{
-        const firstStatus=target?.querySelector(".toggleStatus");
-        firstStatus?.focus({preventScroll:true});
-      },500);
-    }
-  };
 });
-$("branchPartnerSelect").onchange=loadBranchManagerAccess;
-$("closeBranchManager").onclick=()=>$("branchManager").classList.add("hidden");
-$("login").onclick=login;$("password").onkeydown=e=>{if(e.key==="Enter")login()};
-$("logout").onclick=async()=>{await db.auth.signOut();showLogin()};
-$("refreshAll").onclick=refreshAll;$("refreshPartners").onclick=refreshAll;$("search").oninput=renderPartners;
-(async()=>{const {data}=await db.auth.getSession();if(data?.session)await authorize();else showLogin()})();
 </script>
 </body>
 </html>
