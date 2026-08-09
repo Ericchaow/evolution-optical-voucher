@@ -503,6 +503,243 @@ input:focus,select:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,
   }
 }
 
+
+/* ===== FINAL BLUE REDEMPTION DESIGN ===== */
+.final-voucher{
+  width:min(100%,760px);
+  margin:0 auto;
+  border-radius:24px;
+  border:1px solid #bcd7f5;
+  background:
+    radial-gradient(circle at 10% 8%,rgba(101,169,235,.16),transparent 24%),
+    radial-gradient(circle at 88% 10%,rgba(143,194,244,.15),transparent 24%),
+    linear-gradient(180deg,#f8fcff 0%,#eef7ff 100%);
+  box-shadow:0 16px 38px rgba(18,96,196,.13);
+  padding:14px;
+  color:#0d2b62;
+}
+.final-voucher-inner{
+  border:1px dashed #478ddd;
+  border-radius:18px;
+  padding:14px;
+  background:rgba(255,255,255,.58);
+}
+.fv-top{
+  display:grid;
+  grid-template-columns:86px 1fr 86px;
+  align-items:center;
+  gap:10px;
+}
+.fv-glasses svg{width:100%;height:auto}
+.fv-brand{
+  text-align:center;
+  font-size:28px;
+  font-weight:900;
+  letter-spacing:1.2px;
+  color:#08285d;
+}
+.fv-appreciation{
+  text-align:center;
+  font-family:"Segoe Script","Brush Script MT",cursive;
+  color:#1765c5;
+  font-size:20px;
+  margin-top:3px;
+}
+.fv-offer{
+  margin-top:10px;
+  display:grid;
+  grid-template-columns:1.1fr 1fr .62fr;
+  align-items:center;
+  background:linear-gradient(90deg,#0a4da4 0%,#1484d5 68%,#0a3c84 100%);
+  color:#fff;
+  border-radius:18px;
+  padding:12px 14px;
+  box-shadow:0 8px 18px rgba(9,78,163,.18);
+}
+.fv-free{
+  font-size:62px;
+  font-weight:950;
+  line-height:.9;
+  letter-spacing:1px;
+}
+.fv-offer-mid{
+  border-left:1px solid rgba(255,255,255,.55);
+  padding-left:16px;
+  font-size:26px;
+  line-height:1.03;
+  font-weight:900;
+}
+.fv-value{
+  text-align:center;
+  background:#08326f;
+  border-radius:14px;
+  padding:8px 6px;
+  line-height:1;
+}
+.fv-value small{
+  display:block;
+  font-size:16px;
+  letter-spacing:1px;
+}
+.fv-value strong{
+  display:block;
+  margin-top:5px;
+  font-size:38px;
+}
+.fv-info{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  margin-top:10px;
+  border-top:1px solid #c8dcf4;
+  border-bottom:1px solid #c8dcf4;
+}
+.fv-cell{
+  padding:10px 12px;
+  text-align:left;
+}
+.fv-cell:nth-child(odd){border-right:1px solid #c8dcf4}
+.fv-cell:nth-child(-n+2){border-bottom:1px solid #c8dcf4}
+.fv-label{
+  display:inline-block;
+  border-radius:999px;
+  padding:3px 8px;
+  color:#fff;
+  background:linear-gradient(90deg,#134fac,#1d82cf);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.3px;
+}
+.fv-data{
+  display:block;
+  margin-top:4px;
+  font-size:17px;
+  font-weight:850;
+  color:#111827;
+}
+.fv-bottom{
+  display:grid;
+  grid-template-columns:1fr 270px;
+  gap:14px;
+  align-items:stretch;
+  margin-top:10px;
+}
+.fv-locations{
+  border-radius:16px;
+  border:1px solid #c3dcf5;
+  background:rgba(238,247,255,.75);
+  padding:10px;
+}
+.fv-loc-title{
+  font-size:15px;
+  font-weight:900;
+  color:#0d5ab8;
+  text-align:center;
+  margin-bottom:8px;
+  letter-spacing:.5px;
+}
+.fv-loc-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.fv-loc{
+  background:rgba(255,255,255,.72);
+  border-radius:12px;
+  padding:9px;
+  text-align:center;
+  min-height:70px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.fv-loc-name{
+  font-size:14px;
+  font-weight:900;
+  color:#123b79;
+}
+.fv-loc-phone{
+  margin-top:4px;
+  font-size:14px;
+  font-weight:800;
+  color:#0e5ebc;
+}
+.fv-qr-panel{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+#qrBox.final-qr{
+  width:248px;
+  height:248px;
+  max-width:64vw;
+  max-height:64vw;
+  padding:9px;
+  border:3px solid #0f56b3;
+  border-radius:16px;
+  background:#fff;
+}
+#qrBox.final-qr img,#qrBox.final-qr canvas{
+  width:100%!important;
+  height:100%!important;
+  image-rendering:pixelated;
+}
+.fv-scan{
+  width:100%;
+  margin-top:6px;
+  text-align:center;
+  color:#fff;
+  background:linear-gradient(90deg,#0d4fa9,#1b86d2);
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:.4px;
+}
+.fv-footer{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  border-top:1px solid #c8dcf4;
+  margin-top:10px;
+  padding-top:8px;
+  font-size:11px;
+  color:#123b79;
+}
+.fv-thanks{
+  font-family:"Segoe Script","Brush Script MT",cursive;
+  font-size:16px;
+  color:#1765c5;
+}
+
+@media(max-width:560px){
+  .final-voucher{padding:8px;border-radius:18px}
+  .final-voucher-inner{padding:8px;border-radius:14px}
+  .fv-top{grid-template-columns:55px 1fr 55px;gap:4px}
+  .fv-brand{font-size:20px}
+  .fv-appreciation{font-size:14px;margin-top:1px}
+  .fv-offer{margin-top:6px;padding:8px 8px;border-radius:14px;grid-template-columns:1fr 1fr .66fr}
+  .fv-free{font-size:44px}
+  .fv-offer-mid{font-size:18px;padding-left:9px}
+  .fv-value{padding:6px 4px}.fv-value small{font-size:11px}.fv-value strong{font-size:27px}
+  .fv-info{margin-top:6px}
+  .fv-cell{padding:7px 8px}
+  .fv-label{font-size:9px;padding:2px 6px}
+  .fv-data{font-size:13px;margin-top:2px}
+  .fv-bottom{grid-template-columns:1fr 190px;gap:7px;margin-top:6px}
+  .fv-locations{padding:7px}
+  .fv-loc-title{font-size:11px;margin-bottom:5px}
+  .fv-loc-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+  .fv-loc{padding:5px;min-height:50px}
+  .fv-loc-name{font-size:10.5px}
+  .fv-loc-phone{font-size:10.5px;margin-top:2px}
+  #qrBox.final-qr{width:180px;height:180px;max-width:47vw;max-height:47vw;padding:6px;border-radius:12px}
+  .fv-scan{font-size:10px;padding:5px}
+  .fv-footer{margin-top:6px;padding-top:5px;font-size:8px}
+  .fv-thanks{font-size:11px}
+}
+
 </style>
 </head>
 <body>
@@ -545,116 +782,67 @@ input:focus,select:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,
 <section id="voucherResultCard" class="card hidden">
 <h3>Voucher Generated</h3>
 
-<div class="voucher">
-<div class="voucher-content">
-<div class="gift-top">
-  <div class="ribbon"><i></i></div>
-  <div>
-    <div class="vlogo-wrap">
-      <svg class="vlogo" viewBox="0 0 200 200" aria-label="Evolution Optical">
-  <defs>
-    <linearGradient id="evoGradFinal" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#d65cff"/>
-      <stop offset="36%" stop-color="#8d68ff"/>
-      <stop offset="70%" stop-color="#438cff"/>
-      <stop offset="100%" stop-color="#28d9ef"/>
-    </linearGradient>
-  </defs>
 
-  <!-- circular evolution ring -->
-  <path
-    d="M145 31
-       A76 76 0 1 0 151 158"
-    fill="none"
-    stroke="url(#evoGradFinal)"
-    stroke-width="14"
-    stroke-linecap="round"
-  />
+<div class="final-voucher">
+  <div class="final-voucher-inner">
 
-  <!-- slim right arc -->
-  <path
-    d="M149 40
-       Q171 61 174 100
-       Q172 139 149 158"
-    fill="none"
-    stroke="url(#evoGradFinal)"
-    stroke-width="12"
-    stroke-linecap="round"
-  />
+    <div class="fv-top">
+      <div class="fv-glasses">
+        <svg viewBox="0 0 160 70"><g fill="none" stroke="#174b94" stroke-width="4"><path d="M7 32 Q21 8 56 14 Q76 18 77 37 Q77 57 53 61 Q20 62 10 43Z"/><path d="M83 37 Q84 18 104 14 Q139 8 153 32 L150 43 Q140 62 107 61 Q83 57 83 37Z"/><path d="M77 35 Q80 31 83 35"/><path d="M5 30 L0 23 M155 30 L160 23"/></g></svg>
+      </div>
 
-  <!-- centre forward arrow / optical mark -->
-  <path
-    d="M69 101
-       L108 76
-       H145
-       L124 94
-       H157
-       L176 101
-       L157 108
-       H124
-       L145 126
-       H108
-       Z"
-    fill="url(#evoGradFinal)"
-  />
+      <div>
+        <div class="fv-brand">EVOLUTION OPTICAL SDN BHD</div>
+        <div class="fv-appreciation">Appreciation for your support</div>
+      </div>
 
-  <!-- right protrusion -->
-  <path
-    d="M174 91
-       L192 101
-       L174 111
-       Z"
-    fill="url(#evoGradFinal)"
-  />
-</svg>
+      <div class="fv-glasses">
+        <svg viewBox="0 0 160 70"><g fill="none" stroke="#174b94" stroke-width="4"><path d="M7 32 Q21 8 56 14 Q76 18 77 37 Q77 57 53 61 Q20 62 10 43Z"/><path d="M83 37 Q84 18 104 14 Q139 8 153 32 L150 43 Q140 62 107 61 Q83 57 83 37Z"/><path d="M77 35 Q80 31 83 35"/><path d="M5 30 L0 23 M155 30 L160 23"/></g></svg>
+      </div>
     </div>
-    <div class="vbrand">EVOLUTION</div><div class="vbrand-sub">OPTICAL</div>
+
+    <div class="fv-offer">
+      <div class="fv-free">FREE</div>
+      <div class="fv-offer-mid">SPECTACLE WITH<br>FREE GLASSES</div>
+      <div class="fv-value"><small>VALUE</small><strong>RM60</strong></div>
+    </div>
+
+    <div class="fv-info">
+      <div class="fv-cell">
+        <span class="fv-label">PARTNER</span>
+        <span class="fv-data" id="giftPartner">Partner</span>
+      </div>
+      <div class="fv-cell">
+        <span class="fv-label">CUSTOMER</span>
+        <span class="fv-data" id="giftCustomer">Customer</span>
+      </div>
+      <div class="fv-cell">
+        <span class="fv-label">VALID UNTIL</span>
+        <span class="fv-data" id="giftExpiry"></span>
+      </div>
+      <div class="fv-cell">
+        <span class="fv-label">VOUCHER CODE</span>
+        <span class="fv-data" id="resultCode"></span>
+      </div>
+    </div>
+
+    <div class="fv-bottom">
+      <div class="fv-locations">
+        <div class="fv-loc-title">REDEEMABLE AT</div>
+        <div id="giftLocations" class="fv-loc-grid"></div>
+      </div>
+
+      <div class="fv-qr-panel">
+        <div id="qrBox" class="final-qr"></div>
+        <div class="fv-scan">SCAN TO REDEEM</div>
+      </div>
+    </div>
+
+    <div class="fv-footer">
+      <div class="fv-thanks">Thank you for your support!</div>
+      <div>T&amp;C APPLY &nbsp; | &nbsp; VALID FOR 30 DAYS FROM DATE OF ISSUE ONLY.</div>
+    </div>
   </div>
-  <div class="heart3d"></div>
-</div>
-
-<div class="gift-script">A little gift<br>just for your ♡</div>
-<div class="hi">— • Hi <span id="giftCustomer">Customer</span>, • —</div>
-<div class="tagline">Enjoy better vision, enjoy better life.</div>
-
-<div class="offer-card">
-<div class="offer-head">
-  <div class="offer-left">
-    <div class="received">YOU ARE RECEIVED</div>
-    <div id="offerTitle" class="offer-title">FREE SPECTACLE</div>
-    <div id="offerSub" class="offer-sub">WITH GLASSES VALUE</div>
-    <div id="offerValue" class="offer-value">RM60</div>
-    <div class="qr-label">• REDEMPTION QR •</div>
-  </div>
-  <div class="partner-from">From<b id="giftPartner">Partner</b><div class="gift-box">🎁</div></div>
-</div>
-
-<div class="qr-area">
-  <div class="glasses-deco left">
-    <svg viewBox="0 0 160 70"><g fill="none" stroke="#2c77c8" stroke-width="4"><path d="M7 32 Q21 8 56 14 Q76 18 77 37 Q77 57 53 61 Q20 62 10 43Z"/><path d="M83 37 Q84 18 104 14 Q139 8 153 32 L150 43 Q140 62 107 61 Q83 57 83 37Z"/><path d="M77 35 Q80 31 83 35"/><path d="M5 30 L0 23 M155 30 L160 23"/></g></svg>
-  </div>
-  <div class="glasses-deco">
-    <svg viewBox="0 0 160 70"><g fill="none" stroke="#2c77c8" stroke-width="4"><path d="M7 32 Q21 8 56 14 Q76 18 77 37 Q77 57 53 61 Q20 62 10 43Z"/><path d="M83 37 Q84 18 104 14 Q139 8 153 32 L150 43 Q140 62 107 61 Q83 57 83 37Z"/><path d="M77 35 Q80 31 83 35"/><path d="M5 30 L0 23 M155 30 L160 23"/></g></svg>
-  </div>
-  <div id="qrBox"></div>
-  <div id="resultCode" class="voucher-code"></div>
-</div>
-
-<div class="meta-strip">
-  <span>📅 Valid until &nbsp;<b id="giftExpiry"></b></span>
-  <span class="meta-sep"></span>
-  <span>👤 Customer &nbsp;<b id="giftCustomer2"></b></span>
-</div>
-
-<div class="smile-strip"><div class="heart-icon">♥</div><div>We hope this little gift<br>brings a smile to your day. ♡</div><div class="smile">☺♡</div></div>
-
-<div class="locations">
-  <div class="locations-title">— • REDEEM AT • —</div>
-  <div id="giftLocations"></div>
-</div>
-
-<div class="vfooter">♡ &nbsp; Please show this voucher when redeeming. &nbsp; ♡</div>
-</div>
 </div>
 
 <button id="shareBtn" class="btn" style="margin-top:14px">SHARE VOUCHER</button>
@@ -732,7 +920,12 @@ function renderOffer(type){
   }
 }
 function renderLocations(details){
-  el("giftLocations").innerHTML=details.map(o=>`<div class="location-row"><div class="pin">●</div><div><div class="location-name">Evolution Optical – ${cleanOutletName(o.name)}</div><div class="location-address">${o.address}</div><div class="location-phone">☎ ${o.phone}</div></div></div>`).join("");
+  el("giftLocations").innerHTML=details.map(o=>`
+    <div class="fv-loc">
+      <div class="fv-loc-name">${cleanOutletName(o.name)}</div>
+      <div class="fv-loc-phone">☎ ${o.phone}</div>
+    </div>
+  `).join("");
 }
 
 async function createVoucher(){
@@ -750,11 +943,11 @@ async function createVoucher(){
   const result=data;
   currentVoucher={voucher_id:result.voucher_id,voucher_code:result.voucher_code,voucher_type:voucherType,customer_name:customerName,customer_phone:phone,expiry_date:result.expiry_date,partner_name:currentPartnerName,all_branches:allBranches,branch_codes:branchCodes,outlet:selectedOutletSummary(allBranches,branchCodes)};
   showMsg(el("createMsg"),`Voucher ${result.voucher_code} created successfully.`,"ok");
-  el("giftCustomer").textContent=customerName;el("giftCustomer2").textContent=customerName;el("giftPartner").textContent=currentPartnerName;el("giftExpiry").textContent=result.expiry_date;el("resultCode").textContent=result.voucher_code;
-  renderOffer(voucherType);renderLocations(currentVoucher.outlet.details);
+  el("giftCustomer").textContent=customerName;el("giftPartner").textContent=currentPartnerName;el("giftExpiry").textContent=result.expiry_date;el("resultCode").textContent=result.voucher_code;
+  renderLocations(currentVoucher.outlet.details);
 
   const qrBox=el("qrBox");qrBox.innerHTML="";
-  new QRCode(qrBox,{text:result.voucher_code,width:340,height:340,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
+  new QRCode(qrBox,{text:result.voucher_code,width:420,height:420,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
   el("voucherResultCard").classList.remove("hidden");
   setTimeout(()=>el("voucherResultCard").scrollIntoView({behavior:"smooth",block:"start"}),100);
   await loadPartner();
