@@ -16,11 +16,14 @@
 
 :root{
   --navy:#03172b;
-  --navy2:#082a4a;
-  --gold:#d6a84e;
-  --gold-light:#ffe2a0;
+  --navy-light:#0a3155;
+  --navy-card:#06223e;
+
+  --gold:#d7a84c;
+  --gold-light:#ffe1a0;
+
   --white:#ffffff;
-  --muted:#c4cfdb;
+  --muted:#c7d0db;
 }
 
 *{
@@ -35,174 +38,227 @@ html,body{
 
 body{
   font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Helvetica,
-    Arial,
-    sans-serif;
+    Georgia,
+    "Times New Roman",
+    serif;
 
   color:white;
 
+  min-height:100vh;
+
   background:
     radial-gradient(
-      circle at 10% 10%,
-      #17466f 0,
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at 90% 55%,
-      #0b3358 0,
-      transparent 30%
-    ),
-    linear-gradient(
-      145deg,
-      #020c19,
-      #041a31 55%,
-      #020d1b
+      circle at 50% 0%,
+      #12446f 0,
+      #062744 26%,
+      #03172b 58%,
+      #020d19 100%
     );
-
-  min-height:100vh;
 }
 
 
-/* MAIN */
+/* =========================
+   PAGE
+========================= */
 
 .app{
   width:min(820px,100%);
   margin:auto;
 
   padding:
-    calc(20px + env(safe-area-inset-top))
-    16px
+    calc(16px + env(safe-area-inset-top))
+    15px
     calc(35px + env(safe-area-inset-bottom));
 }
 
 
-/* HEADER */
+/* =========================
+   HEADER
+========================= */
 
 .header{
-  position:relative;
   text-align:center;
+  position:relative;
 
   padding:
-    8px
-    12px
-    34px;
+    5px 5px
+    32px;
 }
 
 
-/* REAL LOGO */
+/* =========================
+   SVG LOGO
+========================= */
 
-.real-logo{
+.logo{
+  width:115px;
+  height:115px;
+
   display:block;
-
-  width:min(330px,78vw);
-  max-height:175px;
-
-  object-fit:contain;
 
   margin:
     0 auto
-    8px;
+    7px;
 
   filter:
     drop-shadow(
-      0 9px 12px
-      rgba(0,0,0,.55)
+      0 8px 10px
+      rgba(0,0,0,.7)
     );
 }
 
 
-/* PLATFORM TITLE */
+/* =========================
+   COMPANY NAME
+========================= */
 
-.subtitle{
-  margin-top:10px;
+.company-name{
+  margin:0;
 
-  color:var(--gold-light);
+  font-size:
+    clamp(
+      27px,
+      7vw,
+      43px
+    );
 
-  letter-spacing:4px;
+  font-weight:600;
 
-  font-size:13px;
-  font-weight:500;
+  letter-spacing:
+    3px;
+
+  color:
+    var(--gold-light);
+
+  text-shadow:
+    0 3px 7px
+    rgba(0,0,0,.8);
 }
 
 
-/* GOLD DECORATION */
+.platform-name{
+  margin-top:10px;
 
-.gold-line{
-  position:absolute;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
-  height:2px;
-  width:65%;
+  font-size:12px;
 
-  right:-15px;
-  bottom:5px;
+  letter-spacing:4px;
 
-  transform:rotate(-7deg);
+  color:
+    #f1c975;
+}
+
+
+/* =========================
+   GOLD HEADER LINE
+========================= */
+
+.header-line{
+  width:75%;
+  height:1px;
+
+  margin:
+    19px auto
+    0;
 
   background:
     linear-gradient(
       90deg,
       transparent,
-      var(--gold),
-      #fff3cb,
+      #9d6a24,
+      #ffe49c,
+      #9d6a24,
       transparent
     );
 
   box-shadow:
-    0 0 15px
-    rgba(214,168,78,.8);
+    0 0 9px
+    rgba(255,194,70,.8);
+
+  position:relative;
+}
+
+.header-line::after{
+  content:"";
+
+  position:absolute;
+
+  width:50px;
+  height:3px;
+
+  left:50%;
+  top:-1px;
+
+  transform:
+    translateX(-50%);
+
+  background:
+    #ffd36f;
+
+  box-shadow:
+    0 0 12px
+    #ffc44b;
 }
 
 
-/* CARD */
+/* =========================
+   COMMON CARD
+========================= */
 
 .card{
   background:
     linear-gradient(
       135deg,
-      rgba(19,55,91,.96),
-      rgba(3,23,43,.98)
+      rgba(9,47,82,.97),
+      rgba(2,23,43,.98)
     );
 
   border:
     1px solid
-    rgba(218,169,78,.75);
+    rgba(221,168,70,.78);
 
-  border-radius:27px;
+  border-radius:19px;
 
   box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.13),
-    0 15px 35px rgba(0,0,0,.50),
-    0 0 15px rgba(218,169,78,.08);
+    inset 0 1px 1px
+    rgba(255,255,255,.07),
 
-  overflow:hidden;
+    0 12px 25px
+    rgba(0,0,0,.38);
 }
 
 
-/* WELCOME */
+/* =========================
+   WELCOME
+========================= */
 
 .welcome{
-  min-height:230px;
-
-  margin-bottom:20px;
-
   display:grid;
 
   grid-template-columns:
-    43% 57%;
+    48% 52%;
+
+  overflow:hidden;
+
+  min-height:220px;
+
+  margin-bottom:12px;
 }
 
 
 .welcome-image{
-  min-height:230px;
+  min-height:220px;
 
   background-image:
     linear-gradient(
-      rgba(0,0,0,.05),
-      rgba(0,0,0,.18)
+      rgba(2,20,38,.06),
+      rgba(2,20,38,.18)
     ),
     url("welcome-glasses.jpg");
 
@@ -212,170 +268,207 @@ body{
 }
 
 
-.welcome-text{
-  padding:30px 26px;
-
+.welcome-content{
   display:flex;
 
   flex-direction:column;
 
   justify-content:center;
+
+  padding:
+    25px 24px;
 }
 
 
-.welcome-text h2{
+.welcome-content h2{
   margin:0;
 
-  color:var(--gold-light);
+  color:
+    var(--gold-light);
 
-  font-size:36px;
+  font-size:
+    38px;
 
-  line-height:1;
+  font-weight:500;
 }
 
 
-.small-gold-line{
-  width:58px;
-  height:3px;
+.title-line{
+  width:55px;
+  height:2px;
 
-  background:var(--gold);
-
-  margin:15px 0;
-}
-
-
-.welcome-text p{
-  margin:0;
-
-  color:#eef3f8;
-
-  font-size:17px;
-
-  line-height:1.55;
-}
-
-
-/* PORTALS */
-
-.portal-grid{
-  display:grid;
-
-  gap:17px;
-}
-
-
-.portal{
-  min-height:150px;
-
-  padding:18px 20px;
-
-  display:flex;
-
-  align-items:center;
-
-  text-decoration:none;
-
-  color:inherit;
-
-  transition:
-    transform .17s ease,
-    filter .17s ease;
-}
-
-
-.portal:active{
-  transform:scale(.985);
-
-  filter:brightness(1.12);
-}
-
-
-/* ICON */
-
-.portal-icon{
-  width:94px;
-  height:94px;
-
-  flex:0 0 94px;
-
-  border-radius:50%;
-
-  display:grid;
-
-  place-items:center;
-
-  font-size:42px;
+  margin:
+    13px 0
+    16px;
 
   background:
-    radial-gradient(
-      circle at 30% 25%,
-      #1b4b79,
-      #061a30 68%
-    );
-
-  border:
-    1px solid
     var(--gold);
-
-  box-shadow:
-    inset 0 0 15px rgba(0,0,0,.8),
-    0 8px 16px rgba(0,0,0,.6);
-
-  text-shadow:
-    0 5px 5px rgba(0,0,0,.8);
 }
 
 
-/* PORTAL CONTENT */
-
-.portal-content{
-  margin-left:20px;
-
-  padding-left:23px;
-
-  border-left:
-    2px solid
-    var(--gold);
-
-  flex:1;
-}
-
-
-.portal-content h3{
-  margin:0 0 9px;
-
-  font-size:28px;
-
-  font-weight:800;
-}
-
-
-.portal-content p{
+.welcome-content p{
   margin:0;
 
-  color:var(--muted);
+  color:#f2f3f6;
 
-  font-size:15px;
+  font-size:17px;
 
   line-height:1.5;
 }
 
 
-/* ARROW */
+/* =========================
+   PORTALS
+========================= */
 
-.arrow{
-  margin-left:15px;
+.portals{
+  display:grid;
 
-  width:52px;
-  height:52px;
+  gap:10px;
+}
 
-  flex:0 0 52px;
+
+.portal{
+  min-height:120px;
+
+  display:grid;
+
+  grid-template-columns:
+    85px 1fr 55px;
+
+  align-items:center;
+
+  padding:
+    13px 17px;
+
+  color:white;
+
+  text-decoration:none;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+}
+
+
+.portal:active{
+  transform:
+    scale(.985);
+
+  filter:
+    brightness(1.12);
+}
+
+
+/* =========================
+   PORTAL ICON
+========================= */
+
+.portal-icon{
+  width:68px;
+  height:68px;
 
   border-radius:50%;
 
   display:grid;
 
   place-items:center;
+
+  color:
+    var(--gold-light);
+
+  border:
+    1px solid
+    rgba(220,170,75,.75);
+
+  background:
+    radial-gradient(
+      circle at 35% 25%,
+      #123d66,
+      #03172b 70%
+    );
+
+  box-shadow:
+    inset 0 0 12px
+    rgba(0,0,0,.7),
+
+    0 5px 12px
+    rgba(0,0,0,.45);
+}
+
+
+.portal-icon svg{
+  width:38px;
+  height:38px;
+
+  stroke:
+    var(--gold-light);
+
+  fill:none;
+
+  stroke-width:1.7;
+
+  stroke-linecap:round;
+
+  stroke-linejoin:round;
+}
+
+
+/* =========================
+   PORTAL TEXT
+========================= */
+
+.portal-info{
+  display:grid;
+
+  grid-template-columns:
+    minmax(125px,38%)
+    1fr;
+
+  align-items:center;
+
+  gap:16px;
+}
+
+
+.portal-info h3{
+  margin:0;
+
+  color:
+    var(--gold-light);
+
+  font-size:29px;
+
+  font-weight:500;
+}
+
+
+.portal-info p{
+  margin:0;
+
+  color:#f0f2f5;
+
+  font-size:15px;
+
+  line-height:1.4;
+}
+
+
+/* =========================
+   ARROW
+========================= */
+
+.arrow{
+  width:43px;
+  height:43px;
+
+  border-radius:50%;
+
+  display:grid;
+
+  place-items:center;
+
+  justify-self:end;
 
   border:
     1px solid
@@ -384,38 +477,54 @@ body{
   color:
     var(--gold-light);
 
-  font-size:36px;
+  font-family:
+    Arial,
+    sans-serif;
 
-  padding-bottom:5px;
+  font-size:29px;
+
+  line-height:1;
 
   box-shadow:
-    0 7px 15px
-    rgba(0,0,0,.6);
+    0 4px 10px
+    rgba(0,0,0,.45);
 }
 
 
-/* FEATURES */
+/* =========================
+   SECURITY BAR
+========================= */
 
 .features{
-  margin-top:20px;
+  margin-top:11px;
 
-  padding:20px 8px;
+  padding:
+    16px 8px;
 
   display:grid;
 
   grid-template-columns:
     repeat(3,1fr);
-
-  text-align:center;
 }
 
 
 .feature{
-  padding:4px 8px;
+  min-height:58px;
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  gap:10px;
+
+  padding:
+    5px 12px;
 
   border-right:
     1px solid
-    rgba(214,168,78,.7);
+    rgba(218,168,75,.45);
 }
 
 
@@ -424,208 +533,251 @@ body{
 }
 
 
-.feature-icon{
-  display:block;
+.feature svg{
+  width:31px;
+  height:31px;
 
-  margin-bottom:8px;
+  flex:0 0 31px;
 
-  font-size:28px;
+  stroke:
+    var(--gold-light);
+
+  fill:none;
+
+  stroke-width:1.7;
+
+  stroke-linecap:round;
+
+  stroke-linejoin:round;
 }
 
 
-.feature-text{
-  color:#e3e9ef;
+.feature span{
+  color:
+    var(--gold-light);
 
-  font-size:13px;
+  font-size:14px;
 
-  line-height:1.35;
+  line-height:1.25;
 }
 
 
-/* FOOTER */
+/* =========================
+   FOOTER
+========================= */
 
 .footer{
   text-align:center;
 
-  margin-top:25px;
+  margin-top:20px;
 
-  color:#99a8b7;
+  color:
+    #d4b36d;
 
   font-size:13px;
 }
 
 
 .footer-line{
-  width:75%;
-
+  width:70%;
   height:1px;
 
   margin:
-    16px auto 0;
+    15px auto 0;
 
   background:
     linear-gradient(
       90deg,
       transparent,
-      var(--gold),
+      #d29c3e,
+      #ffe3a0,
+      #d29c3e,
       transparent
     );
 
   box-shadow:
-    0 0 8px
-    var(--gold);
+    0 0 7px
+    rgba(255,192,70,.55);
 }
 
 
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
 
-@media(max-width:560px){
+@media(max-width:600px){
 
   .app{
-    padding-left:14px;
-    padding-right:14px;
+    padding-left:13px;
+    padding-right:13px;
   }
 
-  .header{
-    padding-top:4px;
+  .logo{
+    width:98px;
+    height:98px;
   }
 
-  .real-logo{
-    width:min(285px,78vw);
+  .company-name{
+    font-size:
+      clamp(
+        25px,
+        7.2vw,
+        34px
+      );
 
-    max-height:145px;
+    letter-spacing:2px;
   }
 
-  .subtitle{
-    margin-top:8px;
-
-    letter-spacing:2.7px;
-
-    font-size:12px;
+  .platform-name{
+    font-size:11px;
+    letter-spacing:2.6px;
   }
 
   .welcome{
-    min-height:200px;
+    min-height:205px;
 
     grid-template-columns:
-      42% 58%;
+      45% 55%;
   }
 
   .welcome-image{
-    min-height:200px;
+    min-height:205px;
   }
 
-  .welcome-text{
-    padding:22px 18px;
+  .welcome-content{
+    padding:
+      20px 17px;
   }
 
-  .welcome-text h2{
-    font-size:30px;
+  .welcome-content h2{
+    font-size:31px;
   }
 
-  .welcome-text p{
-    font-size:15px;
-  }
-
-  .portal{
-    min-height:138px;
-
-    padding:15px;
-  }
-
-  .portal-icon{
-    width:76px;
-    height:76px;
-
-    flex-basis:76px;
-
-    font-size:34px;
-  }
-
-  .portal-content{
-    margin-left:15px;
-
-    padding-left:16px;
-  }
-
-  .portal-content h3{
-    font-size:24px;
-  }
-
-  .portal-content p{
+  .welcome-content p{
     font-size:14px;
   }
 
-  .arrow{
-    width:42px;
-    height:42px;
-
-    flex-basis:42px;
-
-    font-size:29px;
-  }
-
-  .feature-text{
-    font-size:11px;
-  }
-
-}
-
-
-/* SMALL PHONE */
-
-@media(max-width:390px){
-
-  .real-logo{
-    width:min(250px,76vw);
-  }
-
-  .welcome{
-    grid-template-columns:1fr;
-  }
-
-  .welcome-image{
-    height:155px;
-
-    min-height:155px;
-
-    background-position:center;
-  }
-
   .portal{
-    padding:13px;
+    min-height:115px;
+
+    grid-template-columns:
+      72px
+      1fr
+      42px;
+
+    padding:
+      12px 13px;
   }
 
   .portal-icon{
-    width:64px;
-    height:64px;
-
-    flex-basis:64px;
-
-    font-size:29px;
+    width:59px;
+    height:59px;
   }
 
-  .portal-content{
-    margin-left:11px;
-
-    padding-left:11px;
+  .portal-icon svg{
+    width:32px;
+    height:32px;
   }
 
-  .portal-content h3{
-    font-size:22px;
+  .portal-info{
+    display:block;
   }
 
-  .portal-content p{
+  .portal-info h3{
+    font-size:25px;
+
+    margin-bottom:6px;
+  }
+
+  .portal-info p{
     font-size:13px;
   }
 
   .arrow{
-    width:36px;
-    height:36px;
-
-    flex-basis:36px;
+    width:37px;
+    height:37px;
 
     font-size:25px;
+  }
+
+  .features{
+    padding:
+      13px 3px;
+  }
+
+  .feature{
+    display:block;
+
+    text-align:center;
+
+    padding:
+      4px 6px;
+  }
+
+  .feature svg{
+    width:27px;
+    height:27px;
+
+    margin-bottom:5px;
+  }
+
+  .feature span{
+    display:block;
+
+    font-size:10px;
+  }
+
+}
+
+
+/* =========================
+   SMALL PHONE
+========================= */
+
+@media(max-width:390px){
+
+  .welcome{
+    grid-template-columns:
+      1fr;
+  }
+
+  .welcome-image{
+    height:150px;
+
+    min-height:150px;
+  }
+
+  .welcome-content{
+    padding:
+      18px 20px
+      22px;
+  }
+
+  .portal{
+    grid-template-columns:
+      65px
+      1fr
+      36px;
+  }
+
+  .portal-icon{
+    width:54px;
+    height:54px;
+  }
+
+  .portal-info h3{
+    font-size:23px;
+  }
+
+  .portal-info p{
+    font-size:12px;
+  }
+
+  .arrow{
+    width:33px;
+    height:33px;
+
+    font-size:22px;
   }
 
 }
@@ -639,55 +791,261 @@ body{
 <main class="app">
 
 
-<!-- HEADER -->
+<!-- =========================
+     HEADER
+========================= -->
 
 <header class="header">
 
-  <img
-    src="evolution-logo.png"
-    class="real-logo"
-    alt="Evolution Optical"
+
+<!--
+EVOLUTION OPTICAL LOGO
+No PNG required
+-->
+
+<svg
+  class="logo"
+  viewBox="0 0 200 200"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-label="Evolution Optical Logo"
+>
+
+<defs>
+
+  <linearGradient
+    id="blackMetal"
+    x1="0"
+    y1="0"
+    x2="1"
+    y2="1"
+  >
+    <stop
+      offset="0%"
+      stop-color="#555b63"
+    />
+
+    <stop
+      offset="35%"
+      stop-color="#090b0e"
+    />
+
+    <stop
+      offset="70%"
+      stop-color="#20252b"
+    />
+
+    <stop
+      offset="100%"
+      stop-color="#050608"
+    />
+  </linearGradient>
+
+
+  <linearGradient
+    id="blueMetal"
+    x1="0"
+    y1="0"
+    x2="1"
+    y2="1"
+  >
+    <stop
+      offset="0%"
+      stop-color="#3d9cff"
+    />
+
+    <stop
+      offset="45%"
+      stop-color="#0757bb"
+    />
+
+    <stop
+      offset="100%"
+      stop-color="#003b87"
+    />
+  </linearGradient>
+
+
+  <filter
+    id="shadow"
+    x="-40%"
+    y="-40%"
+    width="180%"
+    height="180%"
   >
 
-  <div class="subtitle">
-    PARTNER VOUCHER PLATFORM
-  </div>
+    <feDropShadow
+      dx="0"
+      dy="5"
+      stdDeviation="5"
+      flood-color="#000"
+      flood-opacity=".75"
+    />
 
-  <div class="gold-line"></div>
+  </filter>
+
+</defs>
+
+
+<!-- BLACK OUTER CIRCLE -->
+
+<g filter="url(#shadow)">
+
+  <path
+    d="
+      M93 22
+      A78 78 0 0 0 36 54
+      A78 78 0 0 0 33 143
+      A78 78 0 0 0 80 176
+    "
+    fill="none"
+    stroke="url(#blackMetal)"
+    stroke-width="18"
+    stroke-linecap="butt"
+  />
+
+
+  <path
+    d="
+      M92 22
+      A78 78 0 0 1 149 43
+    "
+    fill="none"
+    stroke="url(#blackMetal)"
+    stroke-width="18"
+  />
+
+
+  <path
+    d="
+      M84 178
+      A78 78 0 0 0 146 159
+    "
+    fill="none"
+    stroke="url(#blackMetal)"
+    stroke-width="18"
+  />
+
+
+<!-- BLUE RIGHT ARC -->
+
+  <path
+    d="
+      M147 37
+      Q181 57 184 101
+      Q183 145 147 168
+      Q164 151 168 132
+      Q174 101 166 72
+      Q161 51 147 37
+    "
+    fill="url(#blueMetal)"
+    stroke="#419cff"
+    stroke-width="1"
+  />
+
+
+<!-- TOP BLACK TRIANGLE -->
+
+  <path
+    d="
+      M151 57
+      L113 91
+      L158 91
+      Z
+    "
+    fill="url(#blackMetal)"
+  />
+
+
+<!-- BOTTOM BLACK TRIANGLE -->
+
+  <path
+    d="
+      M113 112
+      L158 112
+      L148 148
+      Z
+    "
+    fill="url(#blackMetal)"
+  />
+
+
+<!-- BLUE CENTER BAR -->
+
+  <path
+    d="
+      M74 96
+      L91 87
+      H151
+      Q157 87 157 94
+      V103
+      Q157 110 151 110
+      H91
+      L74 101
+      Z
+    "
+    fill="url(#blueMetal)"
+  />
+
+</g>
+
+</svg>
+
+
+
+<h1 class="company-name">
+  EVOLUTION OPTICAL
+</h1>
+
+
+<div class="platform-name">
+  PARTNER VOUCHER PLATFORM
+</div>
+
+
+<div class="header-line"></div>
+
 
 </header>
 
 
 
-<!-- WELCOME -->
+<!-- =========================
+     WELCOME
+========================= -->
 
 <section class="welcome card">
 
-  <div class="welcome-image"></div>
+<div
+  class="welcome-image"
+  aria-label="Eyeglasses"
+></div>
 
-  <div class="welcome-text">
 
-    <h2>
-      Welcome
-    </h2>
+<div class="welcome-content">
 
-    <div class="small-gold-line"></div>
+<h2>
+  Welcome
+</h2>
 
-    <p>
-      Select your portal below.
-      Access will be based on your
-      assigned account role.
-    </p>
+<div class="title-line"></div>
 
-  </div>
+<p>
+  Select your portal below.
+  Access will be based on your
+  assigned account role.
+</p>
+
+</div>
 
 </section>
 
 
 
-<!-- PORTALS -->
+<!-- =========================
+     PORTALS
+========================= -->
 
-<section class="portal-grid">
+<section class="portals">
 
 
 <!-- ADMIN -->
@@ -697,28 +1055,44 @@ body{
   href="admin.html"
 >
 
-  <div class="portal-icon">
-    👥
-  </div>
+<div class="portal-icon">
 
-  <div class="portal-content">
+<svg viewBox="0 0 48 48">
 
-    <h3>
-      Admin
-    </h3>
+<circle cx="24" cy="15" r="7"/>
 
-    <p>
-      Manage partners,
-      branches,
-      staff,
-      vouchers and reports.
-    </p>
+<circle cx="10" cy="20" r="5"/>
 
-  </div>
+<circle cx="38" cy="20" r="5"/>
 
-  <div class="arrow">
-    ›
-  </div>
+<path d="M12 40v-5c0-7 5-11 12-11s12 4 12 11v5"/>
+
+<path d="M2 38v-4c0-5 3-8 8-8"/>
+
+<path d="M46 38v-4c0-5-3-8-8-8"/>
+
+</svg>
+
+</div>
+
+
+<div class="portal-info">
+
+<h3>
+  Admin
+</h3>
+
+<p>
+  Manage partners, branches,
+  staff, vouchers and reports.
+</p>
+
+</div>
+
+
+<div class="arrow">
+  ›
+</div>
 
 </a>
 
@@ -731,27 +1105,49 @@ body{
   href="partner.html"
 >
 
-  <div class="portal-icon">
-    🤝
-  </div>
+<div class="portal-icon">
 
-  <div class="portal-content">
+<svg viewBox="0 0 48 48">
 
-    <h3>
-      Partner
-    </h3>
+<path d="M4 17l9-8 8 6"/>
 
-    <p>
-      Create QR vouchers,
-      manage allocations
-      and view issued vouchers.
-    </p>
+<path d="M44 17l-9-8-8 6"/>
 
-  </div>
+<path d="M13 27l9 9c2 2 5 2 7 0l10-10"/>
 
-  <div class="arrow">
-    ›
-  </div>
+<path d="M9 21l11 11"/>
+
+<path d="M39 21L28 32"/>
+
+<path d="M18 14l5-4c3-2 6-2 9 0l5 4"/>
+
+<path d="M7 14l6 7-7 7-5-8z"/>
+
+<path d="M41 14l-6 7 7 7 5-8z"/>
+
+</svg>
+
+</div>
+
+
+<div class="portal-info">
+
+<h3>
+  Partner
+</h3>
+
+<p>
+  Create QR vouchers,
+  manage allocations and
+  view issued vouchers.
+</p>
+
+</div>
+
+
+<div class="arrow">
+  ›
+</div>
 
 </a>
 
@@ -764,27 +1160,47 @@ body{
   href="staff.html"
 >
 
-  <div class="portal-icon">
-    🔐
-  </div>
+<div class="portal-icon">
 
-  <div class="portal-content">
+<svg viewBox="0 0 48 48">
 
-    <h3>
-      Staff
-    </h3>
+<path d="M24 4l16 6v12c0 11-6 18-16 22C14 40 8 33 8 22V10z"/>
 
-    <p>
-      Scan, verify and redeem
-      customer vouchers at
-      Evolution Optical branches.
-    </p>
+<rect
+  x="17"
+  y="22"
+  width="14"
+  height="12"
+  rx="2"
+/>
 
-  </div>
+<path d="M20 22v-4a4 4 0 018 0v4"/>
 
-  <div class="arrow">
-    ›
-  </div>
+<path d="M24 27v3"/>
+
+</svg>
+
+</div>
+
+
+<div class="portal-info">
+
+<h3>
+  Staff
+</h3>
+
+<p>
+  Scan, verify and redeem
+  customer vouchers at
+  Evolution Optical branches.
+</p>
+
+</div>
+
+
+<div class="arrow">
+  ›
+</div>
 
 </a>
 
@@ -793,62 +1209,97 @@ body{
 
 
 
-<!-- SECURITY -->
+<!-- =========================
+     FEATURES
+========================= -->
 
 <section class="features card">
 
-  <div class="feature">
 
-    <span class="feature-icon">
-      🛡️
-    </span>
+<div class="feature">
 
-    <div class="feature-text">
-      Secure access
-    </div>
+<svg viewBox="0 0 48 48">
 
-  </div>
+<path d="M24 4l16 6v12c0 11-6 18-16 22C14 40 8 33 8 22V10z"/>
 
+<path d="M17 24l5 5 10-11"/>
 
-  <div class="feature">
+</svg>
 
-    <span class="feature-icon">
-      ▦
-    </span>
+<span>
+  Secure access
+</span>
 
-    <div class="feature-text">
-      Voucher verification
-    </div>
-
-  </div>
+</div>
 
 
-  <div class="feature">
 
-    <span class="feature-icon">
-      🏬
-    </span>
+<div class="feature">
 
-    <div class="feature-text">
-      Branch-controlled
-      redemption
-    </div>
+<svg viewBox="0 0 48 48">
 
-  </div>
+<rect x="5" y="5" width="14" height="14"/>
+
+<rect x="29" y="5" width="14" height="14"/>
+
+<rect x="5" y="29" width="14" height="14"/>
+
+<path d="M29 29h6v6h8"/>
+
+<path d="M29 43v-6"/>
+
+<path d="M37 43h6v-6"/>
+
+</svg>
+
+<span>
+  Voucher verification
+</span>
+
+</div>
+
+
+
+<div class="feature">
+
+<svg viewBox="0 0 48 48">
+
+<path d="M6 18h36"/>
+
+<path d="M9 18v24h30V18"/>
+
+<path d="M4 18l5-10h30l5 10"/>
+
+<path d="M18 42V29h12v13"/>
+
+<path d="M12 24h5"/>
+
+<path d="M31 24h5"/>
+
+</svg>
+
+<span>
+  Branch-controlled redemption
+</span>
+
+</div>
+
 
 </section>
 
 
 
-<!-- FOOTER -->
+<!-- =========================
+     FOOTER
+========================= -->
 
 <footer class="footer">
 
-  Evolution Optical
-  &nbsp;•&nbsp;
-  Partner Voucher Platform
+Evolution Optical
+&nbsp; • &nbsp;
+Partner Voucher Platform
 
-  <div class="footer-line"></div>
+<div class="footer-line"></div>
 
 </footer>
 
