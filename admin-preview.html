@@ -674,11 +674,223 @@ body:after{
   #partners .pname{font-size:15px!important}
   .partner-manage-toggle,.partner-vouchers-toggle{border-radius:11px!important}
 }
+
+
+/* V11 — younger, brighter typography + lively polish; behavior unchanged */
+:root{
+  --fresh-blue:#2563ff;
+  --fresh-cyan:#19baf7;
+  --fresh-violet:#7657ff;
+  --fresh-green:#12b76a;
+  --fresh-orange:#ff9f43;
+  --fresh-ink:#08182f;
+}
+
+/* More youthful system typography without external font dependency */
+html,body,button,input,select{
+  font-family:
+    Inter, ui-rounded, "SF Pro Display", "SF Pro Text",
+    -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif!important;
+}
+body{
+  font-size:17px!important;
+  letter-spacing:.005em!important;
+}
+
+/* Energetic but still professional header */
+.top{
+  background:
+    radial-gradient(circle at 12% -30%,rgba(54,130,255,.52),transparent 42%),
+    radial-gradient(circle at 78% -45%,rgba(117,87,255,.30),transparent 38%),
+    linear-gradient(135deg,#08244a 0%,#071b37 55%,#04152c 100%)!important;
+}
+.brand h1{
+  font-size:25px!important;
+  font-weight:950!important;
+  letter-spacing:1.1px!important;
+}
+.brand p{
+  font-size:14px!important;
+  font-weight:650!important;
+  letter-spacing:.3px!important;
+}
+
+/* Clear hierarchy, larger and friendlier */
+h2{
+  font-size:30px!important;
+  line-height:1.1!important;
+  font-weight:950!important;
+  letter-spacing:-.8px!important;
+}
+h3{
+  font-size:23px!important;
+  line-height:1.15!important;
+  font-weight:930!important;
+  letter-spacing:-.45px!important;
+}
+h4,.pname{
+  font-weight:920!important;
+  letter-spacing:-.2px!important;
+}
+.sub{
+  font-size:15px!important;
+  line-height:1.5!important;
+}
+
+/* Fresh accent line on major cards */
+.card{
+  position:relative!important;
+  overflow:hidden!important;
+}
+.card:before{
+  content:"";
+  position:absolute;
+  left:18px;right:18px;top:0;height:2px;
+  border-radius:999px;
+  background:linear-gradient(90deg,transparent,rgba(37,99,255,.55),rgba(25,186,247,.38),transparent);
+  pointer-events:none;
+}
+
+/* KPI cards feel more lively */
+.stat:nth-child(1):before{background:linear-gradient(#3b82f6,#2563eb)!important}
+.stat:nth-child(2):before{background:linear-gradient(#22c5f6,#0891b2)!important}
+.stat:nth-child(3):before{background:linear-gradient(#25c76f,#0d9f53)!important}
+.stat:nth-child(4):before{background:linear-gradient(#8b6cff,#6d4ee8)!important}
+.stat span{
+  font-size:12px!important;
+  font-weight:850!important;
+  letter-spacing:.35px!important;
+}
+.stat strong{
+  font-size:31px!important;
+  letter-spacing:-1px!important;
+}
+
+/* Partner cards get distinct accents */
+#partners .partner:nth-child(4n+1){border-left-color:#2563ff!important}
+#partners .partner:nth-child(4n+2){border-left-color:#7657ff!important}
+#partners .partner:nth-child(4n+3){border-left-color:#12b76a!important}
+#partners .partner:nth-child(4n+4){border-left-color:#ff9f43!important}
+
+#partners .pname{
+  font-size:17px!important;
+  line-height:1.15!important;
+}
+#partners .pcode{
+  font-size:11px!important;
+  font-weight:850!important;
+  letter-spacing:.45px!important;
+}
+
+/* More readable metric tiles */
+#partners .num span,.pm span{
+  font-size:10px!important;
+  font-weight:850!important;
+  letter-spacing:.25px!important;
+}
+#partners .num b,.pm b{
+  font-size:19px!important;
+  font-weight:950!important;
+  letter-spacing:-.4px!important;
+}
+
+/* Pill controls feel modern and friendly */
+.partner-manage-toggle,.partner-vouchers-toggle{
+  font-size:12px!important;
+  font-weight:900!important;
+  letter-spacing:.1px!important;
+  border-radius:13px!important;
+  padding:11px 12px!important;
+  background:
+    linear-gradient(135deg,#edf5ff 0%,#e7f1ff 55%,#eef0ff 100%)!important;
+  color:#174ea6!important;
+}
+.partner-manage-toggle:hover,.partner-vouchers-toggle:hover{
+  filter:brightness(1.015);
+}
+
+/* Buttons: lively gradients, clear labels */
+.btn,#createPartnerLauncherBtn{
+  font-weight:900!important;
+  letter-spacing:.1px!important;
+}
+.btn.blue,#createPartnerLauncherBtn{
+  background:linear-gradient(135deg,#4e89ff 0%,#2563ff 58%,#4058e8 100%)!important;
+}
+.btn.green{
+  background:linear-gradient(135deg,#29c879 0%,#12b76a 58%,#0e9657 100%)!important;
+}
+.btn.red{
+  background:linear-gradient(135deg,#f35f68 0%,#e5323d 58%,#c81f2a 100%)!important;
+}
+
+/* Performance section */
+.perf-card:nth-child(4n+1){border-bottom-color:rgba(37,99,255,.62)!important}
+.perf-card:nth-child(4n+2){border-bottom-color:rgba(118,87,255,.56)!important}
+.perf-card:nth-child(4n+3){border-bottom-color:rgba(18,183,106,.55)!important}
+.perf-card:nth-child(4n+4){border-bottom-color:rgba(255,159,67,.58)!important}
+.perf-card h4{
+  font-size:17px!important;
+  line-height:1.2!important;
+}
+.perf-code{
+  font-size:10px!important;
+  font-weight:850!important;
+  letter-spacing:.4px!important;
+}
+
+/* Voucher rows: slightly brighter and cleaner */
+.partner-voucher-item{
+  background:
+    linear-gradient(145deg,#ffffff 0%,#f7faff 55%,#eef5ff 100%)!important;
+}
+.partner-voucher-item b{
+  color:#0d2442!important;
+}
+
+/* Inputs */
+input,select{
+  font-size:16px!important;
+  font-weight:650!important;
+}
+input::placeholder{color:#93a3b8!important}
+
+/* Modal title */
+#createPartnerModal .create-modal-head h3{
+  font-size:25px!important;
+  font-weight:950!important;
+}
+
+/* Mobile tuning: larger but not cramped */
+@media(max-width:720px){
+  body{font-size:16px!important}
+  .brand h1{font-size:22px!important}
+  .brand p{font-size:13px!important}
+  h2{font-size:27px!important}
+  h3{font-size:21px!important}
+  .sub{font-size:14px!important}
+
+  .stat span{font-size:10px!important}
+  .stat strong{font-size:26px!important}
+
+  #partners .pname{font-size:15px!important}
+  #partners .pcode{font-size:10px!important}
+  #partners .num span,.pm span{font-size:9px!important}
+  #partners .num b,.pm b{font-size:16px!important}
+
+  .partner-manage-toggle,.partner-vouchers-toggle{
+    font-size:11px!important;
+    padding:10px 8px!important;
+  }
+
+  .perf-card h4{font-size:15px!important}
+  .perf-code{font-size:9px!important}
+}
 `;
 fetch('admin.html?preview=' + Date.now(), {cache:'no-store'})
   .then(r=>{if(!r.ok) throw new Error('Unable to load admin.html'); return r.text();})
   .then(html=>{
-    const enhancementJS="\n(function(){\n  function esc2(s){return String(s??\"\").replace(/[&<>\"']/g,c=>({\"&\":\"&amp;\",\"<\":\"&lt;\",\">\":\"&gt;\",'\"':\"&quot;\",\"'\":\"&#39;\"}[c]))}\n\n  function installBranchCreateUI(){\n    const limit=document.getElementById(\"newPartnerLimit\");\n    const grid=limit?.closest(\".create-grid\");\n    if(!grid || document.getElementById(\"newPartnerBranchBox\")) return;\n\n    const box=document.createElement(\"div\");\n    box.id=\"newPartnerBranchBox\";\n    box.className=\"field wide\";\n    box.innerHTML=`<div class=\"branch-title\">Voucher Claim Branch Permission</div>\n      <label class=\"branch-all\"><input id=\"newPartnerAllBranches\" type=\"checkbox\" checked>\n        <span><b>All Evolution Optical branches</b><br><small style=\"color:#718096\">Or untick to select specific branches.</small></span>\n      </label>\n      <div id=\"newPartnerBranchList\"></div>`;\n    grid.appendChild(box);\n\n    const render=()=>{\n      const all=document.getElementById(\"newPartnerAllBranches\");\n      const list=document.getElementById(\"newPartnerBranchList\");\n      if(!list) return;\n      const rows=(typeof branches!==\"undefined\" && Array.isArray(branches)?branches:[])\n        .filter(b=>String(b.status||\"active\").toLowerCase()===\"active\");\n      list.innerHTML=rows.length?rows.map(b=>`<label><input class=\"newPartnerBranchCheck\" type=\"checkbox\" value=\"${esc2(b.branch_code)}\" ${all?.checked?\"disabled\":\"\"}><span>${esc2(String(b.branch_name||b.branch_code).replace(/\\s*\\(HQ\\)\\s*/gi,\" \").trim())}</span></label>`).join(\"\")\n        :`<small style=\"color:#718096\">Branches will appear after dashboard data finishes loading.</small>`;\n    };\n    box.querySelector(\"#newPartnerAllBranches\").onchange=e=>{\n      box.querySelectorAll(\".newPartnerBranchCheck\").forEach(x=>x.disabled=e.target.checked);\n    };\n    render();\n    setTimeout(render,700);setTimeout(render,1800);\n\n    const btn=document.getElementById(\"createPartnerBtn\");\n    if(btn && !btn.dataset.branchWrapped){\n      btn.dataset.branchWrapped=\"1\";\n      const original=btn.onclick;\n      btn.onclick=async function(e){\n        const code=(document.getElementById(\"newPartnerCode\")?.value||\"\").trim().toUpperCase();\n        const all=document.getElementById(\"newPartnerAllBranches\")?.checked!==false;\n        const codes=[...document.querySelectorAll(\".newPartnerBranchCheck:checked\")].map(x=>x.value);\n        if(!all && !codes.length){\n          const out=document.getElementById(\"createPartnerMsg\");\n          if(typeof msg===\"function\" && out) msg(out,\"Please select at least one branch, or choose All Evolution Optical branches.\");\n          return;\n        }\n        if(original) await original.call(this,e);\n        const out=document.getElementById(\"createPartnerMsg\");\n        if(!code || !out || !/created successfully/i.test(out.textContent||\"\")) return;\n        try{\n          const {data:p,error:qerr}=await db.from(\"partners\").select(\"id,partner_name\").eq(\"partner_code\",code).maybeSingle();\n          if(qerr||!p?.id) throw qerr||new Error(\"Created Partner could not be found.\");\n          const {error}=await db.rpc(\"admin_set_partner_claim_access\",{p_partner_id:p.id,p_all_branches:all,p_branch_codes:codes});\n          if(error) throw error;\n          if(typeof msg===\"function\") msg(out,`${p.partner_name||code} created successfully with branch access saved.`,true);\n        }catch(err){\n          if(typeof msg===\"function\") msg(out,`Partner created, but branch access could not be saved: ${err?.message||err}`);\n        }\n      };\n    }\n  }\n\n  function compactPartnerCards(){\n    const root=document.getElementById(\"partners\");\n    if(!root) return;\n    [...root.querySelectorAll(\".partner\")].forEach(card=>{\n      if(card.dataset.compactReady) return;\n      card.dataset.compactReady=\"1\";\n      const prow=card.querySelector(\".prow\");\n      const nums=card.querySelector(\".nums\");\n      if(!prow||!nums) return;\n      const extra=document.createElement(\"div\");\n      extra.className=\"partner-extra\";\n      let node=nums.nextElementSibling;\n      while(node){const next=node.nextElementSibling;extra.appendChild(node);node=next}\n      card.appendChild(extra);\n      prow.addEventListener(\"click\",ev=>{\n        if(ev.target.closest(\"button,input,select,a\")) return;\n        card.classList.toggle(\"expanded\");\n      });\n    });\n  }\n\n  function bootEnhancements(){\n    installBranchCreateUI();\n    compactPartnerCards();\n    const root=document.getElementById(\"partners\");\n    if(root) new MutationObserver(compactPartnerCards).observe(root,{childList:true});\n  }\n  if(document.readyState===\"loading\") document.addEventListener(\"DOMContentLoaded\",()=>setTimeout(bootEnhancements,0));\n  else setTimeout(bootEnhancements,0);\n})();\n\n\n(function(){\n  function bootV5(){\n    const modal=document.getElementById(\"createPartnerModal\");\n    const openBtn=document.getElementById(\"createPartnerLauncherBtn\");\n    const closeBtn=document.getElementById(\"createPartnerClose\");\n    if(!modal||!openBtn||!closeBtn) return;\n\n    const open=()=>{modal.classList.add(\"open\");document.body.style.overflow=\"hidden\"};\n    const close=()=>{modal.classList.remove(\"open\");document.body.style.overflow=\"\"};\n\n    openBtn.onclick=open;\n    closeBtn.onclick=close;\n    modal.addEventListener(\"click\",e=>{if(e.target===modal) close();});\n\n    const msg=document.getElementById(\"createPartnerMsg\");\n    if(msg){\n      new MutationObserver(()=>{\n        if(/created successfully/i.test(msg.textContent||\"\")) setTimeout(close,650);\n      }).observe(msg,{childList:true,subtree:true,characterData:true});\n    }\n  }\n  if(document.readyState===\"loading\") document.addEventListener(\"DOMContentLoaded\",bootV5);\n  else bootV5();\n})();\n\n\n(function(){\n  function addManageToggles(){\n    const root=document.getElementById(\"partners\");\n    if(!root) return;\n    root.querySelectorAll(\".partner\").forEach(card=>{\n      if(card.querySelector(\".partner-manage-toggle\")) return;\n      const extra=card.querySelector(\".partner-extra\");\n      if(!extra) return;\n      const btn=document.createElement(\"button\");\n      btn.type=\"button\"; btn.className=\"partner-manage-toggle\"; btn.textContent=\"Manage\";\n      card.insertBefore(btn,extra);\n      btn.onclick=()=>card.classList.toggle(\"manage-open\");\n    });\n  }\n\n  function textOf(el,sel){return (el.querySelector(sel)?.textContent||\"\").trim()}\n  function identifyPartner(card){\n    return {\n      name:textOf(card,\"h4,.pname,strong\"),\n      code:textOf(card,\".perf-code,.pcode\").replace(/^Partner:\\s*/i,\"\").trim()\n    };\n  }\n\n  function findVoucherSection(){\n    const cards=[...document.querySelectorAll(\".card,section\")];\n    return cards.find(el=>/Voucher Records|Vouchers/i.test((el.querySelector(\"h2,h3\")?.textContent||\"\")) &&\n      !/Partner Performance/i.test(el.querySelector(\"h2,h3\")?.textContent||\"\"));\n  }\n\n  function collectVoucherRows(section){\n    if(!section) return [];\n    const rows=[...section.querySelectorAll(\".vrecord\")];\n    return rows.map(r=>({\n      node:r,\n      text:(r.textContent||\"\").replace(/\\s+/g,\" \").trim(),\n      html:r.innerHTML\n    }));\n  }\n\n  function groupVouchers(){\n    const perfGrid=document.querySelector(\".perf-grid\");\n    if(!perfGrid) return;\n    const voucherSection=findVoucherSection();\n    const rows=collectVoucherRows(voucherSection);\n\n    perfGrid.querySelectorAll(\".perf-card\").forEach(card=>{\n      if(card.querySelector(\".partner-vouchers-toggle\")) return;\n      const p=identifyPartner(card);\n      const matches=rows.filter(v=>{\n        const t=v.text.toLowerCase();\n        return (p.code && t.includes(p.code.toLowerCase())) ||\n               (p.name && t.includes(p.name.toLowerCase()));\n      });\n\n      const btn=document.createElement(\"button\");\n      btn.type=\"button\"; btn.className=\"partner-vouchers-toggle\";\n      btn.textContent=`Vouchers (${matches.length})`;\n\n      const wrap=document.createElement(\"div\");\n      wrap.className=\"partner-vouchers-wrap\";\n      if(!matches.length){\n        wrap.innerHTML='<div class=\"partner-voucher-empty\">No vouchers for this partner.</div>';\n      }else{\n        matches.forEach(v=>{\n          const item=document.createElement(\"div\");\n          item.className=\"partner-voucher-item\";\n          /* clone the original record content so no database/query logic changes */\n          item.innerHTML=v.html;\n          wrap.appendChild(item);\n        });\n      }\n      card.appendChild(btn); card.appendChild(wrap);\n      btn.onclick=()=>card.classList.toggle(\"vouchers-open\");\n    });\n\n    if(voucherSection){\n      voucherSection.id=voucherSection.id||\"vouchersSection\";\n      voucherSection.classList.add(\"v8-hidden-vouchers\");\n    }\n  }\n\n  function bootV8(){\n    addManageToggles();\n    groupVouchers();\n    const p=document.getElementById(\"partners\");\n    if(p)new MutationObserver(()=>{addManageToggles()}).observe(p,{childList:true,subtree:true});\n    setTimeout(groupVouchers,700);\n    setTimeout(groupVouchers,1800);\n  }\n  if(document.readyState===\"loading\")document.addEventListener(\"DOMContentLoaded\",bootV8);\n  else bootV8();\n})();\n";
+    const enhancementJS="\n(function(){\n  function esc2(s){return String(s??\"\").replace(/[&<>\"']/g,c=>({\"&\":\"&amp;\",\"<\":\"&lt;\",\">\":\"&gt;\",'\"':\"&quot;\",\"'\":\"&#39;\"}[c]))}\n\n  function installBranchCreateUI(){\n    const limit=document.getElementById(\"newPartnerLimit\");\n    const grid=limit?.closest(\".create-grid\");\n    if(!grid || document.getElementById(\"newPartnerBranchBox\")) return;\n\n    const box=document.createElement(\"div\");\n    box.id=\"newPartnerBranchBox\";\n    box.className=\"field wide\";\n    box.innerHTML=`<div class=\"branch-title\">Voucher Claim Branch Permission</div>\n      <label class=\"branch-all\"><input id=\"newPartnerAllBranches\" type=\"checkbox\" checked>\n        <span><b>All Evolution Optical branches</b><br><small style=\"color:#718096\">Or untick to select specific branches.</small></span>\n      </label>\n      <div id=\"newPartnerBranchList\"></div>`;\n    grid.appendChild(box);\n\n    const render=()=>{\n      const all=document.getElementById(\"newPartnerAllBranches\");\n      const list=document.getElementById(\"newPartnerBranchList\");\n      if(!list) return;\n      const rows=(typeof branches!==\"undefined\" && Array.isArray(branches)?branches:[])\n        .filter(b=>String(b.status||\"active\").toLowerCase()===\"active\");\n      list.innerHTML=rows.length?rows.map(b=>`<label><input class=\"newPartnerBranchCheck\" type=\"checkbox\" value=\"${esc2(b.branch_code)}\" ${all?.checked?\"disabled\":\"\"}><span>${esc2(String(b.branch_name||b.branch_code).replace(/\\s*\\(HQ\\)\\s*/gi,\" \").trim())}</span></label>`).join(\"\")\n        :`<small style=\"color:#718096\">Branches will appear after dashboard data finishes loading.</small>`;\n    };\n    box.querySelector(\"#newPartnerAllBranches\").onchange=e=>{\n      box.querySelectorAll(\".newPartnerBranchCheck\").forEach(x=>x.disabled=e.target.checked);\n    };\n    render();\n    setTimeout(render,700);setTimeout(render,1800);\n\n    const btn=document.getElementById(\"createPartnerBtn\");\n    if(btn && !btn.dataset.branchWrapped){\n      btn.dataset.branchWrapped=\"1\";\n      const original=btn.onclick;\n      btn.onclick=async function(e){\n        const code=(document.getElementById(\"newPartnerCode\")?.value||\"\").trim().toUpperCase();\n        const all=document.getElementById(\"newPartnerAllBranches\")?.checked!==false;\n        const codes=[...document.querySelectorAll(\".newPartnerBranchCheck:checked\")].map(x=>x.value);\n        if(!all && !codes.length){\n          const out=document.getElementById(\"createPartnerMsg\");\n          if(typeof msg===\"function\" && out) msg(out,\"Please select at least one branch, or choose All Evolution Optical branches.\");\n          return;\n        }\n        if(original) await original.call(this,e);\n        const out=document.getElementById(\"createPartnerMsg\");\n        if(!code || !out || !/created successfully/i.test(out.textContent||\"\")) return;\n        try{\n          const {data:p,error:qerr}=await db.from(\"partners\").select(\"id,partner_name\").eq(\"partner_code\",code).maybeSingle();\n          if(qerr||!p?.id) throw qerr||new Error(\"Created Partner could not be found.\");\n          const {error}=await db.rpc(\"admin_set_partner_claim_access\",{p_partner_id:p.id,p_all_branches:all,p_branch_codes:codes});\n          if(error) throw error;\n          if(typeof msg===\"function\") msg(out,`${p.partner_name||code} created successfully with branch access saved.`,true);\n        }catch(err){\n          if(typeof msg===\"function\") msg(out,`Partner created, but branch access could not be saved: ${err?.message||err}`);\n        }\n      };\n    }\n  }\n\n  function compactPartnerCards(){\n    const root=document.getElementById(\"partners\");\n    if(!root) return;\n    [...root.querySelectorAll(\".partner\")].forEach(card=>{\n      if(card.dataset.compactReady) return;\n      card.dataset.compactReady=\"1\";\n      const prow=card.querySelector(\".prow\");\n      const nums=card.querySelector(\".nums\");\n      if(!prow||!nums) return;\n      const extra=document.createElement(\"div\");\n      extra.className=\"partner-extra\";\n      let node=nums.nextElementSibling;\n      while(node){const next=node.nextElementSibling;extra.appendChild(node);node=next}\n      card.appendChild(extra);\n      prow.addEventListener(\"click\",ev=>{\n        if(ev.target.closest(\"button,input,select,a\")) return;\n        card.classList.toggle(\"expanded\");\n      });\n    });\n  }\n\n  function bootEnhancements(){\n    installBranchCreateUI();\n    compactPartnerCards();\n    const root=document.getElementById(\"partners\");\n    if(root) new MutationObserver(compactPartnerCards).observe(root,{childList:true});\n  }\n  if(document.readyState===\"loading\") document.addEventListener(\"DOMContentLoaded\",()=>setTimeout(bootEnhancements,0));\n  else setTimeout(bootEnhancements,0);\n})();\n\n\n(function(){\n  function bootV5(){\n    const modal=document.getElementById(\"createPartnerModal\");\n    const openBtn=document.getElementById(\"createPartnerLauncherBtn\");\n    const closeBtn=document.getElementById(\"createPartnerClose\");\n    if(!modal||!openBtn||!closeBtn) return;\n\n    const open=()=>{modal.classList.add(\"open\");document.body.style.overflow=\"hidden\"};\n    const close=()=>{modal.classList.remove(\"open\");document.body.style.overflow=\"\"};\n\n    openBtn.onclick=open;\n    closeBtn.onclick=close;\n    modal.addEventListener(\"click\",e=>{if(e.target===modal) close();});\n\n    const msg=document.getElementById(\"createPartnerMsg\");\n    if(msg){\n      new MutationObserver(()=>{\n        if(/created successfully/i.test(msg.textContent||\"\")) setTimeout(close,650);\n      }).observe(msg,{childList:true,subtree:true,characterData:true});\n    }\n  }\n  if(document.readyState===\"loading\") document.addEventListener(\"DOMContentLoaded\",bootV5);\n  else bootV5();\n})();\n\n\n(function(){\n  function addManageToggles(){\n    const root=document.getElementById(\"partners\");\n    if(!root) return;\n    root.querySelectorAll(\".partner\").forEach(card=>{\n      if(card.querySelector(\".partner-manage-toggle\")) return;\n      const extra=card.querySelector(\".partner-extra\");\n      if(!extra) return;\n      const btn=document.createElement(\"button\");\n      btn.type=\"button\"; btn.className=\"partner-manage-toggle\"; btn.textContent=\"Manage\";\n      card.insertBefore(btn,extra);\n      btn.onclick=()=>card.classList.toggle(\"manage-open\");\n    });\n  }\n\n  function textOf(el,sel){return (el.querySelector(sel)?.textContent||\"\").trim()}\n  function identifyPartner(card){\n    return {\n      name:textOf(card,\"h4,.pname,strong\"),\n      code:textOf(card,\".perf-code,.pcode\").replace(/^Partner:\\s*/i,\"\").trim()\n    };\n  }\n\n  function findVoucherSection(){\n    const cards=[...document.querySelectorAll(\".card,section\")];\n    return cards.find(el=>/Voucher Records|Vouchers/i.test((el.querySelector(\"h2,h3\")?.textContent||\"\")) &&\n      !/Partner Performance/i.test(el.querySelector(\"h2,h3\")?.textContent||\"\"));\n  }\n\n  function collectVoucherRows(section){\n    if(!section) return [];\n    const rows=[...section.querySelectorAll(\".vrecord\")];\n    return rows.map(r=>({\n      node:r,\n      text:(r.textContent||\"\").replace(/\\s+/g,\" \").trim(),\n      html:r.innerHTML\n    }));\n  }\n\n  function groupVouchers(){\n    const perfGrid=document.querySelector(\".perf-grid\");\n    if(!perfGrid) return;\n    const voucherSection=findVoucherSection();\n    const rows=collectVoucherRows(voucherSection);\n\n    perfGrid.querySelectorAll(\".perf-card\").forEach(card=>{\n      if(card.querySelector(\".partner-vouchers-toggle\")) return;\n      const p=identifyPartner(card);\n      const matches=rows.filter(v=>{\n        const t=v.text.toLowerCase();\n        return (p.code && t.includes(p.code.toLowerCase())) ||\n               (p.name && t.includes(p.name.toLowerCase()));\n      });\n\n      const btn=document.createElement(\"button\");\n      btn.type=\"button\"; btn.className=\"partner-vouchers-toggle\";\n      btn.textContent=`Vouchers (${matches.length})`;\n\n      const wrap=document.createElement(\"div\");\n      wrap.className=\"partner-vouchers-wrap\";\n      if(!matches.length){\n        wrap.innerHTML='<div class=\"partner-voucher-empty\">No vouchers for this partner.</div>';\n      }else{\n        matches.forEach(v=>{\n          const item=document.createElement(\"div\");\n          item.className=\"partner-voucher-item\";\n          /* clone the original record content so no database/query logic changes */\n          item.innerHTML=v.html;\n          wrap.appendChild(item);\n        });\n      }\n      card.appendChild(btn); card.appendChild(wrap);\n      btn.onclick=()=>card.classList.toggle(\"vouchers-open\");\n    });\n\n    if(voucherSection){\n      voucherSection.id=voucherSection.id||\"vouchersSection\";\n      voucherSection.classList.add(\"v8-hidden-vouchers\");\n    }\n  }\n\n  function bootV8(){\n    addManageToggles();\n    groupVouchers();\n    const p=document.getElementById(\"partners\");\n    if(p)new MutationObserver(()=>{addManageToggles()}).observe(p,{childList:true,subtree:true});\n    setTimeout(groupVouchers,700);\n    setTimeout(groupVouchers,1800);\n  }\n  if(document.readyState===\"loading\")document.addEventListener(\"DOMContentLoaded\",bootV8);\n  else bootV8();\n})();\n\n\n(function(){\n  function isExpiredUnclaimedFromText(text){\n    const t=String(text||\"\").toUpperCase();\n    const expired=/\\bEXPIRED\\b/.test(t);\n    const redeemed=/\\bREDEEMED\\b|\\bUSED\\b|\\bCLAIMED\\b/.test(t);\n    return expired && !redeemed;\n  }\n\n  function hideExpiredUnclaimedInGroupedVouchers(){\n    document.querySelectorAll(\".partner-vouchers-wrap\").forEach(wrap=>{\n      let visible=0;\n      wrap.querySelectorAll(\".partner-voucher-item\").forEach(item=>{\n        const hide=isExpiredUnclaimedFromText(item.textContent);\n        item.style.display=hide?\"none\":\"\";\n        if(!hide) visible++;\n      });\n\n      let empty=wrap.querySelector(\".partner-voucher-empty\");\n      if(!visible){\n        if(!empty){\n          empty=document.createElement(\"div\");\n          empty.className=\"partner-voucher-empty\";\n          empty.textContent=\"No active or claimed vouchers for this partner.\";\n          wrap.appendChild(empty);\n        }\n        empty.style.display=\"\";\n      }else if(empty){\n        empty.style.display=\"none\";\n      }\n\n      const card=wrap.closest(\".perf-card\");\n      const btn=card?.querySelector(\".partner-vouchers-toggle\");\n      if(btn){\n        btn.textContent=`Vouchers (${visible})`;\n      }\n    });\n  }\n\n  function hideExpiredUnclaimedStandalone(){\n    document.querySelectorAll(\".vrecord\").forEach(r=>{\n      if(isExpiredUnclaimedFromText(r.textContent)) r.style.display=\"none\";\n    });\n  }\n\n  function bootV10(){\n    hideExpiredUnclaimedInGroupedVouchers();\n    hideExpiredUnclaimedStandalone();\n    setTimeout(hideExpiredUnclaimedInGroupedVouchers,700);\n    setTimeout(hideExpiredUnclaimedStandalone,700);\n    setTimeout(hideExpiredUnclaimedInGroupedVouchers,1800);\n    setTimeout(hideExpiredUnclaimedStandalone,1800);\n\n    const perf=document.querySelector(\".perf-grid\");\n    if(perf){\n      new MutationObserver(()=>{\n        hideExpiredUnclaimedInGroupedVouchers();\n      }).observe(perf,{childList:true,subtree:true});\n    }\n    const records=document.getElementById(\"voucherRecords\");\n    if(records){\n      new MutationObserver(()=>{\n        hideExpiredUnclaimedStandalone();\n      }).observe(records,{childList:true,subtree:true});\n    }\n  }\n\n  if(document.readyState===\"loading\") document.addEventListener(\"DOMContentLoaded\",bootV10);\n  else bootV10();\n})();\n";
     let transformed=html;
     const addStart='<section class="card">\n<h3>Add New Partner</h3>';
     const allocStart='<section class="card"><h3>Partner Voucher Allocation</h3>';
