@@ -281,6 +281,35 @@ input::placeholder{color:#97a6b8}
 .create-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 10px;margin-top:10px}
 .create-grid .wide{grid-column:1/-1}
 
+
+#staffModal,#shareModal{
+  position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;
+  padding:10px;background:rgba(4,16,33,.56);backdrop-filter:blur(10px)
+}
+#staffModal.open,#shareModal.open{display:flex}
+.share-card{
+  width:min(620px,100%);padding:18px;border-radius:26px 26px 18px 18px;
+  border:1px solid rgba(255,255,255,.98);
+  background:linear-gradient(145deg,#fff,#f3f7fc);
+  box-shadow:0 -24px 60px rgba(5,21,43,.28),inset 0 1px 0 #fff
+}
+.share-role{
+  display:inline-block;margin-top:8px;padding:6px 10px;border-radius:999px;
+  background:#eaf2ff;color:#2457b8;border:1px solid #d3e1ff;font-size:11px;font-weight:900
+}
+.share-link{
+  margin-top:12px;padding:11px 12px;border:1px solid #dbe5f1;border-radius:13px;
+  background:#f8fbff;color:#1c3553;font-size:12px;line-height:1.45;word-break:break-all
+}
+.share-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.share-actions .wide{grid-column:1/-1}
+.staff-launcher-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:720px){
+  .staff-launcher-grid{grid-template-columns:1fr}
+  .share-actions{grid-template-columns:1fr}
+  .share-actions .wide{grid-column:auto}
+}
+
 .bottomnav{
   position:fixed;z-index:60;left:10px;right:10px;bottom:calc(7px + env(safe-area-inset-bottom));
   display:grid;grid-template-columns:repeat(6,1fr);gap:3px;padding:8px;
@@ -373,13 +402,23 @@ input::placeholder{color:#97a6b8}
     </div>
   </section>
 
-  <section class="card launcher">
-    <div class="launcher-copy">
-      <h3>Add New Partner</h3>
-      <p class="sub">Create partner + voucher limit + branch permission.</p>
-    </div>
-    <button id="openPartnerModal" class="btn blue">+ Add Partner</button>
-  </section>
+  <div class="staff-launcher-grid">
+    <section class="card launcher">
+      <div class="launcher-copy">
+        <h3>Add New Partner</h3>
+        <p class="sub">Create partner + voucher limit + branch permission.</p>
+      </div>
+      <button id="openPartnerModal" class="btn blue">+ Add Partner</button>
+    </section>
+
+    <section class="card launcher">
+      <div class="launcher-copy">
+        <h3>Add New Staff</h3>
+        <p class="sub">Create staff login + assign branch.</p>
+      </div>
+      <button id="openStaffModal" class="btn green">+ Add Staff</button>
+    </section>
+  </div>
 
   </div>
 
@@ -499,6 +538,56 @@ input::placeholder{color:#97a6b8}
   </section>
 </div>
 
+<div id="staffModal">
+  <section class="modal-sheet">
+    <div class="modal-head">
+      <h3>Add New Staff</h3>
+      <button id="closeStaffModal" class="modal-close" type="button">×</button>
+    </div>
+    <p class="sub">Create a Staff login and assign an Evolution Optical branch.</p>
+
+    <div class="create-grid">
+      <div class="field"><label>Staff Name</label><input id="newStaffName" autocomplete="name" placeholder="Staff name"></div>
+      <div class="field"><label>Email</label><input id="newStaffEmail" type="email" autocomplete="off" placeholder="staff@example.com"></div>
+      <div class="field"><label>Temporary Password</label><input id="newStaffPassword" type="password" autocomplete="new-password" placeholder="Minimum 6 characters"></div>
+      <div class="field">
+        <label>Role</label>
+        <select id="newStaffRole">
+          <option value="staff">Staff</option>
+          <option value="manager">Branch Manager</option>
+        </select>
+      </div>
+      <div class="field wide">
+        <label>Assigned Branch</label>
+        <select id="newStaffBranch"><option value="">Select branch</option></select>
+      </div>
+    </div>
+
+    <button id="createStaffBtn" class="btn green" style="width:100%;margin-top:12px">Create Staff</button>
+    <div id="createStaffMsg"></div>
+  </section>
+</div>
+
+<div id="shareModal">
+  <section class="share-card">
+    <div class="modal-head">
+      <div>
+        <h3 id="shareTitle">Account Ready</h3>
+        <span id="shareRole" class="share-role">ACCESS</span>
+      </div>
+      <button id="closeShareModal" class="modal-close" type="button">×</button>
+    </div>
+    <p id="shareDescription" class="sub" style="margin-top:10px"></p>
+    <div id="shareLink" class="share-link"></div>
+    <div class="share-actions">
+      <button id="copyShareLink" class="btn blue" type="button">Copy Link</button>
+      <button id="whatsappShareLink" class="btn green" type="button">WhatsApp</button>
+      <button id="doneShareLink" class="btn light wide" type="button">Close</button>
+    </div>
+    <div id="shareMsg"></div>
+  </section>
+</div>
+
 <nav class="bottomnav" id="bottomNav">
   <button class="active" data-view="dashboard">Dashboard</button>
   <button data-view="partners">Partners</button>
@@ -525,6 +614,68 @@ const HIDDEN_KEY="eo_admin_hidden_partners_v1";
 const hiddenCodes=new Set(JSON.parse(localStorage.getItem(HIDDEN_KEY)||"[]").map(x=>String(x).toUpperCase()));
 const openManage=new Set();
 const openVouchers=new Set();
+
+const SITE_BASE="https://ericchaow.github.io/evolution-optical-voucher/";
+let currentShare={role:"",name:"",email:"",url:""};
+
+function roleAccessUrl(role){
+  const clean=String(role||"").toLowerCase();
+  return `${SITE_BASE}index.html?role=${encodeURIComponent(clean)}`;
+}
+
+function openShareModal(role,name,email){
+  const clean=String(role||"").toLowerCase();
+  const label=clean==="partner"?"PARTNER":"STAFF";
+  const url=roleAccessUrl(clean);
+
+  currentShare={role:clean,name:name||"",email:email||"",url};
+
+  $("shareTitle").textContent=`${name||label} is ready`;
+  $("shareRole").textContent=`${label} ACCESS`;
+  $("shareDescription").textContent=
+    clean==="partner"
+      ?"Send this Partner access link. The Main Page will show only the Partner Portal."
+      :"Send this Staff access link. The Main Page will show only the Staff Portal.";
+  $("shareLink").textContent=url;
+  msg($("shareMsg"),"");
+  $("shareModal").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+
+function closeShareModal(){
+  $("shareModal").classList.remove("open");
+  if(!$("partnerModal").classList.contains("open")&&!$("staffModal").classList.contains("open")){
+    document.body.style.overflow="";
+  }
+}
+
+async function copyCurrentShareLink(){
+  if(!currentShare.url)return;
+  try{
+    await navigator.clipboard.writeText(currentShare.url);
+    msg($("shareMsg"),"Access link copied.",true);
+  }catch(_){
+    const ta=document.createElement("textarea");
+    ta.value=currentShare.url;
+    document.body.appendChild(ta);ta.select();
+    document.execCommand("copy");ta.remove();
+    msg($("shareMsg"),"Access link copied.",true);
+  }
+}
+
+function whatsappCurrentShareLink(){
+  if(!currentShare.url)return;
+  const roleName=currentShare.role==="partner"?"Partner":"Staff";
+  const message=[
+    `Evolution Optical ${roleName} Access`,
+    currentShare.name?`Account: ${currentShare.name}`:"",
+    currentShare.email?`Login email: ${currentShare.email}`:"",
+    `Sign in: ${currentShare.url}`,
+    "",
+    "Please keep your login details private."
+  ].filter(Boolean).join("\n");
+  window.open(`https://wa.me/?text=${encodeURIComponent(message)}`,"_blank","noopener");
+}
 
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function msg(node,text,ok=false){if(!node)return;node.innerHTML=text?`<div class="msg ${ok?'ok':'err'}">${esc(text)}</div>`:""}
@@ -573,6 +724,15 @@ async function ensureClaimBranchOptions(){
       <span>${esc(b.branch_name||b.branch_code)}</span>
     </label>`).join("");
   syncNewPartnerClaimUI();
+
+  const staffBranch=$("newStaffBranch");
+  if(staffBranch){
+    const current=staffBranch.value||"";
+    staffBranch.innerHTML='<option value="">Select branch</option>'+
+      claimBranchOptions.map(b=>`<option value="${esc(b.id)}">${esc(b.branch_name||b.branch_code)}</option>`).join("");
+    if([...staffBranch.options].some(o=>o.value===current))staffBranch.value=current;
+  }
+
   return claimBranchOptions;
 }
 
@@ -1148,12 +1308,76 @@ async function createPartner(){
     setTimeout(()=>{
       $("partnerModal").classList.remove("open");
       document.body.style.overflow="";
-    },600);
+      openShareModal("partner",data.partner?.partner_name||partner_name,email);
+    },250);
   }catch(e){
     msg(out,e?.message||"Create Partner failed.");
   }finally{
     btn.disabled=false;
     btn.textContent="Create Partner";
+  }
+}
+
+async function createStaff(){
+  const btn=$("createStaffBtn");
+  const out=$("createStaffMsg");
+  msg(out,"");
+
+  const staff_name=$("newStaffName").value.trim();
+  const email=$("newStaffEmail").value.trim().toLowerCase();
+  const password=$("newStaffPassword").value;
+  const role=$("newStaffRole").value||"staff";
+  const branch_id=$("newStaffBranch").value||"";
+
+  if(!staff_name||!email||!password||!branch_id){
+    msg(out,"Please complete Staff Name, Email, Password and Assigned Branch.");return;
+  }
+  if(!email.includes("@")){msg(out,"Please enter a valid email address.");return}
+  if(password.length<6){msg(out,"Password must be at least 6 characters.");return}
+  if(!["staff","manager"].includes(role)){msg(out,"Invalid Staff role.");return}
+
+  const branchName=$("newStaffBranch").selectedOptions[0]?.textContent||"selected branch";
+  if(!confirm(`Create ${staff_name} as ${role==="manager"?"Branch Manager":"Staff"} at ${branchName}?`))return;
+
+  btn.disabled=true;
+  btn.textContent="Creating...";
+
+  try{
+    const {data,error}=await db.functions.invoke("create-staff",{
+      body:{staff_name,email,password,branch_id,role}
+    });
+
+    if(error){
+      let detail=error.message||"Create Staff failed.";
+      try{
+        if(error.context&&typeof error.context.json==="function"){
+          const body=await error.context.json();
+          if(body?.error)detail=body.error+(body?.details?`: ${typeof body.details==="string"?body.details:JSON.stringify(body.details)}`:"");
+        }
+      }catch(_){}
+      throw new Error(detail);
+    }
+
+    if(!data?.success)throw new Error(data?.error||"Create Staff failed.");
+
+    msg(out,`${data.staff?.staff_name||staff_name} created successfully.`,true);
+
+    $("newStaffName").value="";
+    $("newStaffEmail").value="";
+    $("newStaffPassword").value="";
+    $("newStaffRole").value="staff";
+    $("newStaffBranch").value="";
+
+    setTimeout(()=>{
+      $("staffModal").classList.remove("open");
+      document.body.style.overflow="";
+      openShareModal("staff",data.staff?.staff_name||staff_name,email);
+    },250);
+  }catch(e){
+    msg(out,e?.message||"Create Staff failed.");
+  }finally{
+    btn.disabled=false;
+    btn.textContent="Create Staff";
   }
 }
 
@@ -1277,6 +1501,29 @@ $("partnerModal").addEventListener("click",e=>{
 
 $("createPartnerBtn").onclick=createPartner;
 $("newPartnerAllBranches").addEventListener("change",syncNewPartnerClaimUI);
+
+$("openStaffModal").onclick=async()=>{
+  try{await ensureClaimBranchOptions()}catch(e){msg($("createStaffMsg"),"Unable to load branches: "+e.message)}
+  $("staffModal").classList.add("open");
+  document.body.style.overflow="hidden";
+};
+$("closeStaffModal").onclick=()=>{
+  $("staffModal").classList.remove("open");
+  document.body.style.overflow="";
+};
+$("staffModal").addEventListener("click",e=>{
+  if(e.target===$("staffModal")){
+    $("staffModal").classList.remove("open");
+    document.body.style.overflow="";
+  }
+});
+$("createStaffBtn").onclick=createStaff;
+
+$("closeShareModal").onclick=closeShareModal;
+$("doneShareLink").onclick=closeShareModal;
+$("copyShareLink").onclick=copyCurrentShareLink;
+$("whatsappShareLink").onclick=whatsappCurrentShareLink;
+$("shareModal").addEventListener("click",e=>{if(e.target===$("shareModal"))closeShareModal()});
 
 $("voucherRefresh").onclick=loadVouchers;
 $("voucherSearch").addEventListener("input",renderVouchers);
