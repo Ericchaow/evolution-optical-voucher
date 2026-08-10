@@ -287,6 +287,7 @@ input::placeholder{color:#97a6b8}
   padding:10px;background:rgba(4,16,33,.56);backdrop-filter:blur(10px)
 }
 #staffModal.open,#shareModal.open{display:flex}
+#shareModal{z-index:140}
 .share-card{
   width:min(620px,100%);padding:18px;border-radius:26px 26px 18px 18px;
   border:1px solid rgba(255,255,255,.98);
@@ -1362,17 +1363,27 @@ async function createStaff(){
 
     msg(out,`${data.staff?.staff_name||staff_name} created successfully.`,true);
 
+    const createdStaffName=data.staff?.staff_name||staff_name;
+    const createdStaffEmail=email;
+
+    // Close Staff creation sheet first, then open Share Access immediately.
+    $("staffModal").classList.remove("open");
+    document.body.style.overflow="";
+
     $("newStaffName").value="";
     $("newStaffEmail").value="";
     $("newStaffPassword").value="";
     $("newStaffRole").value="staff";
     $("newStaffBranch").value="";
 
-    setTimeout(()=>{
-      $("staffModal").classList.remove("open");
-      document.body.style.overflow="";
-      openShareModal("staff",data.staff?.staff_name||staff_name,email);
-    },250);
+    openShareModal("staff",createdStaffName,createdStaffEmail);
+
+    // Safety fallback: if browser rendering delayed the modal, force it visible.
+    requestAnimationFrame(()=>{
+      if(!$("shareModal").classList.contains("open")){
+        openShareModal("staff",createdStaffName,createdStaffEmail);
+      }
+    });
   }catch(e){
     msg(out,e?.message||"Create Staff failed.");
   }finally{
