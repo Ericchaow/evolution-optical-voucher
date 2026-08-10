@@ -369,6 +369,216 @@ input::placeholder{color:#97a6b8}
   .branch-admin-row,.settings-row{padding:10px}
 }
 
+
+/* =========================================================
+   EVOLUTION OPTICAL — UNIFIED NEON ADMIN THEME
+   Visual only. Existing Admin logic is intentionally preserved.
+========================================================= */
+:root{
+  --bg:#050716;
+  --card:#0b1335;
+  --ink:#f7f8ff;
+  --muted:#bcc7e3;
+  --navy:#07152f;
+  --navy2:#0b2f61;
+  --blue:#4f8dff;
+  --violet:#bd5cff;
+  --green:#20d7a0;
+  --red:#ff5f7a;
+  --orange:#ffb14c;
+  --line:rgba(115,135,210,.34);
+  --soft:#101b44;
+}
+html,body{
+  background:
+    radial-gradient(circle at 8% 5%,rgba(192,92,255,.20),transparent 26%),
+    radial-gradient(circle at 92% 16%,rgba(40,168,255,.16),transparent 30%),
+    radial-gradient(circle at 55% 80%,rgba(40,228,242,.07),transparent 30%),
+    linear-gradient(160deg,#050716 0%,#08102b 52%,#040816 100%);
+  color:var(--ink);
+}
+body:before{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:
+    linear-gradient(135deg,transparent 0 11%,rgba(168,85,247,.10) 11.1% 11.24%,transparent 11.4%),
+    linear-gradient(315deg,transparent 0 9%,rgba(34,211,238,.08) 9.1% 9.23%,transparent 9.35%);
+  opacity:.65;
+}
+.top{
+  position:sticky;top:0;
+  background:
+    linear-gradient(180deg,rgba(5,9,28,.96),rgba(5,12,35,.92));
+  border-bottom:1px solid rgba(103,120,255,.28);
+  box-shadow:
+    0 16px 40px rgba(0,0,0,.32),
+    0 0 28px rgba(107,86,255,.10);
+  backdrop-filter:blur(18px);
+}
+.brand h1{
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:500;
+  letter-spacing:2px;
+  background:linear-gradient(90deg,#ffffff,#e6e9ff 44%,#75b9ff 70%,#d675ff);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 18px rgba(95,139,255,.22);
+}
+.brand p{
+  letter-spacing:2.2px;
+  text-transform:uppercase;
+  background:linear-gradient(90deg,#dc66ff,#8c82ff,#37def0);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.ghost{
+  border:1px solid transparent;
+  background:
+    linear-gradient(#0a1234,#07102d) padding-box,
+    linear-gradient(135deg,#e65cff,#846dff,#28dff0) border-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 8px 18px rgba(0,0,0,.28),
+    0 0 16px rgba(111,87,255,.23);
+}
+.wrap{max-width:1120px}
+.card,.partner,.perf-card,.vrecord,.stat,.vstat,.branch-admin-row,.settings-row,
+.hidden-box,.claim-panel,.num,.pm,.claim-summary{
+  background:
+    linear-gradient(145deg,rgba(20,18,69,.96),rgba(7,20,52,.96) 58%,rgba(5,14,38,.97)) padding-box,
+    linear-gradient(120deg,rgba(225,92,255,.72),rgba(91,103,255,.54),rgba(42,221,240,.46)) border-box;
+  border:1px solid transparent;
+  color:var(--ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 14px 28px rgba(0,0,0,.28),
+    0 0 18px rgba(91,86,255,.09);
+}
+.card{border-radius:24px}
+.card:before{
+  height:2px;
+  background:linear-gradient(90deg,transparent,#dc5cff,#6b7cff,#2be1ef,transparent);
+  box-shadow:0 0 12px rgba(106,99,255,.62);
+}
+h2,h3,h4,.pname,.vcode{color:#fff}
+h2,h3{
+  background:linear-gradient(90deg,#ef6dff,#9d85ff 50%,#45dff0);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub,.note,.vmeta,.rate,.claim-summary,.partner-voucher-item div{color:var(--muted)!important}
+input,select{
+  background:linear-gradient(145deg,rgba(15,23,58,.98),rgba(7,15,41,.98));
+  color:#fff;
+  border:1px solid rgba(100,128,210,.42);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 0 0 rgba(0,0,0,0);
+}
+input::placeholder{color:#8e9ab8}
+input:focus,select:focus{
+  border-color:#6aa7ff;
+  box-shadow:0 0 0 3px rgba(79,125,255,.16),0 0 18px rgba(89,109,255,.16);
+}
+label{color:#d9e3ff}
+.btn{
+  border:1px solid transparent;
+  background:
+    linear-gradient(145deg,#121d49,#071331) padding-box,
+    linear-gradient(135deg,#d75cff,#6f74ff,#2cdef0) border-box;
+  color:#fff;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    0 8px 18px rgba(0,0,0,.28),
+    0 0 15px rgba(95,85,255,.18);
+}
+.btn.blue{
+  background:
+    linear-gradient(145deg,#182665,#0b1b4f) padding-box,
+    linear-gradient(135deg,#b85cff,#6285ff,#2ee2ee) border-box;
+}
+.btn.green{
+  background:
+    linear-gradient(145deg,#0d4a47,#073633) padding-box,
+    linear-gradient(135deg,#58f0ca,#28d3a8,#3fdff0) border-box;
+}
+.btn.red{
+  background:
+    linear-gradient(145deg,#5b182b,#39101e) padding-box,
+    linear-gradient(135deg,#ff7391,#ff4e73,#c94cff) border-box;
+}
+.btn.light{
+  color:#e8edff;
+  background:
+    linear-gradient(145deg,#172043,#0b1535) padding-box,
+    linear-gradient(135deg,#866cff,#50a0ff,#30ddeb) border-box;
+}
+.stat:before{
+  background:linear-gradient(#d75cff,#6678ff,#2cddea);
+  box-shadow:0 0 12px rgba(113,88,255,.45);
+}
+.badge{
+  background:rgba(31,207,145,.13);
+  color:#58f0bd;
+  border-color:rgba(70,225,173,.36);
+}
+.badge.suspended{
+  background:rgba(255,85,112,.12);
+  color:#ff8297;
+  border-color:rgba(255,95,122,.32);
+}
+.partner-manage-toggle,.partner-vouchers-toggle{
+  color:#dce7ff;
+  background:
+    linear-gradient(145deg,#17234f,#0b173b) padding-box,
+    linear-gradient(135deg,#9f64ff,#5c8dff,#2cdff0) border-box;
+  border:1px solid transparent;
+}
+.claim-option,.hidden-row,.partner-voucher-item{
+  background:linear-gradient(145deg,rgba(19,25,63,.96),rgba(8,17,46,.96));
+  border-color:rgba(91,115,190,.34);
+  color:#eef2ff;
+}
+.modal-sheet,.share-card{
+  background:
+    linear-gradient(145deg,rgba(19,17,64,.99),rgba(6,18,48,.99)) padding-box,
+    linear-gradient(120deg,#e05cff,#6b79ff,#2edfea) border-box;
+  border:1px solid transparent;
+  color:#fff;
+  box-shadow:0 -26px 70px rgba(0,0,0,.48),0 0 30px rgba(85,80,255,.22);
+}
+.modal-close{
+  color:#fff;
+  background:
+    linear-gradient(#18234f,#0b1536) padding-box,
+    linear-gradient(135deg,#de5cff,#6a7cff,#2ddfea) border-box;
+  border:1px solid transparent;
+}
+.share-role{
+  background:rgba(88,95,255,.14);
+  color:#a9c9ff;
+  border-color:rgba(107,129,255,.34);
+}
+.share-link{
+  background:#0a1537;
+  color:#dce8ff;
+  border-color:rgba(87,116,188,.38);
+}
+.msg.ok{background:rgba(22,163,102,.15);color:#69efb7;border:1px solid rgba(45,220,154,.24)}
+.msg.err{background:rgba(197,47,72,.15);color:#ff92a5;border:1px solid rgba(255,93,124,.24)}
+.bottomnav{
+  background:
+    linear-gradient(180deg,rgba(11,22,59,.96),rgba(5,13,38,.98)) padding-box,
+    linear-gradient(90deg,#b65cff,#677cff,#2cdaed) border-box;
+  border:1px solid transparent;
+  box-shadow:0 14px 30px rgba(0,0,0,.42),0 0 24px rgba(80,87,255,.16);
+}
+.bottomnav button.active{
+  background:linear-gradient(135deg,#ad58ff,#5d78ff 58%,#28cfe7);
+  box-shadow:0 0 16px rgba(97,92,255,.35);
+}
+@media(max-width:720px){
+  .top{padding-top:calc(14px + env(safe-area-inset-top));padding-bottom:14px}
+  .brand h1{font-size:23px;letter-spacing:1.3px}
+  .brand p{font-size:10px;letter-spacing:1.5px}
+  .card{border-radius:20px}
+}
+
 </style>
 </head>
 
