@@ -96,6 +96,13 @@ body:before{
   .portal{grid-template-columns:39px minmax(0,1fr) 22px}.portal-icon{width:35px;height:35px}
   .portal-info h3{font-size:18.5px}.portal-info p{font-size:8px}.arrow{width:21px;height:21px;font-size:15px}
 }
+/* ROLE-SPECIFIC ENTRY MODE */
+.portal[hidden]{display:none!important}
+body.role-filtered .portals{grid-template-columns:1fr}
+@media(max-width:700px){
+  body.role-filtered .portals{grid-template-rows:minmax(0,1fr)}
+}
+
 </style>
 
 </head>
@@ -413,6 +420,7 @@ body:before{
 
 <a
   class="portal card"
+  data-role="admin"
   href="admin.html"
 >
 
@@ -465,6 +473,7 @@ body:before{
 
 <a
   class="portal card"
+  data-role="partner"
   href="partner.html"
 >
 
@@ -522,6 +531,7 @@ body:before{
 
 <a
   class="portal card"
+  data-role="staff"
   href="staff.html"
 >
 
@@ -672,6 +682,30 @@ body:before{
 
 
 </main>
+
+<script>
+(function(){
+  const params=new URLSearchParams(window.location.search);
+  const role=(params.get("role")||"").trim().toLowerCase();
+
+  // Only Partner and Staff use restricted invitation links.
+  // Unknown / missing role keeps the normal 3-portal homepage.
+  if(!["partner","staff"].includes(role)) return;
+
+  document.body.classList.add("role-filtered","role-"+role);
+
+  document.querySelectorAll(".portal[data-role]").forEach(portal=>{
+    portal.hidden=portal.dataset.role!==role;
+  });
+
+  const welcome=document.querySelector(".welcome-content p");
+  if(welcome){
+    welcome.textContent=role==="partner"
+      ? "Continue to the Partner Portal with your assigned account."
+      : "Continue to the Staff Portal with your assigned account.";
+  }
+})();
+</script>
 
 </body>
 </html>
