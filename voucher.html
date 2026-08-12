@@ -9,16 +9,16 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Evolution Optical Digital Voucher">
 <meta property="og:description" content="Tap to view your secure digital voucher, QR code, validity and redemption location.">
-<meta property="og:url" content="https://ericchaow.github.io/evolution-optical-voucher/voucher.html">
+<meta property="og:url" content="https://xiaoe-ai.github.io/evolution-optical-voucher/voucher.html">
 <meta property="og:site_name" content="Evolution Optical">
-<meta property="og:image" content="https://ericchaow.github.io/evolution-optical-voucher/evolution-logo.png">
-<meta property="og:image:secure_url" content="https://ericchaow.github.io/evolution-optical-voucher/evolution-logo.png">
+<meta property="og:image" content="https://xiaoe-ai.github.io/evolution-optical-voucher/evolution-logo.png">
+<meta property="og:image:secure_url" content="https://xiaoe-ai.github.io/evolution-optical-voucher/evolution-logo.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:alt" content="Evolution Optical Digital Voucher">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Evolution Optical Digital Voucher">
 <meta name="twitter:description" content="Tap to view your secure digital voucher, QR code, validity and redemption location.">
-<meta name="twitter:image" content="https://ericchaow.github.io/evolution-optical-voucher/evolution-logo.png">
+<meta name="twitter:image" content="https://xiaoe-ai.github.io/evolution-optical-voucher/evolution-logo.png">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
@@ -69,12 +69,23 @@ function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&l
 function fail(t){$("loading").classList.add("hidden");$("voucherCard").classList.add("hidden");$("errorCard").classList.remove("hidden");$("errorText").textContent=t}
 (async()=>{
  const token=new URLSearchParams(location.search).get("v"); if(!token){fail("This voucher link is incomplete.");return}
- const {data,error}=await db.rpc("get_public_voucher",{p_token:token}); if(error||!data?.success){fail("This voucher link is invalid or unavailable.");return}
+ const {data,error}=await db.rpc("get_public_voucher",{p_token:token});
+ if(error){
+   console.error("get_public_voucher RPC error:", error);
+   fail("Unable to verify this voucher right now. Please try again.");
+   return;
+ }
+ const voucher = Array.isArray(data) ? data[0] : data;
+ if(!voucher || voucher.success !== true){
+   console.error("Unexpected voucher response:", data);
+   fail("This voucher link is invalid or unavailable.");
+   return;
+ }
  $("loading").classList.add("hidden");$("voucherCard").classList.remove("hidden");
- $("partner").textContent=data.partner_name||"Partner";$("customer").textContent=data.customer_name||"—";$("expiry").textContent=data.expiry_date||"—";$("code").textContent=data.voucher_code||"—";
- const s=String(data.status||"valid").toLowerCase(),pill=$("statusPill");pill.textContent=s.toUpperCase();pill.className="pill "+(s==="valid"?"valid":s==="redeemed"?"redeemed":s==="expired"?"expired":"invalid");
+ $("partner").textContent=voucher.partner_name||"Partner";$("customer").textContent=voucher.customer_name||"—";$("expiry").textContent=voucher.expiry_date||"—";$("code").textContent=voucher.voucher_code||"—";
+ const s=String(voucher.status||"valid").toLowerCase(),pill=$("statusPill");pill.textContent=s.toUpperCase();pill.className="pill "+(s==="valid"?"valid":s==="redeemed"?"redeemed":s==="expired"?"expired":"invalid");
  if(s==="redeemed")$("stateNote").textContent="This voucher has already been redeemed.";else if(s==="expired")$("stateNote").textContent="This voucher has expired.";else if(s!=="valid")$("stateNote").textContent="This voucher is currently not valid for redemption.";
- new QRCode($("qr"),{text:data.voucher_code,width:420,height:420,correctLevel:QRCode.CorrectLevel.M});
- const rows=data.branches||[];$("branchList").innerHTML=rows.length?rows.map(b=>{const l=OUTLETS[b.branch_code]||{},a=b.address||l.address||"",p=b.phone||l.phone||"";return `<div class="branch"><b>${esc(b.branch_name||b.branch_code||"Evolution Optical")}</b>${a?`<span>${esc(a)}</span>`:""}${p?`<span>☎ ${esc(p)}</span>`:""}</div>`}).join(""):'<div class="branch"><b>Please contact Evolution Optical for redemption locations.</b></div>';
+ new QRCode($("qr"),{text:voucher.voucher_code,width:420,height:420,correctLevel:QRCode.CorrectLevel.M});
+ const rows=voucher.branches||[];$("branchList").innerHTML=rows.length?rows.map(b=>{const l=OUTLETS[b.branch_code]||{},a=b.address||l.address||"",p=b.phone||l.phone||"";return `<div class="branch"><b>${esc(b.branch_name||b.branch_code||"Evolution Optical")}</b>${a?`<span>${esc(a)}</span>`:""}${p?`<span>☎ ${esc(p)}</span>`:""}</div>`}).join(""):'<div class="branch"><b>Please contact Evolution Optical for redemption locations.</b></div>';
 })();
 </script></body></html>
