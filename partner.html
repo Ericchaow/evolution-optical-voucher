@@ -276,16 +276,39 @@
     }
 
     .approved-voucher {
+      --voucher-ink: #0c2c67;
+      --voucher-brand: #082b68;
+      --voucher-accent: #4f5bbf;
+      --voucher-line: #8fb9ef;
+      --voucher-panel-line: #bdd4ef;
+      --voucher-offer-bg:
+        radial-gradient(circle at 82% 20%, rgba(43, 225, 239, .24), transparent 26%),
+        linear-gradient(100deg, #071c4c, #263995 48%, #7351c7 76%, #075d8d);
+      --voucher-scan-bg: linear-gradient(90deg, #2456b8, #555ac9);
+      --voucher-footer-bg: linear-gradient(90deg, #08285f, #4755bc 58%, #067295);
+      --voucher-gift-bg:
+        radial-gradient(circle at 20% 20%, rgba(111,84,211,.12), transparent 28%),
+        linear-gradient(180deg, #eef5ff, #fbfdff);
+
       width: min(100%, 680px);
       margin: 0 auto;
       padding: 10px;
-      border: 1px solid #8fb9ef;
+      border: 1px solid var(--voucher-line);
       border-radius: 24px;
-      color: #0c2c67;
+      color: var(--voucher-ink);
       background:
         radial-gradient(circle at 88% 8%, rgba(92, 89, 255, 0.20), transparent 28%),
         linear-gradient(180deg, #d9eaff, #f8fbff 24%, #edf6ff);
       box-shadow: 0 18px 44px rgba(15, 50, 105, 0.16);
+    }
+
+    /* Theme layer: add future themes here without touching voucher logic. */
+    .approved-voucher[data-theme="classic"] {
+      --voucher-ink: #0c2c67;
+      --voucher-brand: #082b68;
+      --voucher-accent: #4f5bbf;
+      --voucher-line: #8fb9ef;
+      --voucher-panel-line: #bdd4ef;
     }
 
     .approved-inner {
@@ -301,7 +324,7 @@
     }
 
     .av-brand {
-      color: #082b68;
+      color: var(--voucher-brand);
       font-size: 23px;
       font-weight: 950;
       letter-spacing: .4px;
@@ -309,7 +332,7 @@
 
     .av-appreciation {
       margin-top: 4px;
-      color: #4f5bbf;
+      color: var(--voucher-accent);
       font-size: 13px;
       font-weight: 700;
     }
@@ -323,9 +346,7 @@
       padding: 12px 13px;
       border-radius: 17px;
       color: #fff;
-      background:
-        radial-gradient(circle at 82% 20%, rgba(43, 225, 239, .24), transparent 26%),
-        linear-gradient(100deg, #071c4c, #263995 48%, #7351c7 76%, #075d8d);
+      background: var(--voucher-offer-bg);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 8px 18px rgba(16,43,102,.18);
     }
 
@@ -421,11 +442,9 @@
       display: grid;
       place-items: center;
       padding: 16px;
-      border: 1px solid #bdd4ef;
+      border: 1px solid var(--voucher-panel-line);
       border-radius: 16px;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(111,84,211,.12), transparent 28%),
-        linear-gradient(180deg, #eef5ff, #fbfdff);
+      background: var(--voucher-gift-bg);
     }
 
     .av-gift-text {
@@ -434,6 +453,30 @@
       font-size: 30px;
       text-align: center;
       line-height: 1.35;
+    }
+
+    .av-gift-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .av-theme-decoration {
+      width: min(88%, 250px);
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .av-theme-decoration svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 8px 10px rgba(31, 64, 122, .14));
     }
 
     .av-qr {
@@ -471,7 +514,7 @@
       border-radius: 999px;
       color: #fff;
       text-align: center;
-      background: linear-gradient(90deg, #2456b8, #555ac9);
+      background: var(--voucher-scan-bg);
       font-size: 12px;
       font-weight: 900;
       letter-spacing: .4px;
@@ -703,8 +746,9 @@
           <label>Voucher Type</label>
           <select id="voucherType">
             <option value="RM60 Free Glasses">RM60 Free Glasses</option>
-            <option value="Free Eye Screening">Free Eye Screening</option>
-            <option value="Special Partner Voucher">Special Partner Voucher</option>
+            <option value="RM20 Cash Voucher">RM20 Cash Voucher</option>
+            <option value="RM50 Cash Voucher">RM50 Cash Voucher</option>
+            <option value="RM100 Cash Voucher">RM100 Cash Voucher</option>
           </select>
         </div>
 
@@ -777,21 +821,21 @@
           <div class="approved-inner">
 
             <div class="av-head">
-              <div class="av-brand">EVOLUTION OPTICAL SDN BHD</div>
-              <div class="av-appreciation">Appreciation for your support</div>
+              <div class="av-brand">Evolution Optical</div>
+              <div class="av-appreciation">Sdn Bhd</div>
             </div>
 
             <div class="av-offer">
-              <div class="av-free">FREE</div>
+              <div class="av-free" id="offerEyebrow">FREE</div>
 
-              <div class="av-offer-copy">
+              <div class="av-offer-copy" id="offerTitle">
                 FREE GLASSES<br />
                 VOUCHER
               </div>
 
               <div class="av-value">
-                <small>VALUE</small>
-                <strong>RM60</strong>
+                <small id="offerValueLabel">VALUE</small>
+                <strong id="offerValue">RM60</strong>
               </div>
             </div>
 
@@ -819,10 +863,13 @@
 
             <div class="av-main">
               <div class="av-gift">
-                <div class="av-gift-text">
-                  A little gift<br />
-                  just for you<br />
-                  ♡
+                <div class="av-gift-content">
+                  <div class="av-gift-text">
+                    A little gift<br />
+                    just for you<br />
+                    ♡
+                  </div>
+                  <div id="themeDecoration" class="av-theme-decoration" aria-hidden="true"></div>
                 </div>
               </div>
 
@@ -871,6 +918,129 @@
     let partnerClaimNames = [];
 
     /* =========================================================
+       VOUCHER ENGINE
+       Purpose/rules and visual theme are deliberately separated.
+       Add new voucher types or themes here without changing QR,
+       Supabase, redemption, or WhatsApp share logic.
+    ========================================================= */
+    const VOUCHER_ENGINE = {
+      defaultTheme: "classic",
+
+      types: {
+        "RM60 Free Glasses": {
+          key: "free_glasses_rm60",
+          eyebrow: "FREE",
+          titleHtml: "FREE GLASSES<br />VOUCHER",
+          valueLabel: "VALUE",
+          valueText: "RM60",
+          defaultTheme: "classic"
+        },
+        "RM20 Cash Voucher": {
+          key: "cash_voucher_rm20",
+          eyebrow: "CASH",
+          titleHtml: "CASH<br />VOUCHER",
+          valueLabel: "VALUE",
+          valueText: "RM20",
+          defaultTheme: "classic"
+        },
+        "RM50 Cash Voucher": {
+          key: "cash_voucher_rm50",
+          eyebrow: "CASH",
+          titleHtml: "CASH<br />VOUCHER",
+          valueLabel: "VALUE",
+          valueText: "RM50",
+          defaultTheme: "classic"
+        },
+        "RM100 Cash Voucher": {
+          key: "cash_voucher_rm100",
+          eyebrow: "CASH",
+          titleHtml: "CASH<br />VOUCHER",
+          valueLabel: "VALUE",
+          valueText: "RM100",
+          defaultTheme: "classic"
+        }
+      },
+
+      themes: {
+        classic: {
+          key: "classic",
+          decoration: "cute_glasses"
+        }
+      }
+    };
+
+    function getVoucherTypeDefinition(voucherType) {
+      return VOUCHER_ENGINE.types[voucherType] || {
+        key: "custom",
+        eyebrow: "SPECIAL",
+        titleHtml: "PARTNER<br />VOUCHER",
+        valueLabel: "BENEFIT",
+        valueText: "GIFT",
+        defaultTheme: VOUCHER_ENGINE.defaultTheme
+      };
+    }
+
+    function getVoucherThemeKey(voucherType, partnerTheme = "") {
+      const typeDef = getVoucherTypeDefinition(voucherType);
+      const requested = String(partnerTheme || "").trim();
+
+      if (requested && VOUCHER_ENGINE.themes[requested]) return requested;
+      if (typeDef.defaultTheme && VOUCHER_ENGINE.themes[typeDef.defaultTheme]) {
+        return typeDef.defaultTheme;
+      }
+      return VOUCHER_ENGINE.defaultTheme;
+    }
+
+    function renderThemeDecoration(themeKey) {
+      const box = $("themeDecoration");
+      if (!box) return;
+
+      const theme = VOUCHER_ENGINE.themes[themeKey];
+      if (!theme || theme.decoration !== "cute_glasses") {
+        box.innerHTML = "";
+        return;
+      }
+
+      /* Lightweight inline SVG: no extra image file, safe for html2canvas. */
+      box.innerHTML = `
+        <svg viewBox="0 0 320 130" role="img" aria-label="Cute eyeglasses decoration">
+          <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M38 64 L18 47" stroke="#173f88" stroke-width="10"/>
+            <path d="M282 64 L302 47" stroke="#173f88" stroke-width="10"/>
+            <rect x="42" y="34" width="95" height="68" rx="30" fill="#f7fbff" stroke="#2857aa" stroke-width="9"/>
+            <rect x="183" y="34" width="95" height="68" rx="30" fill="#f7fbff" stroke="#2857aa" stroke-width="9"/>
+            <path d="M137 63 C151 51 169 51 183 63" stroke="#7a60d2" stroke-width="9"/>
+            <circle cx="88" cy="65" r="8" fill="#173f88" stroke="none"/>
+            <path d="M218 65 q13 11 26 0" stroke="#173f88" stroke-width="7"/>
+            <circle cx="72" cy="82" r="7" fill="#ff9db4" stroke="none" opacity=".8"/>
+            <circle cx="250" cy="82" r="7" fill="#ff9db4" stroke="none" opacity=".8"/>
+            <path d="M146 91 q14 13 28 0" stroke="#173f88" stroke-width="6"/>
+            <path d="M54 24 l4 9 10 1-8 6 3 10-9-5-9 5 3-10-8-6 10-1z" fill="#f1c45b" stroke="none"/>
+            <path d="M264 20 l3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1z" fill="#f1c45b" stroke="none"/>
+          </g>
+        </svg>`;
+    }
+
+    function renderVoucherDesign(voucherType, partnerTheme = "") {
+      const typeDef = getVoucherTypeDefinition(voucherType);
+      const themeKey = getVoucherThemeKey(voucherType, partnerTheme);
+      const voucherNode = document.querySelector(".approved-voucher");
+
+      if (voucherNode) voucherNode.dataset.theme = themeKey;
+
+      $("offerEyebrow").textContent = typeDef.eyebrow;
+      $("offerTitle").innerHTML = typeDef.titleHtml;
+      $("offerValueLabel").textContent = typeDef.valueLabel;
+      $("offerValue").textContent = typeDef.valueText;
+
+      $("offerEyebrow").style.fontSize =
+        typeDef.eyebrow.length > 5 ? "34px" : "";
+
+      renderThemeDecoration(themeKey);
+      return { typeDef, themeKey };
+    }
+
+    /* =========================================================
        OUTLETS
     ========================================================= */
     const OUTLETS = {
@@ -916,6 +1086,8 @@
         phone: "012-6766016"
       }
     };
+
+    renderVoucherDesign($("voucherType")?.value || "RM60 Free Glasses");
 
     /* =========================================================
        UI HELPERS
@@ -1144,9 +1316,13 @@
           return;
         }
 
+        const design = renderVoucherDesign(voucherType);
+
         currentVoucher = {
           voucher_code: data.voucher_code,
           voucher_type: voucherType,
+          voucher_type_key: design.typeDef.key,
+          voucher_theme: design.themeKey,
           customer_name: customerName,
           expiry_date: data.expiry_date,
           partner_name: currentPartnerName,
