@@ -1,11 +1,23 @@
 {
   "name": "Evolution Optical Staff",
   "short_name": "Staff",
+  "id": "./staff.html",
   "start_url": "./staff.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait",
   "theme_color": "#08122f",
   "background_color": "#08122f",
+  "description": "Evolution Optical Staff portal",
+  "categories": [
+    "business",
+    "productivity"
+  ],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "staff-icon-192.png",

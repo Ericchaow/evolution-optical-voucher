@@ -1,11 +1,23 @@
 {
   "name": "Evolution Optical Admin",
   "short_name": "Admin",
+  "id": "./admin.html",
   "start_url": "./admin.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait",
   "theme_color": "#08122f",
   "background_color": "#08122f",
+  "description": "Evolution Optical Admin portal",
+  "categories": [
+    "business",
+    "productivity"
+  ],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "admin-icon-192.png",
