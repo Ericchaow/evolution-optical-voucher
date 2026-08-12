@@ -1,8 +1,8 @@
 {
   "name": "Evolution Optical Admin",
   "short_name": "Admin",
-  "id": "./admin.html",
-  "start_url": "./admin.html",
+  "id": "./admin-launch.html",
+  "start_url": "./admin-launch.html",
   "scope": "./",
   "display": "standalone",
   "display_override": [

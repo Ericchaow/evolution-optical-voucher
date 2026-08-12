@@ -1,8 +1,8 @@
 {
   "name": "Evolution Optical Partner",
   "short_name": "Partner",
-  "id": "./partner.html",
-  "start_url": "./partner.html",
+  "id": "./partner-launch.html",
+  "start_url": "./partner-launch.html",
   "scope": "./",
   "display": "standalone",
   "display_override": [

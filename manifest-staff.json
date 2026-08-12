@@ -1,8 +1,8 @@
 {
   "name": "Evolution Optical Staff",
   "short_name": "Staff",
-  "id": "./staff.html",
-  "start_url": "./staff.html",
+  "id": "./staff-launch.html",
+  "start_url": "./staff-launch.html",
   "scope": "./",
   "display": "standalone",
   "display_override": [
