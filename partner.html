@@ -1,45 +1,1401 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#0f172a" />
-<title>Evolution Optical • Partner Portal</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<style>
-:root{--bg:#eef4fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--navy:#0f172a;--line:#dbe5f1;--blue:#2563eb;--green:#15803d;--greenbg:#ecfdf3;--red:#b91c1c;--redbg:#fef2f2}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:linear-gradient(180deg,#eef4fb,#f8fbff 45%,#eef4fb);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}button,input,select{font:inherit}.hidden{display:none!important}.top{position:sticky;top:0;z-index:20;background:linear-gradient(135deg,#09203e,#06162d);color:#fff;padding:calc(18px + env(safe-area-inset-top)) 16px 18px;box-shadow:0 12px 28px rgba(4,20,42,.25)}.top-inner{max-width:820px;margin:auto;display:flex;align-items:center;gap:12px}.brand{flex:1}.brand h1{margin:0;font-size:22px;font-weight:950}.brand p{margin:4px 0 0;color:#cbd5e1;font-size:13px}.ghost{border:1px solid #ffffff38;color:#fff;background:#ffffff12;border-radius:12px;padding:9px 12px;font-weight:800}.wrap{width:min(820px,calc(100% - 22px));margin:16px auto 42px}.card{background:linear-gradient(145deg,#fff,#f7faff);border:1px solid #fff;border-radius:22px;box-shadow:0 16px 34px rgba(35,57,88,.10);padding:18px;margin-bottom:14px}h2,h3{margin:0 0 8px}.sub{margin:0;color:var(--muted);line-height:1.5}.field{margin-top:14px}label{display:block;font-weight:850;font-size:13px;margin-bottom:6px}input,select{width:100%;min-height:49px;border:1px solid #d6e0ec;border-radius:14px;background:#fff;padding:12px 13px;outline:none}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}.btn{width:100%;border:0;border-radius:14px;min-height:50px;padding:12px 15px;margin-top:16px;color:#fff;background:#0f172a;font-weight:900;cursor:pointer}.btn.blue{background:linear-gradient(135deg,#4e89ff,#2563eb)}.btn.green{background:linear-gradient(135deg,#29c879,#15803d)}.btn.red{background:linear-gradient(135deg,#ef5d65,#b91c1c)}.btn.secondary{background:#e5e7eb;color:#172033}.btn:disabled{opacity:.55}.msg{margin-top:12px;padding:11px 12px;border-radius:12px;font-size:13px}.msg.ok{background:var(--greenbg);color:var(--green)}.msg.error{background:var(--redbg);color:var(--red)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:15px}.stat{padding:12px;border-radius:15px;background:#f8fafc;border:1px solid #e0e8f1}.stat span{display:block;font-size:11px;color:var(--muted);font-weight:800}.stat strong{display:block;margin-top:4px;font-size:22px}.partner-line{margin-top:13px;padding-top:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}.badge{padding:6px 9px;border-radius:999px;background:var(--greenbg);color:var(--green);font-size:11px;font-weight:900}.branch,.validity-box{padding:11px 12px;border:1px solid #dce7f4;border-radius:13px;background:#fff}.branch b,.validity-box b{display:block;font-size:13px}.branch small,.validity-box span{display:block;color:var(--muted);margin-top:3px;font-size:12px;line-height:1.4}.validity-box{margin-top:14px;background:linear-gradient(145deg,#f7fbff,#eaf3ff);border-color:#cfe0fb}.validity-box b{color:#174ea6}.test-delete-card{border:1px solid #fecaca;background:#fff8f8}.test-delete-row{display:grid;grid-template-columns:1fr auto;gap:9px;margin-top:11px}.test-delete-row .btn{margin:0;width:auto;min-width:170px}.approved-voucher{width:min(100%,680px);margin:0 auto;padding:10px;border-radius:24px;background:linear-gradient(180deg,#dceeff,#f8fbff 22%,#edf7ff);border:1px solid #9dc8f4;color:#0c2c67}.approved-inner{border:1.5px dashed #2d78d3;border-radius:18px;padding:14px;background:#f8fcff}.av-head{text-align:center}.av-brand{font-size:23px;font-weight:950;color:#0b2b66}.av-appreciation{color:#145dbb;font-size:14px;margin-top:4px}.av-offer{margin-top:10px;display:grid;grid-template-columns:1fr 1fr .62fr;align-items:center;padding:11px 13px;border-radius:17px;color:#fff;background:linear-gradient(90deg,#092b72,#0b5eb8 56%,#1685d1 78%,#07377d)}.av-free{font-size:52px;font-weight:950;line-height:.9}.av-offer-copy{border-left:1px solid #ffffff88;padding-left:12px;font-size:21px;font-weight:950;line-height:1.05}.av-value{background:#083274;border-radius:13px;padding:8px 5px;text-align:center}.av-value small{display:block;font-size:12px}.av-value strong{display:block;font-size:31px}.av-info{display:grid;grid-template-columns:1fr 1fr;margin-top:10px}.av-info-cell{padding:10px 12px;border-bottom:1px solid #c6dcf5}.av-info-cell:nth-child(odd){border-right:1px solid #c6dcf5}.av-label{display:inline-block;padding:3px 8px;border-radius:999px;background:#1d63bd;color:#fff;font-size:10px;font-weight:900}.av-data{display:block;margin-top:5px;color:#111827;font-size:16px;font-weight:850}.av-main{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.av-gift{min-height:260px;border-radius:16px;border:1px solid #b7d5f3;background:linear-gradient(180deg,#eaf5ff,#f8fbff);display:grid;place-items:center;padding:16px}.av-gift-text{font-family:"Segoe Script","Brush Script MT",cursive;color:#0d3a88;font-size:31px;text-align:center}.av-qr{display:flex;flex-direction:column;align-items:center;justify-content:center}#qrBox{width:280px;height:280px;max-width:74vw;max-height:74vw;background:#fff;border:4px solid #0c55b3;border-radius:16px;padding:9px;display:flex;align-items:center;justify-content:center}#qrBox img,#qrBox canvas{width:100%!important;height:100%!important}.av-scan{width:100%;margin-top:7px;padding:7px 10px;border-radius:999px;color:#fff;background:#1260c4;text-align:center;font-size:13px;font-weight:900}.av-footer{margin-top:10px;padding:11px 10px 8px;border-radius:0 0 15px 15px;background:#064493;color:#fff;text-align:center}.footer{text-align:center;color:#94a3b8;font-size:12px;margin:22px 0}@media(max-width:620px){.form-grid{grid-template-columns:1fr}.card{padding:14px}.av-free{font-size:38px}.av-offer-copy{font-size:15px;padding-left:7px}.av-value strong{font-size:23px}.av-data{font-size:12px}.av-gift{min-height:190px}.av-gift-text{font-size:23px}#qrBox{width:190px;height:190px;max-width:48vw;max-height:48vw}.test-delete-row{grid-template-columns:1fr}.test-delete-row .btn{width:100%;min-width:0}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Evolution Optical • Partner Portal</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #eef4fb;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --navy: #0f172a;
+      --line: #dbe5f1;
+      --blue: #2563eb;
+      --green: #15803d;
+      --green-bg: #ecfdf3;
+      --red: #b91c1c;
+      --red-bg: #fef2f2;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: linear-gradient(180deg, #eef4fb, #f8fbff 45%, #eef4fb);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    button,
+    input,
+    select { font: inherit; }
+
+    .hidden { display: none !important; }
+
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: calc(18px + env(safe-area-inset-top)) 16px 18px;
+      color: #fff;
+      background: linear-gradient(135deg, #09203e, #06162d);
+      box-shadow: 0 12px 28px rgba(4, 20, 42, 0.25);
+    }
+
+    .top-inner {
+      max-width: 820px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand { flex: 1; }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 950;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: #cbd5e1;
+      font-size: 13px;
+    }
+
+    .ghost {
+      padding: 9px 12px;
+      border: 1px solid #ffffff38;
+      border-radius: 12px;
+      color: #fff;
+      background: #ffffff12;
+      font-weight: 800;
+    }
+
+    .wrap {
+      width: min(820px, calc(100% - 22px));
+      margin: 16px auto 42px;
+    }
+
+    .card {
+      margin-bottom: 14px;
+      padding: 18px;
+      border: 1px solid #fff;
+      border-radius: 22px;
+      background: linear-gradient(145deg, #fff, #f7faff);
+      box-shadow: 0 16px 34px rgba(35, 57, 88, 0.10);
+    }
+
+    h2,
+    h3 { margin: 0 0 8px; }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .field { margin-top: 14px; }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 49px;
+      padding: 12px 13px;
+      border: 1px solid #d6e0ec;
+      border-radius: 14px;
+      outline: none;
+      background: #fff;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 12px;
+    }
+
+    .btn {
+      width: 100%;
+      min-height: 50px;
+      margin-top: 16px;
+      padding: 12px 15px;
+      border: 0;
+      border-radius: 14px;
+      color: #fff;
+      background: #0f172a;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .btn.blue {
+      background: linear-gradient(135deg, #4e89ff, #2563eb);
+    }
+
+    .btn.green {
+      background: linear-gradient(135deg, #29c879, #15803d);
+    }
+
+    .btn.red {
+      background: linear-gradient(135deg, #ef5d65, #b91c1c);
+    }
+
+    .btn.secondary {
+      color: #172033;
+      background: #e5e7eb;
+    }
+
+    .btn:disabled { opacity: 0.55; }
+
+    .msg {
+      margin-top: 12px;
+      padding: 11px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .msg.ok {
+      color: var(--green);
+      background: var(--green-bg);
+    }
+
+    .msg.error {
+      color: var(--red);
+      background: var(--red-bg);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin-top: 15px;
+    }
+
+    .stat {
+      padding: 12px;
+      border: 1px solid #e0e8f1;
+      border-radius: 15px;
+      background: #f8fafc;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 22px;
+    }
+
+    .partner-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 13px;
+      padding-top: 13px;
+      border-top: 1px solid var(--line);
+    }
+
+    .badge {
+      padding: 6px 9px;
+      border-radius: 999px;
+      color: var(--green);
+      background: var(--green-bg);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .branch,
+    .validity-box {
+      padding: 11px 12px;
+      border: 1px solid #dce7f4;
+      border-radius: 13px;
+      background: #fff;
+    }
+
+    .branch b,
+    .validity-box b {
+      display: block;
+      font-size: 13px;
+    }
+
+    .branch small,
+    .validity-box span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .validity-box {
+      margin-top: 14px;
+      border-color: #cfe0fb;
+      background: linear-gradient(145deg, #f7fbff, #eaf3ff);
+    }
+
+    .validity-box b { color: #174ea6; }
+
+    .test-delete-card {
+      border: 1px solid #fecaca;
+      background: #fff8f8;
+    }
+
+    .test-delete-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 9px;
+      margin-top: 11px;
+    }
+
+    .test-delete-row .btn {
+      width: auto;
+      min-width: 170px;
+      margin: 0;
+    }
+
+    .approved-voucher {
+      width: min(100%, 680px);
+      margin: 0 auto;
+      padding: 10px;
+      border: 1px solid #9dc8f4;
+      border-radius: 24px;
+      color: #0c2c67;
+      background: linear-gradient(180deg, #dceeff, #f8fbff 22%, #edf7ff);
+    }
+
+    .approved-inner {
+      padding: 14px;
+      border: 1.5px dashed #2d78d3;
+      border-radius: 18px;
+      background: #f8fcff;
+    }
+
+    .av-head { text-align: center; }
+
+    .av-brand {
+      color: #0b2b66;
+      font-size: 23px;
+      font-weight: 950;
+    }
+
+    .av-appreciation {
+      margin-top: 4px;
+      color: #145dbb;
+      font-size: 14px;
+    }
+
+    .av-offer {
+      display: grid;
+      grid-template-columns: 1fr 1fr 0.62fr;
+      align-items: center;
+      margin-top: 10px;
+      padding: 11px 13px;
+      border-radius: 17px;
+      color: #fff;
+      background: linear-gradient(90deg, #092b72, #0b5eb8 56%, #1685d1 78%, #07377d);
+    }
+
+    .av-free {
+      font-size: 52px;
+      font-weight: 950;
+      line-height: 0.9;
+    }
+
+    .av-offer-copy {
+      padding-left: 12px;
+      border-left: 1px solid #ffffff88;
+      font-size: 21px;
+      font-weight: 950;
+      line-height: 1.05;
+    }
+
+    .av-value {
+      padding: 8px 5px;
+      border-radius: 13px;
+      text-align: center;
+      background: #083274;
+    }
+
+    .av-value small {
+      display: block;
+      font-size: 12px;
+    }
+
+    .av-value strong {
+      display: block;
+      font-size: 31px;
+    }
+
+    .av-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 10px;
+    }
+
+    .av-info-cell {
+      padding: 10px 12px;
+      border-bottom: 1px solid #c6dcf5;
+    }
+
+    .av-info-cell:nth-child(odd) {
+      border-right: 1px solid #c6dcf5;
+    }
+
+    .av-label {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #fff;
+      background: #1d63bd;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .av-data {
+      display: block;
+      margin-top: 5px;
+      color: #111827;
+      font-size: 16px;
+      font-weight: 850;
+    }
+
+    .av-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .av-gift {
+      min-height: 260px;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      border: 1px solid #b7d5f3;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #eaf5ff, #f8fbff);
+    }
+
+    .av-gift-text {
+      color: #0d3a88;
+      font-family: "Segoe Script", "Brush Script MT", cursive;
+      font-size: 31px;
+      text-align: center;
+    }
+
+    .av-qr {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #qrBox {
+      width: 280px;
+      height: 280px;
+      max-width: 74vw;
+      max-height: 74vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px;
+      border: 4px solid #0c55b3;
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    #qrBox img,
+    #qrBox canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .av-scan {
+      width: 100%;
+      margin-top: 7px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: #fff;
+      text-align: center;
+      background: #1260c4;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .av-footer {
+      margin-top: 10px;
+      padding: 11px 10px 8px;
+      border-radius: 0 0 15px 15px;
+      color: #fff;
+      text-align: center;
+      background: #064493;
+    }
+
+    .footer {
+      margin: 22px 0;
+      color: #94a3b8;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    @media (max-width: 620px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .card { padding: 14px; }
+      .av-free { font-size: 38px; }
+      .av-offer-copy {
+        padding-left: 7px;
+        font-size: 15px;
+      }
+      .av-value strong { font-size: 23px; }
+      .av-data { font-size: 12px; }
+      .av-gift { min-height: 190px; }
+      .av-gift-text { font-size: 23px; }
+      #qrBox {
+        width: 190px;
+        height: 190px;
+        max-width: 48vw;
+        max-height: 48vw;
+      }
+      .test-delete-row { grid-template-columns: 1fr; }
+      .test-delete-row .btn {
+        width: 100%;
+        min-width: 0;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<header class="top"><div class="top-inner"><div class="brand"><h1>EVOLUTION OPTICAL</h1><p>Partner Voucher Portal</p></div><button id="logoutBtn" class="ghost hidden">Logout</button></div></header>
-<main class="wrap">
-<section id="loginCard" class="card"><h2>Partner Login</h2><p class="sub">Sign in with your authorised Partner account.</p><div class="field"><label>Email</label><input id="email" type="email" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button id="loginBtn" class="btn blue">SIGN IN</button><div id="loginMsg" class="msg hidden"></div></section>
-<div id="dashboard" class="hidden">
-<section class="card"><h2 id="partnerName">Partner</h2><p class="sub" id="partnerCode">Loading partner profile…</p><div class="stats"><div class="stat"><span>Limit</span><strong id="limit">—</strong></div><div class="stat"><span>Issued</span><strong id="issued">—</strong></div><div class="stat"><span>Remaining</span><strong id="remaining">—</strong></div></div><div class="partner-line"><span class="badge">ACTIVE PARTNER</span><span id="roleText" class="sub"></span></div></section>
-<section class="card"><h3>Create Voucher</h3><p class="sub">Create a secure voucher for your customer. Redemption branches are controlled by Evolution Optical Admin.</p><div class="form-grid" style="margin-top:15px"><div class="field"><label>Customer Name</label><input id="customerName" placeholder="Customer full name"></div><div class="field"><label>Phone</label><input id="customerPhone" inputmode="tel" placeholder="01xxxxxxxx"></div></div><div class="field"><label>Voucher Type</label><select id="voucherType"><option value="RM60 Free Glasses">RM60 Free Glasses</option><option value="Free Eye Screening">Free Eye Screening</option><option value="Special Partner Voucher">Special Partner Voucher</option></select></div><div class="validity-box"><b>Validity: 3 calendar months from date issued to customer</b><span>The expiry date is calculated automatically by Evolution Optical. Partner cannot edit the validity period.</span></div><div class="field"><label>Claim Branches (assigned by Evolution Optical Admin)</label><div id="assignedClaimBranches" class="branch"><div><b>Loading assigned branches…</b><small>Partner cannot change this setting.</small></div></div></div><button id="createBtn" class="btn green">GENERATE QR VOUCHER</button><div id="createMsg" class="msg hidden"></div></section>
-<section id="testDeleteCard" class="card test-delete-card hidden"><h3>Delete Test Voucher</h3><p class="sub">TEST001 only. Delete an unredeemed test voucher by voucher code.</p><div class="test-delete-row"><input id="deleteVoucherCode" placeholder="Voucher code"><button id="deleteVoucherBtn" class="btn red">DELETE TEST VOUCHER</button></div><div id="deleteVoucherMsg" class="msg hidden"></div></section>
-<section class="card"><h3>Account Settings</h3><p class="sub">Change your Partner Portal password.</p><div class="form-grid" style="margin-top:15px"><div class="field"><label>Current Password</label><input id="currentPassword" type="password"></div><div class="field"><label>New Password</label><input id="newPassword" type="password"></div></div><div class="field"><label>Confirm New Password</label><input id="confirmNewPassword" type="password"></div><button id="changePasswordBtn" class="btn secondary">CHANGE PASSWORD</button><div id="changePasswordMsg" class="msg hidden"></div></section>
-<section id="voucherResultCard" class="card hidden"><h3>Voucher Generated</h3><div class="approved-voucher"><div class="approved-inner"><div class="av-head"><div class="av-brand">EVOLUTION OPTICAL SDN BHD</div><div class="av-appreciation">Appreciation for your support</div></div><div class="av-offer"><div class="av-free">FREE</div><div class="av-offer-copy">SPECTACLE<br>WITH<br>FREE GLASSES</div><div class="av-value"><small>VALUE</small><strong>RM60</strong></div></div><div class="av-info"><div class="av-info-cell"><span class="av-label">PARTNER</span><span class="av-data" id="giftPartner"></span></div><div class="av-info-cell"><span class="av-label">CUSTOMER</span><span class="av-data" id="giftCustomer"></span></div><div class="av-info-cell"><span class="av-label">VALID UNTIL</span><span class="av-data" id="giftExpiry"></span></div><div class="av-info-cell"><span class="av-label">VOUCHER CODE</span><span class="av-data" id="resultCode"></span></div></div><div class="av-main"><div class="av-gift"><div class="av-gift-text">A little gift<br>just for you<br>♡</div></div><div class="av-qr"><div id="qrBox"></div><div class="av-scan">SCAN TO REDEEM</div></div></div><div class="av-footer">Thank you for your support!<br><small>T&amp;C APPLY</small></div></div></div><button id="shareBtn" class="btn blue">SHARE VOUCHER</button><div id="shareMsg" class="msg hidden"></div></section>
-</div><div class="footer">Evolution Optical • Partner Voucher Platform</div></main>
-<script>
-const SUPABASE_URL="https://hukihbcyyqhanaqrizvm.supabase.co";
-const SUPABASE_ANON_KEY="sb_publishable_kpPFeGYpedq2auo01Zo50A_aiSjdeVh";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY),$=id=>document.getElementById(id);
-let currentVoucher=null,currentPartnerName="Partner",currentPartnerCode="",partnerClaimAll=true,partnerClaimCodes=[],partnerClaimNames=[];
-const OUTLETS={MINES:{name:"The Mines",address:"L3-56, The Mines Shopping Mall, Level 3, Seri Kembangan",phone:"012-4732881"},DAMAI_PERDANA:{name:"CS Damai Perdana",address:"No. 1, Jalan Damai Perdana 6/1E, Bandar Damai Perdana, 56000 Cheras, Selangor Darul Ehsan",phone:"017-4276608"},BANGI:{name:"CS Bangi",address:"Lot 27 & 28, Pasar Raya Besar CS, No. 1, Persiaran Bangi Avenue, 43000 Bangi, Selangor",phone:"017-2076413"},BAHAU:{name:"Bahau",address:"No. 104, Jalan Gurney, 72100 Bahau, Negeri Sembilan",phone:"06-4540984"},VISTA_VALLEY:{name:"Semenyih Vista Valley",address:"No. 12A-G, Jalan Vista Valley 3, Semenyih Vista Valley, 43500 Semenyih",phone:"010-5658922 / 03-87276827"},ECO_TAIPAN:{name:"Semenyih Eco Taipan",address:"No. 12-1 (Ground Floor), Setia Eco Hill Taipan, Semenyih",phone:"011-27302218"},PERTAMA:{name:"Pertama Complex",address:"No. 1.36, 1st Floor, Pertama Shopping Complex, Jalan Tuanku Abdul Rahman, Chow Kit, 50100 Kuala Lumpur",phone:"012-6766016"}};
-function showMsg(n,t,type="error"){n.textContent=t;n.className="msg "+(type==="ok"?"ok":"error")}function hideMsg(n){n.className="msg hidden";n.textContent=""}function showLogin(){$("loginCard").classList.remove("hidden");$("dashboard").classList.add("hidden");$("logoutBtn").classList.add("hidden")}function showDash(){$("loginCard").classList.add("hidden");$("dashboard").classList.remove("hidden");$("logoutBtn").classList.remove("hidden")}
-function cleanOutletName(name){return String(name||"").replace(/\s*\(HQ\)\s*/gi," ").replace(/\s{2,}/g," ").trim()}function selectedOutletSummary(all,codes){const details=(all?Object.values(OUTLETS):codes.map(c=>OUTLETS[c]).filter(Boolean)).map(o=>({...o,name:cleanOutletName(o.name)}));return {details}}
-async function loadMyClaimAccess(){const {data,error}=await db.rpc("get_my_partner_claim_access");if(error)throw error;partnerClaimAll=!!data?.all_branches;partnerClaimCodes=data?.branch_codes||[];partnerClaimNames=(data?.branch_names||[]).map(cleanOutletName);const label=partnerClaimAll?"All Evolution Optical branches":(partnerClaimNames.join(", ")||"No claim branch assigned");$("assignedClaimBranches").innerHTML=`<div><b>${label}</b><small>Set by Evolution Optical Admin. Contact Admin if this needs to be changed.</small></div>`}
-async function login(){hideMsg($("loginMsg"));$("loginBtn").disabled=true;try{const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){showMsg($("loginMsg"),error.message);return}await loadPartner()}finally{$("loginBtn").disabled=false}}
-async function loadPartner(){const {data:authData}=await db.auth.getUser();if(!authData?.user){showLogin();return}const {data,error}=await db.from("partner_users").select(`user_id,role,status,partner_id,partners(id,partner_code,partner_name,voucher_limit,vouchers_issued,status)`).eq("user_id",authData.user.id).eq("status","active").single();if(error||!data||!data.partners){await db.auth.signOut();showLogin();showMsg($("loginMsg"),"This account is not linked to an active Partner.");return}const p=data.partners;if(String(p.status||"").toLowerCase()!=="active"){await db.auth.signOut();showLogin();showMsg($("loginMsg"),"This Partner account is suspended.");return}currentPartnerName=p.partner_name||"Partner";currentPartnerCode=p.partner_code||"";$("partnerName").textContent=currentPartnerName;$("partnerCode").textContent=`${currentPartnerCode} • Partner Portal`;$("roleText").textContent=data.role;$("limit").textContent=p.voucher_limit;$("issued").textContent=p.vouchers_issued;$("remaining").textContent=Math.max(0,p.voucher_limit-p.vouchers_issued);$("testDeleteCard").classList.toggle("hidden",currentPartnerCode!=="TEST001");try{await loadMyClaimAccess()}catch(e){showMsg($("loginMsg"),"Unable to load assigned Claim Branches: "+e.message);return}showDash()}
-async function createVoucher(){hideMsg($("createMsg"));const customerName=$("customerName").value.trim(),phone=$("customerPhone").value.trim(),voucherType=$("voucherType").value;if(!customerName||!phone){showMsg($("createMsg"),"Please complete Customer Name and Phone.");return}if(!partnerClaimAll&&!partnerClaimCodes.length){showMsg($("createMsg"),"No claim branch is assigned to this Partner.");return}const btn=$("createBtn");btn.disabled=true;btn.textContent="GENERATING…";try{const {data,error}=await db.rpc("create_partner_voucher_controlled",{p_customer_name:customerName,p_customer_phone:phone,p_customer_ic:"",p_voucher_type:voucherType,p_expiry_date:null});if(error){showMsg($("createMsg"),error.message);return}currentVoucher={voucher_code:data.voucher_code,voucher_type:voucherType,customer_name:customerName,expiry_date:data.expiry_date,partner_name:currentPartnerName,outlet:selectedOutletSummary(partnerClaimAll,partnerClaimCodes)};showMsg($("createMsg"),`Voucher ${data.voucher_code} created successfully. Valid until ${data.expiry_date}.`,"ok");$("giftCustomer").textContent=customerName;$("giftPartner").textContent=currentPartnerName;$("giftExpiry").textContent=data.expiry_date;$("resultCode").textContent=data.voucher_code;const qr=$("qrBox");qr.innerHTML="";new QRCode(qr,{text:data.voucher_code,width:480,height:480,correctLevel:QRCode.CorrectLevel.M});$("voucherResultCard").classList.remove("hidden");await loadPartner()}finally{btn.disabled=false;btn.textContent="GENERATE QR VOUCHER"}}
-async function shareVoucher(){hideMsg($("shareMsg"));if(!currentVoucher){showMsg($("shareMsg"),"Please generate a voucher first.");return}const btn=$("shareBtn");btn.disabled=true;btn.textContent="PREPARING…";try{const canvas=await html2canvas(document.querySelector(".approved-voucher"),{scale:2,backgroundColor:"#eef7ff",useCORS:true});const blob=await new Promise(r=>canvas.toBlob(r,"image/png",1));const file=new File([blob],`${currentVoucher.voucher_code}.png`,{type:"image/png"});const assigned=currentVoucher.outlet.details||[];const outletText=assigned.length?"\n\nRedeem at:\n"+assigned.map(o=>`📍 ${o.name}\n${o.address}\n☎ ${o.phone}`).join("\n\n"):"";const text=`Hi ${currentVoucher.customer_name} 👋\nA little gift just for you 🎁\n\n${currentVoucher.voucher_type}\nFrom: ${currentVoucher.partner_name}\nVoucher: ${currentVoucher.voucher_code}\nValid until: ${currentVoucher.expiry_date}${outletText}\n\nPlease show this QR voucher when redeeming.`;if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({title:"Evolution Optical Redemption QR",text,files:[file]});else if(navigator.share)await navigator.share({title:"Evolution Optical Redemption QR",text});else window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank");showMsg($("shareMsg"),"Share menu opened.","ok")}catch(e){if(e?.name!=="AbortError")showMsg($("shareMsg"),e?.message||"Unable to share voucher.")}finally{btn.disabled=false;btn.textContent="SHARE VOUCHER"}}
-async function deleteTestVoucher(){hideMsg($("deleteVoucherMsg"));if(currentPartnerCode!=="TEST001"){showMsg($("deleteVoucherMsg"),"TEST001 only.");return}const code=$("deleteVoucherCode").value.trim().toUpperCase();if(!code){showMsg($("deleteVoucherMsg"),"Please enter the voucher code.");return}if(!confirm(`Delete ${code}?`))return;const {error}=await db.rpc("delete_my_test_voucher",{p_voucher_code:code});if(error){showMsg($("deleteVoucherMsg"),error.message);return}$("deleteVoucherCode").value="";showMsg($("deleteVoucherMsg"),"Test voucher deleted. Issued count restored.","ok");if(currentVoucher?.voucher_code===code){currentVoucher=null;$("voucherResultCard").classList.add("hidden")}await loadPartner()}
-async function changeMyPassword(){hideMsg($("changePasswordMsg"));const current=$("currentPassword").value,next=$("newPassword").value,confirmP=$("confirmNewPassword").value;if(!current||!next||!confirmP){showMsg($("changePasswordMsg"),"Please complete all password fields.");return}if(next.length<6){showMsg($("changePasswordMsg"),"New Password must be at least 6 characters.");return}if(next!==confirmP){showMsg($("changePasswordMsg"),"Passwords do not match.");return}const {data:userData}=await db.auth.getUser();const {error:verifyErr}=await db.auth.signInWithPassword({email:userData.user.email,password:current});if(verifyErr){showMsg($("changePasswordMsg"),"Current Password is incorrect.");return}const {error}=await db.auth.updateUser({password:next});if(error){showMsg($("changePasswordMsg"),error.message);return}$("currentPassword").value=$("newPassword").value=$("confirmNewPassword").value="";showMsg($("changePasswordMsg"),"Password changed successfully.","ok")}
-$("loginBtn").onclick=login;$("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});$("createBtn").onclick=createVoucher;$("shareBtn").onclick=shareVoucher;$("deleteVoucherBtn").onclick=deleteTestVoucher;$("changePasswordBtn").onclick=changeMyPassword;$("logoutBtn").onclick=async()=>{await db.auth.signOut();showLogin()};(async()=>{const {data}=await db.auth.getSession();if(data?.session)await loadPartner();else showLogin()})();
-</script>
+  <header class="top">
+    <div class="top-inner">
+      <div class="brand">
+        <h1>EVOLUTION OPTICAL</h1>
+        <p>Partner Voucher Portal</p>
+      </div>
+      <button id="logoutBtn" class="ghost hidden">Logout</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- LOGIN -->
+    <section id="loginCard" class="card">
+      <h2>Partner Login</h2>
+      <p class="sub">Sign in with your authorised Partner account.</p>
+
+      <div class="field">
+        <label>Email</label>
+        <input id="email" type="email" autocomplete="username" />
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input id="password" type="password" autocomplete="current-password" />
+      </div>
+
+      <button id="loginBtn" class="btn blue">SIGN IN</button>
+      <div id="loginMsg" class="msg hidden"></div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="hidden">
+
+      <!-- PARTNER SUMMARY -->
+      <section class="card">
+        <h2 id="partnerName">Partner</h2>
+        <p class="sub" id="partnerCode">Loading partner profile…</p>
+
+        <div class="stats">
+          <div class="stat">
+            <span>Limit</span>
+            <strong id="limit">—</strong>
+          </div>
+          <div class="stat">
+            <span>Issued</span>
+            <strong id="issued">—</strong>
+          </div>
+          <div class="stat">
+            <span>Remaining</span>
+            <strong id="remaining">—</strong>
+          </div>
+        </div>
+
+        <div class="partner-line">
+          <span class="badge">ACTIVE PARTNER</span>
+          <span id="roleText" class="sub"></span>
+        </div>
+      </section>
+
+      <!-- CREATE VOUCHER -->
+      <section class="card">
+        <h3>Create Voucher</h3>
+        <p class="sub">
+          Create a secure voucher for your customer.
+          Redemption branches are controlled by Evolution Optical Admin.
+        </p>
+
+        <div class="form-grid" style="margin-top:15px">
+          <div class="field">
+            <label>Customer Name</label>
+            <input id="customerName" placeholder="Customer full name" />
+          </div>
+
+          <div class="field">
+            <label>Phone</label>
+            <input id="customerPhone" inputmode="tel" placeholder="01xxxxxxxx" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Voucher Type</label>
+          <select id="voucherType">
+            <option value="RM60 Free Glasses">RM60 Free Glasses</option>
+            <option value="Free Eye Screening">Free Eye Screening</option>
+            <option value="Special Partner Voucher">Special Partner Voucher</option>
+          </select>
+        </div>
+
+        <div class="validity-box">
+          <b>Validity: 3 calendar months from date issued to customer</b>
+          <span>
+            The expiry date is calculated automatically by Evolution Optical.
+            Partner cannot edit the validity period.
+          </span>
+        </div>
+
+        <div class="field">
+          <label>Claim Branches (assigned by Evolution Optical Admin)</label>
+          <div id="assignedClaimBranches" class="branch">
+            <div>
+              <b>Loading assigned branches…</b>
+              <small>Partner cannot change this setting.</small>
+            </div>
+          </div>
+        </div>
+
+        <button id="createBtn" class="btn green">GENERATE QR VOUCHER</button>
+        <div id="createMsg" class="msg hidden"></div>
+      </section>
+
+      <!-- TEST DELETE -->
+      <section id="testDeleteCard" class="card test-delete-card hidden">
+        <h3>Delete Test Voucher</h3>
+        <p class="sub">TEST001 only. Delete an unredeemed test voucher by voucher code.</p>
+
+        <div class="test-delete-row">
+          <input id="deleteVoucherCode" placeholder="Voucher code" />
+          <button id="deleteVoucherBtn" class="btn red">DELETE TEST VOUCHER</button>
+        </div>
+
+        <div id="deleteVoucherMsg" class="msg hidden"></div>
+      </section>
+
+      <!-- ACCOUNT SETTINGS -->
+      <section class="card">
+        <h3>Account Settings</h3>
+        <p class="sub">Change your Partner Portal password.</p>
+
+        <div class="form-grid" style="margin-top:15px">
+          <div class="field">
+            <label>Current Password</label>
+            <input id="currentPassword" type="password" />
+          </div>
+
+          <div class="field">
+            <label>New Password</label>
+            <input id="newPassword" type="password" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Confirm New Password</label>
+          <input id="confirmNewPassword" type="password" />
+        </div>
+
+        <button id="changePasswordBtn" class="btn secondary">CHANGE PASSWORD</button>
+        <div id="changePasswordMsg" class="msg hidden"></div>
+      </section>
+
+      <!-- GENERATED VOUCHER -->
+      <section id="voucherResultCard" class="card hidden">
+        <h3>Voucher Generated</h3>
+
+        <div class="approved-voucher">
+          <div class="approved-inner">
+
+            <div class="av-head">
+              <div class="av-brand">EVOLUTION OPTICAL SDN BHD</div>
+              <div class="av-appreciation">Appreciation for your support</div>
+            </div>
+
+            <div class="av-offer">
+              <div class="av-free">FREE</div>
+
+              <div class="av-offer-copy">
+                SPECTACLE<br />
+                WITH<br />
+                FREE GLASSES
+              </div>
+
+              <div class="av-value">
+                <small>VALUE</small>
+                <strong>RM60</strong>
+              </div>
+            </div>
+
+            <div class="av-info">
+              <div class="av-info-cell">
+                <span class="av-label">PARTNER</span>
+                <span class="av-data" id="giftPartner"></span>
+              </div>
+
+              <div class="av-info-cell">
+                <span class="av-label">CUSTOMER</span>
+                <span class="av-data" id="giftCustomer"></span>
+              </div>
+
+              <div class="av-info-cell">
+                <span class="av-label">VALID UNTIL</span>
+                <span class="av-data" id="giftExpiry"></span>
+              </div>
+
+              <div class="av-info-cell">
+                <span class="av-label">VOUCHER CODE</span>
+                <span class="av-data" id="resultCode"></span>
+              </div>
+            </div>
+
+            <div class="av-main">
+              <div class="av-gift">
+                <div class="av-gift-text">
+                  A little gift<br />
+                  just for you<br />
+                  ♡
+                </div>
+              </div>
+
+              <div class="av-qr">
+                <div id="qrBox"></div>
+                <div class="av-scan">SCAN TO REDEEM</div>
+              </div>
+            </div>
+
+            <div class="av-footer">
+              Thank you for your support!<br />
+              <small>T&amp;C APPLY</small>
+            </div>
+
+          </div>
+        </div>
+
+        <button id="shareBtn" class="btn blue">SHARE VOUCHER</button>
+        <div id="shareMsg" class="msg hidden"></div>
+      </section>
+    </div>
+
+    <div class="footer">Evolution Optical • Partner Voucher Platform</div>
+  </main>
+
+  <script>
+    /* =========================================================
+       SUPABASE
+       Keep these values unchanged unless the backend changes.
+    ========================================================= */
+    const SUPABASE_URL = "https://hukihbcyyqhanaqrizvm.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_kpPFeGYpedq2auo01Zo50A_aiSjdeVh";
+
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const $ = (id) => document.getElementById(id);
+
+    let currentVoucher = null;
+    let currentPartnerName = "Partner";
+    let currentPartnerCode = "";
+    let partnerClaimAll = true;
+    let partnerClaimCodes = [];
+    let partnerClaimNames = [];
+
+    /* =========================================================
+       OUTLETS
+    ========================================================= */
+    const OUTLETS = {
+      MINES: {
+        name: "The Mines",
+        address: "L3-56, The Mines Shopping Mall, Level 3, Seri Kembangan",
+        phone: "012-4732881"
+      },
+
+      DAMAI_PERDANA: {
+        name: "CS Damai Perdana",
+        address: "No. 1, Jalan Damai Perdana 6/1E, Bandar Damai Perdana, 56000 Cheras, Selangor Darul Ehsan",
+        phone: "017-4276608"
+      },
+
+      BANGI: {
+        name: "CS Bangi",
+        address: "Lot 27 & 28, Pasar Raya Besar CS, No. 1, Persiaran Bangi Avenue, 43000 Bangi, Selangor",
+        phone: "017-2076413"
+      },
+
+      BAHAU: {
+        name: "Bahau",
+        address: "No. 104, Jalan Gurney, 72100 Bahau, Negeri Sembilan",
+        phone: "06-4540984"
+      },
+
+      VISTA_VALLEY: {
+        name: "Semenyih Vista Valley",
+        address: "No. 12A-G, Jalan Vista Valley 3, Semenyih Vista Valley, 43500 Semenyih",
+        phone: "010-5658922 / 03-87276827"
+      },
+
+      ECO_TAIPAN: {
+        name: "Semenyih Eco Taipan",
+        address: "No. 12-1 (Ground Floor), Setia Eco Hill Taipan, Semenyih",
+        phone: "011-27302218"
+      },
+
+      PERTAMA: {
+        name: "Pertama Complex",
+        address: "No. 1.36, 1st Floor, Pertama Shopping Complex, Jalan Tuanku Abdul Rahman, Chow Kit, 50100 Kuala Lumpur",
+        phone: "012-6766016"
+      }
+    };
+
+    /* =========================================================
+       UI HELPERS
+    ========================================================= */
+    function showMsg(node, text, type = "error") {
+      node.textContent = text;
+      node.className = "msg " + (type === "ok" ? "ok" : "error");
+    }
+
+    function hideMsg(node) {
+      node.className = "msg hidden";
+      node.textContent = "";
+    }
+
+    function showLogin() {
+      $("loginCard").classList.remove("hidden");
+      $("dashboard").classList.add("hidden");
+      $("logoutBtn").classList.add("hidden");
+    }
+
+    function showDash() {
+      $("loginCard").classList.add("hidden");
+      $("dashboard").classList.remove("hidden");
+      $("logoutBtn").classList.remove("hidden");
+    }
+
+    function cleanOutletName(name) {
+      return String(name || "")
+        .replace(/\s*\(HQ\)\s*/gi, " ")
+        .replace(/\s{2,}/g, " ")
+        .trim();
+    }
+
+    function selectedOutletSummary(all, codes) {
+      const details = (
+        all
+          ? Object.values(OUTLETS)
+          : codes.map((code) => OUTLETS[code]).filter(Boolean)
+      ).map((outlet) => ({
+        ...outlet,
+        name: cleanOutletName(outlet.name)
+      }));
+
+      return { details };
+    }
+
+    /* =========================================================
+       PARTNER CLAIM ACCESS
+    ========================================================= */
+    async function loadMyClaimAccess() {
+      const { data, error } = await db.rpc("get_my_partner_claim_access");
+
+      if (error) throw error;
+
+      partnerClaimAll = !!data?.all_branches;
+      partnerClaimCodes = data?.branch_codes || [];
+      partnerClaimNames = (data?.branch_names || []).map(cleanOutletName);
+
+      const label = partnerClaimAll
+        ? "All Evolution Optical branches"
+        : (partnerClaimNames.join(", ") || "No claim branch assigned");
+
+      $("assignedClaimBranches").innerHTML = `
+        <div>
+          <b>${label}</b>
+          <small>
+            Set by Evolution Optical Admin.
+            Contact Admin if this needs to be changed.
+          </small>
+        </div>
+      `;
+    }
+
+    /* =========================================================
+       LOGIN
+    ========================================================= */
+    async function login() {
+      hideMsg($("loginMsg"));
+      $("loginBtn").disabled = true;
+
+      try {
+        const { error } = await db.auth.signInWithPassword({
+          email: $("email").value.trim(),
+          password: $("password").value
+        });
+
+        if (error) {
+          showMsg($("loginMsg"), error.message);
+          return;
+        }
+
+        await loadPartner();
+      } finally {
+        $("loginBtn").disabled = false;
+      }
+    }
+
+    /* =========================================================
+       LOAD PARTNER
+    ========================================================= */
+    async function loadPartner() {
+      const { data: authData } = await db.auth.getUser();
+
+      if (!authData?.user) {
+        showLogin();
+        return;
+      }
+
+      const { data, error } = await db
+        .from("partner_users")
+        .select(`
+          user_id,
+          role,
+          status,
+          partner_id,
+          partners(
+            id,
+            partner_code,
+            partner_name,
+            voucher_limit,
+            vouchers_issued,
+            status
+          )
+        `)
+        .eq("user_id", authData.user.id)
+        .eq("status", "active")
+        .single();
+
+      if (error || !data || !data.partners) {
+        await db.auth.signOut();
+        showLogin();
+        showMsg(
+          $("loginMsg"),
+          "This account is not linked to an active Partner."
+        );
+        return;
+      }
+
+      const partner = data.partners;
+
+      if (String(partner.status || "").toLowerCase() !== "active") {
+        await db.auth.signOut();
+        showLogin();
+        showMsg(
+          $("loginMsg"),
+          "This Partner account is suspended."
+        );
+        return;
+      }
+
+      currentPartnerName = partner.partner_name || "Partner";
+      currentPartnerCode = partner.partner_code || "";
+
+      $("partnerName").textContent = currentPartnerName;
+      $("partnerCode").textContent = `${currentPartnerCode} • Partner Portal`;
+      $("roleText").textContent = data.role;
+      $("limit").textContent = partner.voucher_limit;
+      $("issued").textContent = partner.vouchers_issued;
+      $("remaining").textContent = Math.max(
+        0,
+        partner.voucher_limit - partner.vouchers_issued
+      );
+
+      $("testDeleteCard").classList.toggle(
+        "hidden",
+        currentPartnerCode !== "TEST001"
+      );
+
+      try {
+        await loadMyClaimAccess();
+      } catch (error) {
+        showMsg(
+          $("loginMsg"),
+          "Unable to load assigned Claim Branches: " + error.message
+        );
+        return;
+      }
+
+      showDash();
+    }
+
+    /* =========================================================
+       CREATE VOUCHER
+    ========================================================= */
+    async function createVoucher() {
+      hideMsg($("createMsg"));
+
+      const customerName = $("customerName").value.trim();
+      const phone = $("customerPhone").value.trim();
+      const voucherType = $("voucherType").value;
+
+      if (!customerName || !phone) {
+        showMsg(
+          $("createMsg"),
+          "Please complete Customer Name and Phone."
+        );
+        return;
+      }
+
+      if (!partnerClaimAll && !partnerClaimCodes.length) {
+        showMsg(
+          $("createMsg"),
+          "No claim branch is assigned to this Partner."
+        );
+        return;
+      }
+
+      const btn = $("createBtn");
+      btn.disabled = true;
+      btn.textContent = "GENERATING…";
+
+      try {
+        const { data, error } = await db.rpc(
+          "create_partner_voucher_controlled",
+          {
+            p_customer_name: customerName,
+            p_customer_phone: phone,
+            p_customer_ic: "",
+            p_voucher_type: voucherType,
+            p_expiry_date: null
+          }
+        );
+
+        if (error) {
+          showMsg($("createMsg"), error.message);
+          return;
+        }
+
+        currentVoucher = {
+          voucher_code: data.voucher_code,
+          voucher_type: voucherType,
+          customer_name: customerName,
+          expiry_date: data.expiry_date,
+          partner_name: currentPartnerName,
+          outlet: selectedOutletSummary(
+            partnerClaimAll,
+            partnerClaimCodes
+          )
+        };
+
+        showMsg(
+          $("createMsg"),
+          `Voucher ${data.voucher_code} created successfully. Valid until ${data.expiry_date}.`,
+          "ok"
+        );
+
+        $("giftCustomer").textContent = customerName;
+        $("giftPartner").textContent = currentPartnerName;
+        $("giftExpiry").textContent = data.expiry_date;
+        $("resultCode").textContent = data.voucher_code;
+
+        const qr = $("qrBox");
+        qr.innerHTML = "";
+
+        new QRCode(qr, {
+          text: data.voucher_code,
+          width: 480,
+          height: 480,
+          correctLevel: QRCode.CorrectLevel.M
+        });
+
+        $("voucherResultCard").classList.remove("hidden");
+
+        await loadPartner();
+
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "GENERATE QR VOUCHER";
+      }
+    }
+
+    /* =========================================================
+       SHARE TEXT BUILDER
+    ========================================================= */
+    function buildVoucherShareText() {
+      const assigned = currentVoucher?.outlet?.details || [];
+
+      const outletText = assigned.length
+        ? "\n\nRedeem at:\n" +
+          assigned
+            .map(
+              (outlet) =>
+                `📍 ${outlet.name}\n${outlet.address}\n☎ ${outlet.phone}`
+            )
+            .join("\n\n")
+        : "";
+
+      return `Hi ${currentVoucher.customer_name} 👋
+
+A little gift just for you 🎁
+
+${currentVoucher.voucher_type}
+From: ${currentVoucher.partner_name}
+Voucher: ${currentVoucher.voucher_code}
+Valid until: ${currentVoucher.expiry_date}${outletText}
+
+Please show this QR voucher when redeeming.`;
+    }
+
+    /* =========================================================
+       SHARE VOUCHER
+       1. Native image share where supported
+       2. Native text share
+       3. WhatsApp fallback
+       This prevents the in-app browser error from being shown
+       directly to the Partner.
+    ========================================================= */
+    async function shareVoucher() {
+      hideMsg($("shareMsg"));
+
+      if (!currentVoucher) {
+        showMsg(
+          $("shareMsg"),
+          "Please generate a voucher first."
+        );
+        return;
+      }
+
+      const btn = $("shareBtn");
+      btn.disabled = true;
+      btn.textContent = "PREPARING…";
+
+      const text = buildVoucherShareText();
+
+      try {
+        let file = null;
+
+        try {
+          const voucherNode = document.querySelector(".approved-voucher");
+
+          const canvas = await html2canvas(voucherNode, {
+            scale: 2,
+            backgroundColor: "#eef7ff",
+            useCORS: true
+          });
+
+          const blob = await new Promise((resolve) => {
+            canvas.toBlob(resolve, "image/png", 1);
+          });
+
+          if (blob) {
+            file = new File(
+              [blob],
+              `${currentVoucher.voucher_code}.png`,
+              { type: "image/png" }
+            );
+          }
+        } catch (imageError) {
+          console.log(
+            "Voucher image preparation unavailable:",
+            imageError
+          );
+        }
+
+        /* STEP 1: Native share with image */
+        if (
+          file &&
+          navigator.share &&
+          navigator.canShare &&
+          navigator.canShare({ files: [file] })
+        ) {
+          try {
+            await navigator.share({
+              title: "Evolution Optical Redemption QR",
+              text,
+              files: [file]
+            });
+
+            showMsg(
+              $("shareMsg"),
+              "Voucher shared successfully.",
+              "ok"
+            );
+            return;
+
+          } catch (shareError) {
+            if (shareError?.name === "AbortError") {
+              return;
+            }
+
+            console.log(
+              "Native image share unavailable:",
+              shareError
+            );
+          }
+        }
+
+        /* STEP 2: Native text share */
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: "Evolution Optical Voucher",
+              text
+            });
+
+            showMsg(
+              $("shareMsg"),
+              "Voucher shared successfully.",
+              "ok"
+            );
+            return;
+
+          } catch (shareError) {
+            if (shareError?.name === "AbortError") {
+              return;
+            }
+
+            console.log(
+              "Native text share unavailable:",
+              shareError
+            );
+          }
+        }
+
+        /* STEP 3: WhatsApp fallback */
+        const whatsappURL =
+          "https://wa.me/?text=" + encodeURIComponent(text);
+
+        showMsg(
+          $("shareMsg"),
+          "Opening WhatsApp…",
+          "ok"
+        );
+
+        window.location.href = whatsappURL;
+
+      } catch (error) {
+        console.error("Voucher share error:", error);
+
+        const whatsappURL =
+          "https://wa.me/?text=" + encodeURIComponent(text);
+
+        showMsg(
+          $("shareMsg"),
+          "Opening WhatsApp…",
+          "ok"
+        );
+
+        window.location.href = whatsappURL;
+
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "SHARE VOUCHER";
+      }
+    }
+
+    /* =========================================================
+       DELETE TEST VOUCHER
+    ========================================================= */
+    async function deleteTestVoucher() {
+      hideMsg($("deleteVoucherMsg"));
+
+      if (currentPartnerCode !== "TEST001") {
+        showMsg(
+          $("deleteVoucherMsg"),
+          "TEST001 only."
+        );
+        return;
+      }
+
+      const code = $("deleteVoucherCode")
+        .value
+        .trim()
+        .toUpperCase();
+
+      if (!code) {
+        showMsg(
+          $("deleteVoucherMsg"),
+          "Please enter the voucher code."
+        );
+        return;
+      }
+
+      if (!confirm(`Delete ${code}?`)) {
+        return;
+      }
+
+      const { error } = await db.rpc(
+        "delete_my_test_voucher",
+        {
+          p_voucher_code: code
+        }
+      );
+
+      if (error) {
+        showMsg(
+          $("deleteVoucherMsg"),
+          error.message
+        );
+        return;
+      }
+
+      $("deleteVoucherCode").value = "";
+
+      showMsg(
+        $("deleteVoucherMsg"),
+        "Test voucher deleted. Issued count restored.",
+        "ok"
+      );
+
+      if (currentVoucher?.voucher_code === code) {
+        currentVoucher = null;
+        $("voucherResultCard").classList.add("hidden");
+      }
+
+      await loadPartner();
+    }
+
+    /* =========================================================
+       CHANGE PASSWORD
+    ========================================================= */
+    async function changeMyPassword() {
+      hideMsg($("changePasswordMsg"));
+
+      const current = $("currentPassword").value;
+      const next = $("newPassword").value;
+      const confirmPassword = $("confirmNewPassword").value;
+
+      if (!current || !next || !confirmPassword) {
+        showMsg(
+          $("changePasswordMsg"),
+          "Please complete all password fields."
+        );
+        return;
+      }
+
+      if (next.length < 6) {
+        showMsg(
+          $("changePasswordMsg"),
+          "New Password must be at least 6 characters."
+        );
+        return;
+      }
+
+      if (next !== confirmPassword) {
+        showMsg(
+          $("changePasswordMsg"),
+          "Passwords do not match."
+        );
+        return;
+      }
+
+      const { data: userData } = await db.auth.getUser();
+
+      const { error: verifyError } =
+        await db.auth.signInWithPassword({
+          email: userData.user.email,
+          password: current
+        });
+
+      if (verifyError) {
+        showMsg(
+          $("changePasswordMsg"),
+          "Current Password is incorrect."
+        );
+        return;
+      }
+
+      const { error } = await db.auth.updateUser({
+        password: next
+      });
+
+      if (error) {
+        showMsg(
+          $("changePasswordMsg"),
+          error.message
+        );
+        return;
+      }
+
+      $("currentPassword").value = "";
+      $("newPassword").value = "";
+      $("confirmNewPassword").value = "";
+
+      showMsg(
+        $("changePasswordMsg"),
+        "Password changed successfully.",
+        "ok"
+      );
+    }
+
+    /* =========================================================
+       EVENT BINDINGS
+    ========================================================= */
+    $("loginBtn").onclick = login;
+
+    $("password").addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        login();
+      }
+    });
+
+    $("createBtn").onclick = createVoucher;
+    $("shareBtn").onclick = shareVoucher;
+    $("deleteVoucherBtn").onclick = deleteTestVoucher;
+    $("changePasswordBtn").onclick = changeMyPassword;
+
+    $("logoutBtn").onclick = async () => {
+      await db.auth.signOut();
+      showLogin();
+    };
+
+    /* =========================================================
+       INITIAL SESSION CHECK
+    ========================================================= */
+    (async () => {
+      const { data } = await db.auth.getSession();
+
+      if (data?.session) {
+        await loadPartner();
+      } else {
+        showLogin();
+      }
+    })();
+  </script>
 </body>
 </html>
