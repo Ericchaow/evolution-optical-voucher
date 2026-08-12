@@ -1083,11 +1083,10 @@ Please show this QR voucher when redeeming.`;
 
     /* =========================================================
        SHARE VOUCHER
-       1. Native image share where supported
-       2. Native text share
-       3. WhatsApp fallback
-       This prevents the in-app browser error from being shown
-       directly to the Partner.
+       WhatsApp-direct version.
+       This intentionally avoids navigator.share() because some
+       in-app browsers (including WhatsApp's browser on iPhone)
+       can block the Web Share API in the current context.
     ========================================================= */
     async function shareVoucher() {
       hideMsg($("shareMsg"));
@@ -1102,101 +1101,11 @@ Please show this QR voucher when redeeming.`;
 
       const btn = $("shareBtn");
       btn.disabled = true;
-      btn.textContent = "PREPARING…";
-
-      const text = buildVoucherShareText();
+      btn.textContent = "OPENING WHATSAPP…";
 
       try {
-        let file = null;
+        const text = buildVoucherShareText();
 
-        try {
-          const voucherNode = document.querySelector(".approved-voucher");
-
-          const canvas = await html2canvas(voucherNode, {
-            scale: 2,
-            backgroundColor: "#eef7ff",
-            useCORS: true
-          });
-
-          const blob = await new Promise((resolve) => {
-            canvas.toBlob(resolve, "image/png", 1);
-          });
-
-          if (blob) {
-            file = new File(
-              [blob],
-              `${currentVoucher.voucher_code}.png`,
-              { type: "image/png" }
-            );
-          }
-        } catch (imageError) {
-          console.log(
-            "Voucher image preparation unavailable:",
-            imageError
-          );
-        }
-
-        /* STEP 1: Native share with image */
-        if (
-          file &&
-          navigator.share &&
-          navigator.canShare &&
-          navigator.canShare({ files: [file] })
-        ) {
-          try {
-            await navigator.share({
-              title: "Evolution Optical Redemption QR",
-              text,
-              files: [file]
-            });
-
-            showMsg(
-              $("shareMsg"),
-              "Voucher shared successfully.",
-              "ok"
-            );
-            return;
-
-          } catch (shareError) {
-            if (shareError?.name === "AbortError") {
-              return;
-            }
-
-            console.log(
-              "Native image share unavailable:",
-              shareError
-            );
-          }
-        }
-
-        /* STEP 2: Native text share */
-        if (navigator.share) {
-          try {
-            await navigator.share({
-              title: "Evolution Optical Voucher",
-              text
-            });
-
-            showMsg(
-              $("shareMsg"),
-              "Voucher shared successfully.",
-              "ok"
-            );
-            return;
-
-          } catch (shareError) {
-            if (shareError?.name === "AbortError") {
-              return;
-            }
-
-            console.log(
-              "Native text share unavailable:",
-              shareError
-            );
-          }
-        }
-
-        /* STEP 3: WhatsApp fallback */
         const whatsappURL =
           "https://wa.me/?text=" + encodeURIComponent(text);
 
@@ -1209,19 +1118,12 @@ Please show this QR voucher when redeeming.`;
         window.location.href = whatsappURL;
 
       } catch (error) {
-        console.error("Voucher share error:", error);
-
-        const whatsappURL =
-          "https://wa.me/?text=" + encodeURIComponent(text);
+        console.error("WhatsApp share error:", error);
 
         showMsg(
           $("shareMsg"),
-          "Opening WhatsApp…",
-          "ok"
+          "Unable to open WhatsApp. Please copy the voucher details manually."
         );
-
-        window.location.href = whatsappURL;
-
       } finally {
         btn.disabled = false;
         btn.textContent = "SHARE VOUCHER";
