@@ -1191,9 +1191,8 @@
       return details
         .map((outlet) => {
           const name = cleanOutletName(outlet.name);
-          const lines = [`Evolution Optical ${name}`];
+          const lines = [name];
 
-          if (outlet.address) lines.push(outlet.address);
           if (outlet.phone) lines.push(`Tel: ${outlet.phone}`);
 
           return lines.join("\n");
