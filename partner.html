@@ -1214,12 +1214,10 @@
 
       box.innerHTML = details.map((outlet) => {
         const name = cleanOutletName(outlet.name);
-        const address = outlet.address ? `<div>${outlet.address}</div>` : "";
         const phone = outlet.phone ? `<div>Tel: ${outlet.phone}</div>` : "";
 
         return `<div class="av-redeem-item">
-          <b>Evolution Optical ${name}</b>
-          ${address}
+          <b>${name}</b>
           ${phone}
         </div>`;
       }).join("");
