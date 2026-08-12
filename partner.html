@@ -279,88 +279,113 @@
       width: min(100%, 680px);
       margin: 0 auto;
       padding: 10px;
-      border: 1px solid #9dc8f4;
+      border: 1px solid #8fb9ef;
       border-radius: 24px;
       color: #0c2c67;
-      background: linear-gradient(180deg, #dceeff, #f8fbff 22%, #edf7ff);
+      background:
+        radial-gradient(circle at 88% 8%, rgba(92, 89, 255, 0.20), transparent 28%),
+        linear-gradient(180deg, #d9eaff, #f8fbff 24%, #edf6ff);
+      box-shadow: 0 18px 44px rgba(15, 50, 105, 0.16);
     }
 
     .approved-inner {
       padding: 14px;
-      border: 1.5px dashed #2d78d3;
+      border: 1.5px dashed #3a75c4;
       border-radius: 18px;
-      background: #f8fcff;
+      background: rgba(248, 252, 255, 0.96);
     }
 
-    .av-head { text-align: center; }
+    .av-head {
+      padding: 3px 4px 9px;
+      text-align: center;
+    }
 
     .av-brand {
-      color: #0b2b66;
+      color: #082b68;
       font-size: 23px;
       font-weight: 950;
+      letter-spacing: .4px;
     }
 
     .av-appreciation {
       margin-top: 4px;
-      color: #145dbb;
-      font-size: 14px;
+      color: #4f5bbf;
+      font-size: 13px;
+      font-weight: 700;
     }
 
     .av-offer {
       display: grid;
-      grid-template-columns: 1fr 1fr 0.62fr;
+      grid-template-columns: 1fr 1.05fr .72fr;
       align-items: center;
-      margin-top: 10px;
-      padding: 11px 13px;
+      gap: 8px;
+      margin-top: 7px;
+      padding: 12px 13px;
       border-radius: 17px;
       color: #fff;
-      background: linear-gradient(90deg, #092b72, #0b5eb8 56%, #1685d1 78%, #07377d);
+      background:
+        radial-gradient(circle at 82% 20%, rgba(43, 225, 239, .24), transparent 26%),
+        linear-gradient(100deg, #071c4c, #263995 48%, #7351c7 76%, #075d8d);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 8px 18px rgba(16,43,102,.18);
     }
 
     .av-free {
-      font-size: 52px;
+      font-size: 48px;
       font-weight: 950;
-      line-height: 0.9;
+      line-height: .92;
+      letter-spacing: -1px;
     }
 
     .av-offer-copy {
       padding-left: 12px;
-      border-left: 1px solid #ffffff88;
-      font-size: 21px;
+      border-left: 1px solid rgba(255,255,255,.55);
+      font-size: 18px;
       font-weight: 950;
-      line-height: 1.05;
+      line-height: 1.08;
     }
 
     .av-value {
-      padding: 8px 5px;
+      padding: 9px 6px;
+      border: 1px solid rgba(255,255,255,.20);
       border-radius: 13px;
       text-align: center;
-      background: #083274;
+      background: rgba(3,28,80,.65);
     }
 
     .av-value small {
       display: block;
-      font-size: 12px;
+      font-size: 11px;
+      letter-spacing: .7px;
     }
 
     .av-value strong {
       display: block;
-      font-size: 31px;
+      margin-top: 2px;
+      font-size: 30px;
     }
 
     .av-info {
       display: grid;
       grid-template-columns: 1fr 1fr;
       margin-top: 10px;
+      overflow: hidden;
+      border: 1px solid #c9dcf3;
+      border-radius: 14px;
+      background: #fff;
     }
 
     .av-info-cell {
+      min-width: 0;
       padding: 10px 12px;
-      border-bottom: 1px solid #c6dcf5;
+      border-bottom: 1px solid #d7e5f5;
     }
 
     .av-info-cell:nth-child(odd) {
-      border-right: 1px solid #c6dcf5;
+      border-right: 1px solid #d7e5f5;
+    }
+
+    .av-info-cell:nth-last-child(-n+2) {
+      border-bottom: 0;
     }
 
     .av-label {
@@ -368,17 +393,20 @@
       padding: 3px 8px;
       border-radius: 999px;
       color: #fff;
-      background: #1d63bd;
-      font-size: 10px;
+      background: linear-gradient(90deg, #2358b5, #5d58c8);
+      font-size: 9px;
       font-weight: 900;
+      letter-spacing: .3px;
     }
 
     .av-data {
       display: block;
       margin-top: 5px;
+      overflow-wrap: anywhere;
       color: #111827;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 850;
+      line-height: 1.25;
     }
 
     .av-main {
@@ -389,20 +417,23 @@
     }
 
     .av-gift {
-      min-height: 260px;
+      min-height: 250px;
       display: grid;
       place-items: center;
       padding: 16px;
-      border: 1px solid #b7d5f3;
+      border: 1px solid #bdd4ef;
       border-radius: 16px;
-      background: linear-gradient(180deg, #eaf5ff, #f8fbff);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(111,84,211,.12), transparent 28%),
+        linear-gradient(180deg, #eef5ff, #fbfdff);
     }
 
     .av-gift-text {
-      color: #0d3a88;
+      color: #163c88;
       font-family: "Segoe Script", "Brush Script MT", cursive;
-      font-size: 31px;
+      font-size: 30px;
       text-align: center;
+      line-height: 1.35;
     }
 
     .av-qr {
@@ -421,9 +452,10 @@
       align-items: center;
       justify-content: center;
       padding: 9px;
-      border: 4px solid #0c55b3;
+      border: 4px solid #244e9f;
       border-radius: 16px;
       background: #fff;
+      box-shadow: 0 8px 18px rgba(15,50,105,.14);
     }
 
     #qrBox img,
@@ -439,36 +471,37 @@
       border-radius: 999px;
       color: #fff;
       text-align: center;
-      background: #1260c4;
-      font-size: 13px;
+      background: linear-gradient(90deg, #2456b8, #555ac9);
+      font-size: 12px;
       font-weight: 900;
+      letter-spacing: .4px;
     }
 
     .av-redeem {
       margin-top: 10px;
       padding: 11px 12px;
-      border: 1px solid #b7d5f3;
+      border: 1px solid #bfd4ee;
       border-radius: 14px;
-      background: linear-gradient(145deg, #f7fbff, #eaf3ff);
+      background: linear-gradient(145deg, #f9fcff, #edf5ff);
       color: #123a73;
     }
 
     .av-redeem-title {
       margin-bottom: 6px;
-      color: #0b4f9f;
-      font-size: 12px;
+      color: #3154a3;
+      font-size: 11px;
       font-weight: 950;
-      letter-spacing: .4px;
+      letter-spacing: .8px;
       text-transform: uppercase;
     }
 
     .av-redeem-item {
       margin-top: 7px;
       padding-top: 7px;
-      border-top: 1px solid #c9def5;
-      color: #111827;
-      font-size: 12px;
-      line-height: 1.45;
+      border-top: 1px solid #d4e1f1;
+      color: #334155;
+      font-size: 11px;
+      line-height: 1.42;
     }
 
     .av-redeem-item:first-of-type {
@@ -479,17 +512,20 @@
 
     .av-redeem-item b {
       display: block;
-      color: #0b2b66;
+      margin-bottom: 2px;
+      color: #0a2c67;
       font-size: 13px;
     }
 
     .av-footer {
       margin-top: 10px;
-      padding: 11px 10px 8px;
-      border-radius: 0 0 15px 15px;
+      padding: 10px 10px 9px;
+      border-radius: 12px;
       color: #fff;
       text-align: center;
-      background: #064493;
+      background: linear-gradient(90deg, #0a2b68, #3c4fa8, #0b5f8c);
+      font-size: 12px;
+      font-weight: 800;
     }
 
     .footer {
@@ -737,9 +773,8 @@
               <div class="av-free">FREE</div>
 
               <div class="av-offer-copy">
-                SPECTACLE<br />
-                WITH<br />
-                FREE GLASSES
+                FREE GLASSES<br />
+                VOUCHER
               </div>
 
               <div class="av-value">
@@ -791,8 +826,7 @@
             </div>
 
             <div class="av-footer">
-              Thank you for your support!<br />
-              <small>T&amp;C APPLY</small>
+              One-time redemption only &bull; Non-exchangeable for cash &bull; T&amp;C apply
             </div>
 
           </div>
