@@ -1112,9 +1112,30 @@
         : "";
     }
 
+    function buildRedeemLocationText() {
+      const details = currentVoucher?.outlet?.details || [];
+
+      if (!details.length) {
+        return "Evolution Optical";
+      }
+
+      return details
+        .map((outlet) => {
+          const name = cleanOutletName(outlet.name);
+          const lines = [`Evolution Optical ${name}`];
+
+          if (outlet.address) lines.push(outlet.address);
+          if (outlet.phone) lines.push(`Tel: ${outlet.phone}`);
+
+          return lines.join("\n");
+        })
+        .join("\n\n");
+    }
+
     function buildVoucherShareText(options = {}) {
       const includeURL = options.includeURL !== false;
       const voucherURL = includeURL ? buildVoucherURL() : "";
+      const redeemText = buildRedeemLocationText();
 
       return `Hi ${currentVoucher.customer_name} 👋
 
@@ -1124,9 +1145,12 @@ ${currentVoucher.voucher_type}
 From: ${currentVoucher.partner_name}
 Valid until: ${currentVoucher.expiry_date}
 
+Redeem at:
+${redeemText}
+
 Please present the attached QR voucher at Evolution Optical when redeeming.${voucherURL ? `
 
-View your digital voucher:
+Digital voucher backup:
 ${voucherURL}` : ""}`;
     }
 
