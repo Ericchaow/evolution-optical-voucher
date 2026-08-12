@@ -484,6 +484,50 @@
         min-width: 0;
       }
     }
+
+    /* ===== Mobile universal compatibility upgrade ===== */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    body { overflow-x: hidden; padding-bottom: env(safe-area-inset-bottom); }
+    button, input, select { -webkit-tap-highlight-color: transparent; }
+    button { touch-action: manipulation; }
+    input, select { font-size: 16px; }
+    .top { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+    .wrap { width: min(780px, calc(100% - 24px)); }
+    .card, .approved-voucher, .approved-inner { max-width: 100%; }
+    .approved-voucher { overflow: hidden; }
+    .btn, .ghost { min-height: 44px; }
+    .av-data, .sub, .msg { overflow-wrap: anywhere; word-break: break-word; }
+
+    @media (max-width: 430px) {
+      .wrap { width: calc(100% - 18px); margin-top: 10px; }
+      .top-inner { gap: 8px; }
+      .brand h1 { font-size: 18px; }
+      .brand p { font-size: 12px; }
+      .ghost { padding: 8px 10px; font-size: 13px; }
+      .card { border-radius: 18px; padding: 13px; }
+      h2 { font-size: 22px; }
+      h3 { font-size: 18px; }
+      .stats { gap: 6px; }
+      .stat { padding: 10px 8px; }
+      .stat strong { font-size: 19px; }
+      .partner-line { align-items: flex-start; flex-direction: column; }
+      .av-offer { gap: 4px; }
+      .av-free { font-size: 32px; }
+      .av-offer-copy { font-size: 13px; line-height: 1.05; }
+      .av-value strong { font-size: 20px; }
+      .av-info { grid-template-columns: 1fr 1fr; }
+      .av-main { gap: 8px; }
+      .av-gift-text { font-size: 20px; }
+      #qrBox { width: 160px; height: 160px; max-width: 44vw; max-height: 44vw; }
+    }
+
+    @media (max-width: 350px) {
+      .stats { grid-template-columns: 1fr; }
+      .av-main { grid-template-columns: 1fr; }
+      .av-gift { min-height: 125px; }
+      #qrBox { width: 170px; height: 170px; max-width: 70vw; max-height: 70vw; margin: auto; }
+    }
+
   </style>
 </head>
 
@@ -1083,55 +1127,77 @@ Please present the QR voucher at Evolution Optical when redeeming.`;
 
     /* =========================================================
        SHARE VOUCHER
-       WhatsApp-direct version.
-       This intentionally avoids navigator.share() because some
-       in-app browsers (including WhatsApp's browser on iPhone)
-       can block the Web Share API in the current context.
+       Universal strategy: native Web Share first, then WhatsApp,
+       then clipboard as the final fallback.
     ========================================================= */
     async function shareVoucher() {
       hideMsg($("shareMsg"));
 
       if (!currentVoucher) {
-        showMsg(
-          $("shareMsg"),
-          "Please generate a voucher first."
-        );
+        showMsg($("shareMsg"), "Please generate a voucher first.");
         return;
       }
 
       const btn = $("shareBtn");
       btn.disabled = true;
-      btn.textContent = "OPENING WHATSAPP…";
+      btn.textContent = "PREPARING…";
 
       try {
         if (!currentVoucher.public_token) {
-          showMsg(
-            $("shareMsg"),
-            "Secure voucher link is not available for this voucher. Please generate a new voucher."
-          );
+          showMsg($("shareMsg"), "Secure voucher link is not available for this voucher. Please generate a new voucher.");
           return;
         }
 
         const text = buildVoucherShareText();
+        const voucherURL =
+          "https://ericchaow.github.io/evolution-optical-voucher/voucher.html?v=" +
+          encodeURIComponent(currentVoucher.public_token);
 
-        const whatsappURL =
-          "https://wa.me/?text=" + encodeURIComponent(text);
+        // Preferred path on normal iPhone Safari / Android Chrome.
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: "Evolution Optical Digital Voucher",
+              text,
+              url: voucherURL
+            });
+            showMsg($("shareMsg"), "Share menu opened successfully.", "ok");
+            return;
+          } catch (shareError) {
+            if (shareError && shareError.name === "AbortError") {
+              showMsg($("shareMsg"), "Sharing cancelled.");
+              return;
+            }
+            // Some in-app browsers expose navigator.share but block it.
+            console.warn("Native share unavailable, falling back to WhatsApp:", shareError);
+          }
+        }
 
-        showMsg(
-          $("shareMsg"),
-          "Opening WhatsApp…",
-          "ok"
-        );
+        // Universal fallback for browsers/in-app webviews where Web Share is unavailable.
+        const whatsappURL = "https://wa.me/?text=" + encodeURIComponent(text);
+        const opened = window.open(whatsappURL, "_blank", "noopener,noreferrer");
 
-        window.location.href = whatsappURL;
+        if (!opened) {
+          window.location.href = whatsappURL;
+        }
+
+        showMsg($("shareMsg"), "WhatsApp opened with the voucher details.", "ok");
 
       } catch (error) {
-        console.error("WhatsApp share error:", error);
+        console.error("Share voucher error:", error);
 
-        showMsg(
-          $("shareMsg"),
-          "Unable to open WhatsApp. Please copy the voucher details manually."
-        );
+        // Last-resort copy fallback for browsers that block popups or external apps.
+        try {
+          const text = buildVoucherShareText();
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            showMsg($("shareMsg"), "Sharing was blocked, so the voucher details were copied. Paste them into WhatsApp.", "ok");
+          } else {
+            showMsg($("shareMsg"), "Unable to open sharing. Please copy the voucher details manually.");
+          }
+        } catch (_) {
+          showMsg($("shareMsg"), "Unable to open sharing. Please copy the voucher details manually.");
+        }
       } finally {
         btn.disabled = false;
         btn.textContent = "SHARE VOUCHER";
