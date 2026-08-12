@@ -517,6 +517,18 @@
       font-size: 13px;
     }
 
+    .av-redeem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 16px;
+    }
+
+    .av-redeem-col .av-redeem-item:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
     .av-footer {
       margin-top: 10px;
       padding: 10px 10px 9px;
@@ -1193,6 +1205,7 @@
           const name = cleanOutletName(outlet.name);
           const lines = [name];
 
+          if (outlet.address) lines.push(outlet.address);
           if (outlet.phone) lines.push(`Tel: ${outlet.phone}`);
 
           return lines.join("\n");
@@ -1211,7 +1224,7 @@
         return;
       }
 
-      box.innerHTML = details.map((outlet) => {
+      const itemHTML = (outlet) => {
         const name = cleanOutletName(outlet.name);
         const phone = outlet.phone ? `<div>Tel: ${outlet.phone}</div>` : "";
 
@@ -1219,7 +1232,23 @@
           <b>${name}</b>
           ${phone}
         </div>`;
-      }).join("");
+      };
+
+      if (details.length <= 3) {
+        box.innerHTML = details.map(itemHTML).join("");
+        return;
+      }
+
+      const splitIndex = Math.ceil(details.length / 2);
+      const left = details.slice(0, splitIndex).map(itemHTML).join("");
+      const right = details.slice(splitIndex).map(itemHTML).join("");
+
+      box.innerHTML = `
+        <div class="av-redeem-grid">
+          <div class="av-redeem-col">${left}</div>
+          <div class="av-redeem-col">${right}</div>
+        </div>
+      `;
     }
 
     function buildVoucherShareText() {
