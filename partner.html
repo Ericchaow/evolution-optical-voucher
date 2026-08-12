@@ -444,6 +444,45 @@
       font-weight: 900;
     }
 
+    .av-redeem {
+      margin-top: 10px;
+      padding: 11px 12px;
+      border: 1px solid #b7d5f3;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #f7fbff, #eaf3ff);
+      color: #123a73;
+    }
+
+    .av-redeem-title {
+      margin-bottom: 6px;
+      color: #0b4f9f;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+
+    .av-redeem-item {
+      margin-top: 7px;
+      padding-top: 7px;
+      border-top: 1px solid #c9def5;
+      color: #111827;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .av-redeem-item:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .av-redeem-item b {
+      display: block;
+      color: #0b2b66;
+      font-size: 13px;
+    }
+
     .av-footer {
       margin-top: 10px;
       padding: 11px 10px 8px;
@@ -744,6 +783,11 @@
                 <div id="qrBox"></div>
                 <div class="av-scan">SCAN TO REDEEM</div>
               </div>
+            </div>
+
+            <div class="av-redeem">
+              <div class="av-redeem-title">Redeem at</div>
+              <div id="giftRedeemLocations"></div>
             </div>
 
             <div class="av-footer">
@@ -1060,7 +1104,6 @@
           customer_name: customerName,
           expiry_date: data.expiry_date,
           partner_name: currentPartnerName,
-          public_token: data.public_token || "",
           outlet: selectedOutletSummary(
             partnerClaimAll,
             partnerClaimCodes
@@ -1077,6 +1120,7 @@
         $("giftPartner").textContent = currentPartnerName;
         $("giftExpiry").textContent = data.expiry_date;
         $("resultCode").textContent = data.voucher_code;
+        renderVoucherRedeemLocations();
 
         const qr = $("qrBox");
         qr.innerHTML = "";
@@ -1100,18 +1144,9 @@
 
     /* =========================================================
        SHARE HELPERS
-       Uses a secure public token and can generate a PNG image
-       from the on-screen voucher card for sharing.
+       Voucher image is self-contained: QR + branch address.
+       No Digital Voucher backup link is shared.
     ========================================================= */
-    function buildVoucherURL() {
-      const baseURL =
-        "https://xiaoe-ai.github.io/evolution-optical-voucher/voucher.html";
-
-      return currentVoucher && currentVoucher.public_token
-        ? `${baseURL}?v=${encodeURIComponent(currentVoucher.public_token)}`
-        : "";
-    }
-
     function buildRedeemLocationText() {
       const details = currentVoucher?.outlet?.details || [];
 
@@ -1132,9 +1167,31 @@
         .join("\n\n");
     }
 
-    function buildVoucherShareText(options = {}) {
-      const includeURL = options.includeURL !== false;
-      const voucherURL = includeURL ? buildVoucherURL() : "";
+    function renderVoucherRedeemLocations() {
+      const box = $("giftRedeemLocations");
+      if (!box) return;
+
+      const details = currentVoucher?.outlet?.details || [];
+
+      if (!details.length) {
+        box.innerHTML = `<div class="av-redeem-item"><b>Evolution Optical</b></div>`;
+        return;
+      }
+
+      box.innerHTML = details.map((outlet) => {
+        const name = cleanOutletName(outlet.name);
+        const address = outlet.address ? `<div>${outlet.address}</div>` : "";
+        const phone = outlet.phone ? `<div>Tel: ${outlet.phone}</div>` : "";
+
+        return `<div class="av-redeem-item">
+          <b>Evolution Optical ${name}</b>
+          ${address}
+          ${phone}
+        </div>`;
+      }).join("");
+    }
+
+    function buildVoucherShareText() {
       const redeemText = buildRedeemLocationText();
 
       return `Hi ${currentVoucher.customer_name} 👋
@@ -1148,10 +1205,7 @@ Valid until: ${currentVoucher.expiry_date}
 Redeem at:
 ${redeemText}
 
-Please present the attached QR voucher at Evolution Optical when redeeming.${voucherURL ? `
-
-🎟️ Open Digital Voucher:
-${voucherURL}` : ""}`;
+Please present the attached QR voucher at Evolution Optical when redeeming.`;
     }
 
     async function createVoucherShareFile() {
@@ -1216,17 +1270,7 @@ ${voucherURL}` : ""}`;
       btn.textContent = "PREPARING…";
 
       try {
-        if (!currentVoucher.public_token) {
-          showMsg(
-            $("shareMsg"),
-            "Secure voucher link is not available for this voucher. Please generate a new voucher."
-          );
-          return;
-        }
-
-        const voucherURL = buildVoucherURL();
-        const textWithURL = buildVoucherShareText({ includeURL: true });
-        const textWithoutURL = buildVoucherShareText({ includeURL: false });
+        const shareText = buildVoucherShareText();
         let imageFile = null;
 
         try {
@@ -1237,13 +1281,10 @@ ${voucherURL}` : ""}`;
 
         if (imageFile && navigator.share) {
           try {
-            if (
-              !navigator.canShare ||
-              navigator.canShare({ files: [imageFile] })
-            ) {
+            if (!navigator.canShare || navigator.canShare({ files: [imageFile] })) {
               await navigator.share({
                 title: "Evolution Optical Voucher",
-                text: textWithURL,
+                text: shareText,
                 files: [imageFile]
               });
               showMsg(
@@ -1258,10 +1299,7 @@ ${voucherURL}` : ""}`;
               showMsg($("shareMsg"), "Sharing cancelled.");
               return;
             }
-            console.warn(
-              "Image file share unavailable, falling back:",
-              shareError
-            );
+            console.warn("Image file share unavailable, falling back:", shareError);
           }
         }
 
@@ -1278,8 +1316,8 @@ ${voucherURL}` : ""}`;
         if (navigator.share) {
           try {
             await navigator.share({
-              title: "Evolution Optical Digital Voucher",
-              text: textWithURL
+              title: "Evolution Optical Voucher",
+              text: shareText
             });
             showMsg($("shareMsg"), "Share menu opened successfully.", "ok");
             return;
@@ -1288,52 +1326,34 @@ ${voucherURL}` : ""}`;
               showMsg($("shareMsg"), "Sharing cancelled.");
               return;
             }
-            console.warn(
-              "Native text share unavailable, falling back to WhatsApp:",
-              shareError
-            );
+            console.warn("Native text share unavailable, falling back to WhatsApp:", shareError);
           }
         }
 
-        const whatsappURL =
-          "https://wa.me/?text=" + encodeURIComponent(textWithURL);
-        const opened = window.open(
-          whatsappURL,
-          "_blank",
-          "noopener,noreferrer"
-        );
+        const whatsappURL = "https://wa.me/?text=" + encodeURIComponent(shareText);
+        const opened = window.open(whatsappURL, "_blank", "noopener,noreferrer");
 
         if (!opened) {
           window.location.href = whatsappURL;
         }
 
-        showMsg(
-          $("shareMsg"),
-          "WhatsApp opened with the voucher details.",
-          "ok"
-        );
+        showMsg($("shareMsg"), "WhatsApp opened with the voucher details.", "ok");
       } catch (error) {
         console.error("Share voucher error:", error);
 
         try {
           if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(buildVoucherShareText({ includeURL: true }));
+            await navigator.clipboard.writeText(buildVoucherShareText());
             showMsg(
               $("shareMsg"),
               "Sharing was blocked, so the voucher details were copied. Paste them into WhatsApp.",
               "ok"
             );
           } else {
-            showMsg(
-              $("shareMsg"),
-              "Unable to open sharing. Please copy the voucher details manually."
-            );
+            showMsg($("shareMsg"), "Unable to open sharing. Please copy the voucher details manually.");
           }
         } catch (_) {
-          showMsg(
-            $("shareMsg"),
-            "Unable to open sharing. Please copy the voucher details manually."
-          );
+          showMsg($("shareMsg"), "Unable to open sharing. Please copy the voucher details manually.");
         }
       } finally {
         btn.disabled = false;
