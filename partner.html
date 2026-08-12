@@ -1016,6 +1016,7 @@
           customer_name: customerName,
           expiry_date: data.expiry_date,
           partner_name: currentPartnerName,
+          public_token: data.public_token || "",
           outlet: selectedOutletSummary(
             partnerClaimAll,
             partnerClaimCodes
@@ -1055,18 +1056,15 @@
 
     /* =========================================================
        SHARE TEXT BUILDER
+       Uses a secure random public token instead of exposing
+       customer phone or internal voucher IDs.
     ========================================================= */
     function buildVoucherShareText() {
-      const assigned = currentVoucher?.outlet?.details || [];
+      const baseURL =
+        "https://ericchaow.github.io/evolution-optical-voucher/voucher.html";
 
-      const outletText = assigned.length
-        ? "\n\nRedeem at:\n" +
-          assigned
-            .map(
-              (outlet) =>
-                `📍 ${outlet.name}\n${outlet.address}\n☎ ${outlet.phone}`
-            )
-            .join("\n\n")
+      const voucherURL = currentVoucher.public_token
+        ? `${baseURL}?v=${encodeURIComponent(currentVoucher.public_token)}`
         : "";
 
       return `Hi ${currentVoucher.customer_name} 👋
@@ -1075,10 +1073,12 @@ A little gift just for you 🎁
 
 ${currentVoucher.voucher_type}
 From: ${currentVoucher.partner_name}
-Voucher: ${currentVoucher.voucher_code}
-Valid until: ${currentVoucher.expiry_date}${outletText}
+Valid until: ${currentVoucher.expiry_date}
 
-Please show this QR voucher when redeeming.`;
+View your digital voucher:
+${voucherURL}
+
+Please present the QR voucher at Evolution Optical when redeeming.`;
     }
 
     /* =========================================================
@@ -1104,6 +1104,14 @@ Please show this QR voucher when redeeming.`;
       btn.textContent = "OPENING WHATSAPP…";
 
       try {
+        if (!currentVoucher.public_token) {
+          showMsg(
+            $("shareMsg"),
+            "Secure voucher link is not available for this voucher. Please generate a new voucher."
+          );
+          return;
+        }
+
         const text = buildVoucherShareText();
 
         const whatsappURL =
