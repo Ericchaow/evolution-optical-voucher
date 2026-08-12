@@ -1099,17 +1099,22 @@
     }
 
     /* =========================================================
-       SHARE TEXT BUILDER
-       Uses a secure random public token instead of exposing
-       customer phone or internal voucher IDs.
+       SHARE HELPERS
+       Uses a secure public token and can generate a PNG image
+       from the on-screen voucher card for sharing.
     ========================================================= */
-    function buildVoucherShareText() {
+    function buildVoucherURL() {
       const baseURL =
         "https://ericchaow.github.io/evolution-optical-voucher/voucher.html";
 
-      const voucherURL = currentVoucher.public_token
+      return currentVoucher && currentVoucher.public_token
         ? `${baseURL}?v=${encodeURIComponent(currentVoucher.public_token)}`
         : "";
+    }
+
+    function buildVoucherShareText(options = {}) {
+      const includeURL = options.includeURL !== false;
+      const voucherURL = includeURL ? buildVoucherURL() : "";
 
       return `Hi ${currentVoucher.customer_name} 👋
 
@@ -1119,16 +1124,60 @@ ${currentVoucher.voucher_type}
 From: ${currentVoucher.partner_name}
 Valid until: ${currentVoucher.expiry_date}
 
-View your digital voucher:
-${voucherURL}
+Please present the attached QR voucher at Evolution Optical when redeeming.${voucherURL ? `
 
-Please present the QR voucher at Evolution Optical when redeeming.`;
+View your digital voucher:
+${voucherURL}` : ""}`;
+    }
+
+    async function createVoucherShareFile() {
+      const voucherNode = document.querySelector(".approved-voucher");
+      if (!voucherNode) {
+        throw new Error("Voucher preview not found.");
+      }
+
+      const canvas = await html2canvas(voucherNode, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        logging: false,
+        windowWidth: document.documentElement.clientWidth
+      });
+
+      const blob = await new Promise((resolve) =>
+        canvas.toBlob(resolve, "image/png", 1)
+      );
+
+      if (!blob) {
+        throw new Error("Could not create voucher image.");
+      }
+
+      const safeCode = (currentVoucher.voucher_code || "voucher")
+        .replace(/[^a-z0-9_-]/gi, "_")
+        .slice(0, 80);
+
+      return new File([blob], `${safeCode}.png`, { type: "image/png" });
+    }
+
+    function openOrDownloadVoucherImage(file) {
+      const fileURL = URL.createObjectURL(file);
+      const a = document.createElement("a");
+      a.href = fileURL;
+      a.download = file.name || "voucher.png";
+      a.target = "_blank";
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(fileURL), 60000);
     }
 
     /* =========================================================
        SHARE VOUCHER
-       Universal strategy: native Web Share first, then WhatsApp,
-       then clipboard as the final fallback.
+       Priority:
+       1) Share generated PNG voucher image + text.
+       2) If image-file share is unsupported, download/open image.
+       3) Fall back to text-only share / WhatsApp / clipboard.
     ========================================================= */
     async function shareVoucher() {
       hideMsg($("shareMsg"));
@@ -1144,22 +1193,69 @@ Please present the QR voucher at Evolution Optical when redeeming.`;
 
       try {
         if (!currentVoucher.public_token) {
-          showMsg($("shareMsg"), "Secure voucher link is not available for this voucher. Please generate a new voucher.");
+          showMsg(
+            $("shareMsg"),
+            "Secure voucher link is not available for this voucher. Please generate a new voucher."
+          );
           return;
         }
 
-        const text = buildVoucherShareText();
-        const voucherURL =
-          "https://ericchaow.github.io/evolution-optical-voucher/voucher.html?v=" +
-          encodeURIComponent(currentVoucher.public_token);
+        const voucherURL = buildVoucherURL();
+        const textWithURL = buildVoucherShareText({ includeURL: true });
+        const textWithoutURL = buildVoucherShareText({ includeURL: false });
+        let imageFile = null;
 
-        // Preferred path on normal iPhone Safari / Android Chrome.
+        try {
+          imageFile = await createVoucherShareFile();
+        } catch (imageError) {
+          console.warn("Voucher image generation failed:", imageError);
+        }
+
+        if (imageFile && navigator.share) {
+          try {
+            if (
+              !navigator.canShare ||
+              navigator.canShare({ files: [imageFile] })
+            ) {
+              await navigator.share({
+                title: "Evolution Optical Voucher",
+                text: textWithURL,
+                files: [imageFile]
+              });
+              showMsg(
+                $("shareMsg"),
+                "Voucher image is ready and the share menu has opened.",
+                "ok"
+              );
+              return;
+            }
+          } catch (shareError) {
+            if (shareError && shareError.name === "AbortError") {
+              showMsg($("shareMsg"), "Sharing cancelled.");
+              return;
+            }
+            console.warn(
+              "Image file share unavailable, falling back:",
+              shareError
+            );
+          }
+        }
+
+        if (imageFile) {
+          openOrDownloadVoucherImage(imageFile);
+          showMsg(
+            $("shareMsg"),
+            "This browser cannot send the voucher image directly. The voucher image has been opened/downloaded. You can now attach that image in WhatsApp manually.",
+            "ok"
+          );
+          return;
+        }
+
         if (navigator.share) {
           try {
             await navigator.share({
               title: "Evolution Optical Digital Voucher",
-              text,
-              url: voucherURL
+              text: textWithURL
             });
             showMsg($("shareMsg"), "Share menu opened successfully.", "ok");
             return;
@@ -1168,35 +1264,52 @@ Please present the QR voucher at Evolution Optical when redeeming.`;
               showMsg($("shareMsg"), "Sharing cancelled.");
               return;
             }
-            // Some in-app browsers expose navigator.share but block it.
-            console.warn("Native share unavailable, falling back to WhatsApp:", shareError);
+            console.warn(
+              "Native text share unavailable, falling back to WhatsApp:",
+              shareError
+            );
           }
         }
 
-        // Universal fallback for browsers/in-app webviews where Web Share is unavailable.
-        const whatsappURL = "https://wa.me/?text=" + encodeURIComponent(text);
-        const opened = window.open(whatsappURL, "_blank", "noopener,noreferrer");
+        const whatsappURL =
+          "https://wa.me/?text=" + encodeURIComponent(textWithURL);
+        const opened = window.open(
+          whatsappURL,
+          "_blank",
+          "noopener,noreferrer"
+        );
 
         if (!opened) {
           window.location.href = whatsappURL;
         }
 
-        showMsg($("shareMsg"), "WhatsApp opened with the voucher details.", "ok");
-
+        showMsg(
+          $("shareMsg"),
+          "WhatsApp opened with the voucher details.",
+          "ok"
+        );
       } catch (error) {
         console.error("Share voucher error:", error);
 
-        // Last-resort copy fallback for browsers that block popups or external apps.
         try {
-          const text = buildVoucherShareText();
           if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(text);
-            showMsg($("shareMsg"), "Sharing was blocked, so the voucher details were copied. Paste them into WhatsApp.", "ok");
+            await navigator.clipboard.writeText(buildVoucherShareText({ includeURL: true }));
+            showMsg(
+              $("shareMsg"),
+              "Sharing was blocked, so the voucher details were copied. Paste them into WhatsApp.",
+              "ok"
+            );
           } else {
-            showMsg($("shareMsg"), "Unable to open sharing. Please copy the voucher details manually.");
+            showMsg(
+              $("shareMsg"),
+              "Unable to open sharing. Please copy the voucher details manually."
+            );
           }
         } catch (_) {
-          showMsg($("shareMsg"), "Unable to open sharing. Please copy the voucher details manually.");
+          showMsg(
+            $("shareMsg"),
+            "Unable to open sharing. Please copy the voucher details manually."
+          );
         }
       } finally {
         btn.disabled = false;
