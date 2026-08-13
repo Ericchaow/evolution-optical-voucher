@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0f172a" />
-  <meta name="eo-partner-build" content="multi-voucher-full-integration-v1" />
+  <meta name="eo-partner-build" content="multi-voucher-full-integration-v1.1" />
   <title>Evolution Optical • Partner Portal</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -104,6 +104,7 @@ function selectedOption(){return voucherOptions.find(o=>o.version_id===$("vouche
 function optionLabel(o){if(o.face_value!=null)return `RM${money(o.face_value)} • ${o.template_name}`;if(o.discount_percent!=null)return `${money(o.discount_percent)}% • ${o.template_name}`;return o.template_name||"Voucher"}
 function voucherDesignFor(o){
   if(!o)return{key:"custom",eyebrow:"SPECIAL",titleHtml:"PARTNER<br />VOUCHER",valueLabel:"BENEFIT",valueText:"GIFT"};
+  if(o.template_code==="EVO-FREE-GLASSES")return{key:"free_glasses_rm60",eyebrow:"FREE",titleHtml:"FREE GLASSES<br />VOUCHER",valueLabel:"VALUE",valueText:"RM60"};
   const value=o.face_value!=null?`RM${money(o.face_value)}`:(o.discount_percent!=null?`${money(o.discount_percent)}%`:"GIFT");
   const cash=String(o.voucher_category||"").toLowerCase()==="cash"||o.face_value!=null;
   return{key:cash?"cash":"custom",eyebrow:cash?"CASH":"SPECIAL",titleHtml:escapeHtml(o.template_name||"PARTNER VOUCHER").toUpperCase().replace(/\s+VOUCHER$/i,"<br />VOUCHER"),valueLabel:o.face_value!=null?"VALUE":"BENEFIT",valueText:value};
@@ -122,7 +123,7 @@ async function loadBranchDirectory(){
 function redemptionCodesFor(o){
   if(!o)return[];
   const versionCodes=o.version_branch_codes||[];
-  if(partnerClaimAll&&o.all_branches)return Object.keys(branchDirectory).length?Object.keys(branchDirectory):Object.keys(OUTLETS);
+  if(partnerClaimAll&&o.all_branches)return Object.keys(OUTLETS);
   if(partnerClaimAll&&!o.all_branches)return versionCodes;
   if(!partnerClaimAll&&o.all_branches)return partnerClaimCodes;
   return partnerClaimCodes.filter(c=>versionCodes.includes(c));
@@ -131,9 +132,14 @@ function outletSummaryFor(o){const codes=redemptionCodesFor(o);const dir=Object.
 function renderSelectedVoucherMeta(){
   const o=selectedOption();renderVoucherDesign(o);
   if(!o){$("validityTitle").textContent="No active Voucher Type";$("validityText").textContent="Contact Evolution Optical Admin for allocation.";$("assignedClaimBranches").innerHTML='<div><b>No redemption location available</b></div>';syncCreateButton();return}
-  if(o.validity_type==="fixed"){$("validityTitle").textContent=`Validity: until ${o.valid_until||"configured end date"}`;$("validityText").textContent=o.valid_from?`Campaign period ${o.valid_from} to ${o.valid_until||"—"}.`:"Fixed campaign validity."}
+  if(o.template_code==="EVO-FREE-GLASSES"){$("validityTitle").textContent="Validity: 3 calendar months from issue";$("validityText").textContent="RM60 Free Glasses Voucher keeps the original Evolution Optical 3-calendar-month validity rule."}
+  else if(o.validity_type==="fixed"){$("validityTitle").textContent=`Validity: until ${o.valid_until||"configured end date"}`;$("validityText").textContent=o.valid_from?`Campaign period ${o.valid_from} to ${o.valid_until||"—"}.`:"Fixed campaign validity."}
   else{$("validityTitle").textContent=`Validity: ${Number(o.valid_days||0)} days from issue`;$("validityText").textContent="Expiry is calculated automatically from this Voucher Version."}
-  const summary=outletSummaryFor(o),names=summary.details.map(x=>x.name);$("assignedClaimBranches").innerHTML=`<div><b>${escapeHtml(names.join(", ")||"No valid claim branch")}</b><small>Controlled by Evolution Optical Admin and the selected Voucher Version.</small></div>`;
+  let label="";
+  if(partnerClaimAll&&o.all_branches)label="All Evolution Optical branches";
+  else if(!partnerClaimAll&&o.all_branches)label=partnerClaimNames.join(", ")||"No claim branch assigned";
+  else{const summary=outletSummaryFor(o);label=summary.details.map(x=>x.name).join(", ")||"No valid claim branch"}
+  $("assignedClaimBranches").innerHTML=`<div><b>${escapeHtml(label)}</b><small>Controlled by Evolution Optical Admin and the selected Voucher Version.</small></div>`;
   syncCreateButton();
 }
 function renderVoucherBalances(){
