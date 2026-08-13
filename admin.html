@@ -4,146 +4,509 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07152f">
+<meta name="eo-admin-build" content="static-staff-limit-v2">
 <title>Evolution Optical • Admin Portal</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
 <style>
-html,body{margin:0;min-height:100%;background:#050716;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
-#boot{min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center}
-#boot .box{max-width:560px}
-#boot h2{margin:0 0 8px}#boot p{color:#b9c6e4;line-height:1.55}
+:root{
+  --bg:#050716;--card:#0b1335;--ink:#f7f8ff;--muted:#bcc7e3;
+  --blue:#4f8dff;--violet:#bd5cff;--green:#20d7a0;--red:#ff5f7a;
+  --orange:#ffb14c;--line:rgba(115,135,210,.34);--soft:#101b44
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;min-height:100%;color:var(--ink);
+  font-family:Inter,ui-rounded,"SF Pro Display","SF Pro Text",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 8% 5%,rgba(192,92,255,.20),transparent 26%),
+    radial-gradient(circle at 92% 16%,rgba(40,168,255,.16),transparent 30%),
+    linear-gradient(160deg,#050716 0%,#08102b 52%,#040816 100%)
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.top{
+  position:sticky;top:0;z-index:30;padding:calc(18px + env(safe-area-inset-top)) 18px 18px;
+  background:linear-gradient(180deg,rgba(5,9,28,.96),rgba(5,12,35,.92));
+  border-bottom:1px solid rgba(103,120,255,.28);
+  box-shadow:0 16px 40px rgba(0,0,0,.32);backdrop-filter:blur(18px)
+}
+.topin{max-width:1080px;margin:auto;display:flex;align-items:center;gap:14px}
+.brand{flex:1}
+.brand h1{margin:0;font-size:clamp(22px,4vw,31px);font-family:Georgia,"Times New Roman",serif;font-weight:500;letter-spacing:2px}
+.brand p{margin:4px 0 0;color:#bfd4ef;font-size:12px;letter-spacing:1.7px;text-transform:uppercase}
+.ghost{
+  border:1px solid #5d70b8;background:#0a1234;color:#fff;border-radius:16px;padding:11px 15px;font-weight:900
+}
+.wrap{width:min(1080px,calc(100% - 24px));margin:18px auto 105px}
+.card,.partner,.perf-card,.vrecord,.stat,.vstat,.branch-admin-row,.settings-row,.claim-summary,.claim-panel,.num,.pm{
+  background:linear-gradient(145deg,rgba(20,18,69,.96),rgba(7,20,52,.96) 58%,rgba(5,14,38,.97));
+  border:1px solid var(--line);color:var(--ink);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 28px rgba(0,0,0,.28)
+}
+.card{border-radius:24px;padding:19px;margin-bottom:16px}
+h2,h3,h4{margin-top:0}
+h2,h3{color:#efdcff}
+h2{font-size:30px}h3{font-size:22px}
+.sub{color:var(--muted);line-height:1.5;margin:0}
+.note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:10px}
+.field{margin-top:12px}
+label{display:block;margin-bottom:6px;font-size:12px;font-weight:850;color:#d9e3ff}
+input,select{
+  width:100%;min-height:48px;padding:11px 13px;border:1px solid rgba(100,128,210,.42);
+  border-radius:15px;outline:none;background:linear-gradient(145deg,#0f173a,#071029);color:#fff
+}
+input::placeholder{color:#8e9ab8}
+.btn{
+  border:1px solid #5f70c5;border-radius:14px;padding:12px 15px;color:#fff;
+  background:linear-gradient(145deg,#121d49,#071331);font-weight:900
+}
+.btn.small{padding:9px 11px;font-size:12px;border-radius:11px}
+.btn.blue{background:linear-gradient(145deg,#253b8a,#11265e)}
+.btn.green{background:linear-gradient(145deg,#0d4a47,#073633);border-color:#2ebf99}
+.btn.red{background:linear-gradient(145deg,#5b182b,#39101e);border-color:#d04e6b}
+.btn.light{background:linear-gradient(145deg,#172043,#0b1535)}
+.btn:disabled{opacity:.55}
+.loginbtn{width:100%;margin-top:15px;min-height:54px}
+.msg{margin-top:11px;padding:10px 12px;border-radius:12px;font-size:12px;font-weight:700}
+.msg.ok{background:rgba(22,163,102,.15);color:#69efb7;border:1px solid rgba(45,220,154,.24)}
+.msg.err{background:rgba(197,47,72,.15);color:#ff92a5;border:1px solid rgba(255,93,124,.24)}
+#loginCard{max-width:520px;margin:6vh auto 0}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+.stat{padding:14px;border-radius:18px}
+.stat span,.num span,.pm span,.vstat span{display:block;color:var(--muted);font-size:10px;font-weight:850}
+.stat strong{display:block;margin-top:5px;font-size:30px}
+.staff-launcher-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.launcher{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:13px 0}
+.toolbar input{flex:1;min-width:190px}
+.partner-grid,.perf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.partner,.perf-card{padding:13px;border-radius:18px}
+.prow{display:flex;gap:10px;align-items:flex-start}
+.pinfo{flex:1;min-width:0}.pname{font-weight:930;font-size:16px}.pcode,.perf-code{font-size:10px;margin-top:3px;color:#8eb4ff}
+.badge{font-size:10px;font-weight:900;padding:6px 9px;border-radius:999px;background:rgba(31,207,145,.13);color:#58f0bd;border:1px solid rgba(70,225,173,.36)}
+.badge.suspended{background:rgba(255,85,112,.12);color:#ff8297;border-color:rgba(255,95,122,.32)}
+.nums,.perf-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
+.num,.pm{padding:8px 6px;border-radius:12px}
+.num b,.pm b{font-size:18px}
+.partner-manage-toggle,.partner-vouchers-toggle{width:100%;margin-top:9px;padding:10px 11px;border:1px solid #526dc4;border-radius:12px;background:#121f4a;color:#e8eeff;font-weight:900}
+.partner-extra{display:none}.partner.manage-open .partner-extra{display:block}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:9px}
+.actions input{grid-column:1/-1}.actions .btn{width:100%}.actions .wide{grid-column:1/-1}
+.claim-summary{margin-top:8px;padding:9px;border-radius:11px;font-size:11px;color:#c5d3ef}
+.claim-panel{margin-top:10px;padding:12px;border-radius:14px}
+.claim-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
+.claim-option{display:flex;gap:7px;padding:8px;border:1px solid var(--line);border-radius:11px;background:#101a3d;font-size:11px}
+.claim-option input{width:17px;height:17px;min-height:0;flex:0 0 auto}
+.claim-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.hidden-box{margin:10px 0 13px;padding:11px;border:1px dashed #5f6ea9;border-radius:15px;background:#0c1636}
+.hidden-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.hidden-row{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:#101a3d}
+.hidden-row>div{flex:1}
+.rate{margin-top:8px;font-size:10px;color:var(--muted);font-weight:800}
+.partner-vouchers-wrap{display:none;margin-top:8px}.perf-card.vouchers-open .partner-vouchers-wrap{display:block}
+.partner-voucher-item{margin-top:6px;padding:9px;border:1px solid var(--line);border-radius:12px;background:#0d1839;font-size:10px;line-height:1.45}
+.partner-voucher-empty{padding:10px;text-align:center;color:#91a2c4;font-size:10px}
+.vfilters{display:grid;grid-template-columns:1.4fr 150px 170px 150px 150px auto;gap:8px;margin:13px 0}
+.vstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.vstat{padding:10px;border-radius:14px}.vstat b{font-size:20px}
+.vrecord{border-radius:15px;padding:12px;margin-top:9px}
+.vtop{display:flex;gap:10px;align-items:flex-start}.vcode{font-weight:920;font-size:14px}.vmeta{font-size:12px;color:var(--muted);line-height:1.55;margin-top:7px}
+.vstatus{font-size:10px;font-weight:900;border-radius:999px;padding:5px 8px;background:#173e36;color:#70efbc}.vstatus.redeemed{background:#192a61;color:#a8c2ff}.vstatus.expired{background:#4d1d2b;color:#ff9aae}
+.modal{
+  position:fixed;inset:0;z-index:100;display:none;align-items:flex-end;justify-content:center;
+  padding:10px;background:rgba(4,16,33,.58);backdrop-filter:blur(10px)
+}
+.modal.open{display:flex}
+.modal-sheet{width:min(720px,100%);max-height:90vh;overflow:auto;padding:16px;border-radius:26px 26px 18px 18px;background:#0a1432;border:1px solid #6677c3}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.modal-close{width:38px;height:38px;border:1px solid #5969a6;border-radius:12px;background:#14204a;color:#fff;font-size:22px}
+.create-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 10px;margin-top:10px}.create-grid .wide{grid-column:1/-1}
+.share-link{margin-top:12px;padding:11px 12px;border:1px solid #40558e;border-radius:13px;background:#081531;color:#dce8ff;font-size:12px;word-break:break-all}
+.share-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.share-actions .wide{grid-column:1/-1}
+.bottomnav{
+  position:fixed;z-index:60;left:10px;right:10px;bottom:calc(7px + env(safe-area-inset-bottom));
+  display:grid;grid-template-columns:repeat(6,1fr);gap:3px;padding:8px;border:1px solid #5364aa;border-radius:20px;background:#07132f
+}
+.bottomnav button{border:0;background:transparent;color:#fff;border-radius:12px;padding:9px 3px;font-size:10px;font-weight:850}
+.bottomnav button.active{background:linear-gradient(135deg,#8f58ff,#4f78ff,#28cfe7)}
+.app-view{display:none}.app-view.active{display:block}
+.branch-admin-list,.settings-list{display:grid;gap:8px;margin-top:12px}
+.branch-admin-row,.settings-row{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:13px}
+.branch-admin-row>div,.settings-row>div{flex:1}
+@media(max-width:720px){
+  .wrap{width:min(100% - 14px,1080px);margin-top:9px}.card{padding:14px;border-radius:20px;margin-bottom:10px}
+  .stats{gap:6px}.stat{padding:10px 7px}.stat strong{font-size:24px}
+  .partner-grid,.perf-grid{grid-template-columns:1fr}.staff-launcher-grid{grid-template-columns:1fr}
+  .actions{grid-template-columns:1fr}.actions input,.actions .wide{grid-column:1}
+  .claim-grid,.hidden-list,.vfilters,.create-grid,.share-actions{grid-template-columns:1fr}
+  .create-grid .wide,.share-actions .wide{grid-column:auto}.vstats{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
-<div id="boot"><div class="box"><h2>EVOLUTION OPTICAL</h2><p>Loading Admin Portal v4…</p></div></div>
+
+<header class="top">
+  <div class="topin">
+    <div class="brand"><h1>EVOLUTION OPTICAL</h1><p>Admin Voucher Portal</p></div>
+    <button id="logout" class="ghost hidden">Logout</button>
+  </div>
+</header>
+
+<main class="wrap">
+<section id="loginCard" class="card">
+  <h2>Admin Login</h2><p class="sub">Sign in with an authorised Evolution Optical admin account.</p>
+  <div class="field"><label>Email</label><input id="email" type="email" autocomplete="username"></div>
+  <div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div>
+  <button id="login" class="btn loginbtn">SIGN IN</button><div id="loginMsg"></div>
+</section>
+
+<div id="dashboard" class="hidden">
+  <div id="view-dashboard" class="app-view active">
+    <section class="card">
+      <h2>Admin Dashboard</h2><p class="sub">Manage Partner voucher allocations from one place.</p>
+      <div class="stats">
+        <div class="stat"><span>Partners</span><strong id="totalPartners">—</strong></div>
+        <div class="stat"><span>Total Limit</span><strong id="totalLimit">—</strong></div>
+        <div class="stat"><span>Issued</span><strong id="totalIssued">—</strong></div>
+        <div class="stat"><span>Remaining</span><strong id="totalRemaining">—</strong></div>
+      </div>
+    </section>
+    <div class="staff-launcher-grid">
+      <section class="card launcher"><div><h3>Add New Partner</h3><p class="sub">Create partner + voucher limit + staff limit + branch permission.</p></div><button id="openPartnerModal" class="btn blue">+ Add Partner</button></section>
+      <section class="card launcher"><div><h3>Add New Staff</h3><p class="sub">Create Evolution Optical staff login + assign branch.</p></div><button id="openStaffModal" class="btn green">+ Add Staff</button></section>
+    </div>
+  </div>
+
+  <div id="view-partners" class="app-view">
+    <section class="card">
+      <h3>Partner Voucher Allocation</h3><p class="sub">Manage voucher limit, Partner Staff limit, branch access and account status.</p>
+      <div class="toolbar"><input id="search" placeholder="Search company or partner code"><button id="refresh" class="btn small">Refresh</button><button id="hiddenToggle" class="btn small light">Hidden <span id="hiddenCount">0</span></button></div>
+      <div id="hiddenBox" class="hidden-box hidden"><div id="hiddenPartners" class="hidden-list"></div></div>
+      <div id="partnerMsg"></div><div id="partners" class="partner-grid"></div>
+    </section>
+  </div>
+
+  <div id="view-branches" class="app-view">
+    <section class="card"><h3>Branches</h3><p class="sub">Active Evolution Optical branches.</p><div class="toolbar"><button id="branchRefresh" class="btn small">Refresh Branches</button></div><div id="branchAdminList" class="branch-admin-list"></div></section>
+  </div>
+
+  <div id="view-vouchers" class="app-view">
+    <section class="card">
+      <h3>Voucher Records</h3><p class="sub">View issued vouchers and current status.</p>
+      <div class="vfilters">
+        <input id="voucherSearch" placeholder="Voucher code, customer, phone or Partner">
+        <select id="voucherStatus"><option value="ALL">All Status</option><option value="VALID">VALID</option><option value="REDEEMED">REDEEMED</option><option value="EXPIRED">EXPIRED</option></select>
+        <select id="voucherPartner"><option value="ALL">All Partners</option></select>
+        <input id="voucherDateFrom" type="date"><input id="voucherDateTo" type="date">
+        <button id="voucherRefresh" class="btn small">Refresh</button>
+      </div>
+      <div class="toolbar"><button id="clearVoucherFilters" class="btn small blue">Clear Filters</button><button id="exportVoucherExcel" class="btn small green">Export Excel</button></div>
+      <div id="voucherMsg"></div>
+      <div class="vstats"><div class="vstat"><span>Total</span><b id="vTotal">0</b></div><div class="vstat"><span>Valid</span><b id="vValid">0</b></div><div class="vstat"><span>Redeemed</span><b id="vRedeemed">0</b></div><div class="vstat"><span>Expired</span><b id="vExpired">0</b></div></div>
+      <div id="voucherRecords"></div>
+    </section>
+  </div>
+
+  <div id="view-reports" class="app-view">
+    <section class="card"><h3>Partner Performance</h3><p class="sub">Voucher usage and redemption performance by Partner.</p><div class="toolbar"><button id="perfRefresh" class="btn small">Refresh Performance</button></div><div id="performance"></div></section>
+  </div>
+
+  <div id="view-settings" class="app-view">
+    <section class="card"><h3>Settings</h3><div class="settings-list">
+      <div class="settings-row"><div><b>Hidden Partners</b><small>Open hidden Partner list.</small></div><button id="settingsHiddenBtn" class="btn small light">Open</button></div>
+      <div class="settings-row"><div><b>Refresh All Data</b><small>Reload Admin data.</small></div><button id="settingsRefreshAll" class="btn small blue">Refresh</button></div>
+    </div></section>
+  </div>
+</div>
+</main>
+
+<div id="partnerModal" class="modal"><section class="modal-sheet">
+  <div class="modal-head"><h3>Add New Partner</h3><button id="closePartnerModal" class="modal-close">×</button></div>
+  <div class="create-grid">
+    <div class="field"><label>Partner Code</label><input id="newPartnerCode" placeholder="e.g. ABC001"></div>
+    <div class="field"><label>Company / Partner Name</label><input id="newPartnerName" placeholder="Company name"></div>
+    <div class="field"><label>Email</label><input id="newPartnerEmail" type="email" placeholder="partner@example.com"></div>
+    <div class="field"><label>Temporary Password</label><input id="newPartnerPassword" type="password" placeholder="Minimum 6 characters"></div>
+    <div class="field wide"><label>Initial Voucher Limit</label><input id="newPartnerLimit" type="number" min="0" step="1" value="100"></div>
+    <div class="field wide"><label>Partner Staff Limit</label><input id="newPartnerStaffLimit" type="number" min="0" max="1000" step="1" value="0"><div class="note">Maximum Partner Staff accounts allowed.</div></div>
+    <div class="field wide"><label>Voucher Claim Branch Permission</label>
+      <label class="claim-option"><input id="newPartnerAllBranches" type="checkbox" checked><span><b>All Evolution Optical branches</b></span></label>
+      <div id="newPartnerClaimBranches" class="claim-grid"></div>
+    </div>
+  </div>
+  <button id="createPartnerBtn" class="btn green" style="width:100%;margin-top:12px">Create Partner</button><div id="createPartnerMsg"></div>
+</section></div>
+
+<div id="staffModal" class="modal"><section class="modal-sheet">
+  <div class="modal-head"><h3>Add New Staff</h3><button id="closeStaffModal" class="modal-close">×</button></div>
+  <div class="create-grid">
+    <div class="field"><label>Staff Name</label><input id="newStaffName"></div>
+    <div class="field"><label>Email</label><input id="newStaffEmail" type="email"></div>
+    <div class="field"><label>Temporary Password</label><input id="newStaffPassword" type="password"></div>
+    <div class="field"><label>Role</label><select id="newStaffRole"><option value="staff">Staff</option><option value="manager">Branch Manager</option></select></div>
+    <div class="field wide"><label>Assigned Branch</label><select id="newStaffBranch"><option value="">Select branch</option></select></div>
+  </div>
+  <button id="createStaffBtn" class="btn green" style="width:100%;margin-top:12px">Create Staff</button><div id="createStaffMsg"></div>
+</section></div>
+
+<div id="shareModal" class="modal"><section class="modal-sheet">
+  <div class="modal-head"><h3 id="shareTitle">Account Ready</h3><button id="closeShareModal" class="modal-close">×</button></div>
+  <p id="shareDescription" class="sub"></p><div id="shareLink" class="share-link"></div>
+  <div class="share-actions"><button id="copyShareLink" class="btn blue">Copy Link</button><button id="whatsappShareLink" class="btn green">WhatsApp</button><button id="doneShareLink" class="btn light wide">Close</button></div>
+  <div id="shareMsg"></div>
+</section></div>
+
+<nav class="bottomnav" id="bottomNav">
+  <button class="active" data-view="dashboard">Dashboard</button><button data-view="partners">Partners</button><button data-view="branches">Branches</button><button data-view="vouchers">Vouchers</button><button data-view="reports">Reports</button><button data-view="settings">Settings</button>
+</nav>
+
 <script>
+const SUPABASE_URL="https://hukihbcyyqhanaqrizvm.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_kpPFeGYpedq2auo01Zo50A_aiSjdeVh";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const $=id=>document.getElementById(id);
+let partners=[],vouchers=[],voucherBranches=[],branches=[],redemptions=[],claimBranchOptions=[];
+const HIDDEN_KEY="eo_admin_hidden_partners_v1";
+const hiddenCodes=new Set(JSON.parse(localStorage.getItem(HIDDEN_KEY)||"[]").map(x=>String(x).toUpperCase()));
+const openManage=new Set(),openVouchers=new Set();
+const SITE_BASE="https://xiaoe-ai.github.io/evolution-optical-voucher/";
+let currentShare={role:"",name:"",email:"",url:""};
 
-(async function(){
-  const boot=document.getElementById("boot");
-  try{
-    const res=await fetch("https://raw.githubusercontent.com/xiaoe-ai/evolution-optical-voucher/7413a17d2133a16b566c5e4eaddade32b0b73145/admin.html",{cache:"no-store"});
-    if(!res.ok)throw new Error("Unable to load Admin base: HTTP "+res.status);
-    let html=await res.text();
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function msg(node,text,ok=false){if(!node)return;node.innerHTML=text?`<div class="msg ${ok?'ok':'err'}">${esc(text)}</div>`:""}
+function showLogin(){$("loginCard").classList.remove("hidden");$("dashboard").classList.add("hidden");$("logout").classList.add("hidden")}
+function showDash(){$("loginCard").classList.add("hidden");$("dashboard").classList.remove("hidden");$("logout").classList.remove("hidden")}
+function partnerCode(p){return String(p?.partner_code||"").trim().toUpperCase()}
+function isHiddenPartner(p){return hiddenCodes.has(partnerCode(p))}
+function saveHidden(){localStorage.setItem(HIDDEN_KEY,JSON.stringify([...hiddenCodes]))}
 
-    function swap(find,repl,label){
-      if(!html.includes(find))throw new Error("Merge point not found: "+label);
-      html=html.replace(find,repl);
-    }
-
-    swap(
-`      <div class="field wide"><label>Initial Voucher Limit</label><input id="newPartnerLimit" type="number" min="0" step="1" value="100"></div>`,
-`      <div class="field wide"><label>Initial Voucher Limit</label><input id="newPartnerLimit" type="number" min="0" step="1" value="100"></div>
-      <div class="field wide">
-        <label>Partner Staff Limit</label>
-        <input id="newPartnerStaffLimit" type="number" min="0" max="1000" step="1" value="0" placeholder="e.g. 5">
-        <div class="note">Maximum Partner Staff accounts allowed for this Partner.</div>
-      </div>`,
-"new partner field");
-
-    swap(
-`.select("id,partner_code,partner_name,voucher_limit,vouchers_issued,status")`,
-`.select("id,partner_code,partner_name,voucher_limit,vouchers_issued,status,staff_limit,staff_access_enabled")`,
-"partner query");
-
-    swap(
-`        <div id="claim-summary-\${p.id}" class="claim-summary">Claim: loading…</div>`,
-`        <div class="claim-summary" style="margin-top:8px">
-          <b>Partner Staff:</b> Limit \${Number(p.staff_limit||0)} · Staff Access \${p.staff_access_enabled?"ON":"OFF"}
-        </div>
-        <div class="actions" style="margin-top:7px">
-          <input id="staff-limit-\${p.id}" type="number" min="0" max="1000" step="1" value="\${Number(p.staff_limit||0)}" placeholder="Partner Staff Limit">
-          <button class="btn small green wide" onclick="setPartnerStaffLimit('\${p.id}')">Set Staff Limit</button>
-        </div>
-        <div id="staff-limit-msg-\${p.id}"></div>
-        <div id="claim-summary-\${p.id}" class="claim-summary">Claim: loading…</div>`,
-"partner manage controls");
-
-    swap(
-`  const voucher_limit=Number($("newPartnerLimit").value);
-  const claim_all=$("newPartnerAllBranches").checked;`,
-`  const voucher_limit=Number($("newPartnerLimit").value);
-  const staff_limit=Number($("newPartnerStaffLimit").value);
-  const claim_all=$("newPartnerAllBranches").checked;`,
-"create read");
-
-    swap(
-`  if(!Number.isInteger(voucher_limit)||voucher_limit<0){
-    msg(out,"Voucher Limit must be a whole number of 0 or more.");return
-  }
-  if(!claim_all&&!claim_codes.length){`,
-`  if(!Number.isInteger(voucher_limit)||voucher_limit<0){
-    msg(out,"Voucher Limit must be a whole number of 0 or more.");return
-  }
-  if(!Number.isInteger(staff_limit)||staff_limit<0||staff_limit>1000){
-    msg(out,"Partner Staff Limit must be a whole number from 0 to 1000.");return
-  }
-  if(!claim_all&&!claim_codes.length){`,
-"create validation");
-
-    swap(
-`    if(createdId){
-      await savePartnerClaimAccess(createdId,claim_all,claim_codes);
-    }`,
-`    if(createdId){
-      await savePartnerClaimAccess(createdId,claim_all,claim_codes);
-      const {data:slData,error:slError}=await db.functions.invoke("admin-set-partner-staff-limit",{
-        body:{partner_id:createdId,staff_limit}
-      });
-      if(slError||slData?.success===false){
-        throw new Error(slData?.error||slError?.message||"Partner created, but Staff Limit could not be saved.");
-      }
-    }`,
-"create save");
-
-    swap(
-`    $("newPartnerLimit").value="100";
-    $("newPartnerAllBranches").checked=true;`,
-`    $("newPartnerLimit").value="100";
-    $("newPartnerStaffLimit").value="0";
-    $("newPartnerAllBranches").checked=true;`,
-"reset field");
-
-    swap(
-`async function setLimit(id){`,
-`async function setPartnerStaffLimit(id){
-  const p=partners.find(x=>String(x.id)===String(id));
-  const input=$("staff-limit-"+id);
-  const out=$("staff-limit-msg-"+id);
-  if(!p||!input)return;
-
-  const n=Number(input.value);
-  if(!Number.isInteger(n)||n<0||n>1000){
-    msg(out,"Staff Limit must be a whole number from 0 to 1000.");
-    return;
-  }
-
-  if(!confirm(\`Set \${p.partner_name} Partner Staff Limit to \${n}?\`))return;
-
-  const {data,error}=await db.functions.invoke("admin-set-partner-staff-limit",{
-    body:{partner_id:p.id,staff_limit:n}
-  });
-
-  if(error||data?.success===false){
-    msg(out,data?.error||error?.message||"Staff Limit update failed.");
-    return;
-  }
-
-  msg(out,\`Partner Staff Limit updated to \${n}.\`,true);
-  await loadPartners();
+function roleAccessUrl(role){return `${SITE_BASE}index.html?role=${encodeURIComponent(String(role||"").toLowerCase())}`}
+function openShareModal(role,name,email){
+  const url=roleAccessUrl(role);currentShare={role,name,email,url};
+  $("shareTitle").textContent=`${name||role} is ready`;
+  $("shareDescription").textContent=`Send this ${role} access link.`;
+  $("shareLink").textContent=url;$("shareModal").classList.add("open");document.body.style.overflow="hidden"
+}
+function closeShareModal(){$("shareModal").classList.remove("open");document.body.style.overflow=""}
+async function copyCurrentShareLink(){try{await navigator.clipboard.writeText(currentShare.url);msg($("shareMsg"),"Access link copied.",true)}catch(e){msg($("shareMsg"),e.message)}}
+function whatsappCurrentShareLink(){
+  const t=[`Evolution Optical ${currentShare.role} Access`,currentShare.name?`Account: ${currentShare.name}`:"",currentShare.email?`Login email: ${currentShare.email}`:"",`Sign in: ${currentShare.url}`].filter(Boolean).join("\n");
+  window.open(`https://wa.me/?text=${encodeURIComponent(t)}`,"_blank","noopener")
 }
 
-async function setLimit(id){`,
-"setter");
+async function signIn(){
+  msg($("loginMsg"),"");$("login").disabled=true;
+  const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+  $("login").disabled=false;if(error){msg($("loginMsg"),error.message);return}await authorize()
+}
+async function authorize(){
+  const {data:{user}}=await db.auth.getUser();if(!user){showLogin();return}
+  const {data,error}=await db.from("partner_users").select("user_id,role,status").eq("user_id",user.id).eq("status","active").maybeSingle();
+  if(error||!data||String(data.role).toLowerCase()!=="admin"){await db.auth.signOut();showLogin();msg($("loginMsg"),"This account is not authorised as Admin.");return}
+  showDash();await ensureClaimBranchOptions();await loadPartners();await loadVouchers()
+}
+async function ensureClaimBranchOptions(){
+  if(claimBranchOptions.length)return claimBranchOptions;
+  const {data,error}=await db.from("branches").select("id,branch_code,branch_name,status").eq("status","active").order("branch_name");
+  if(error)throw error;claimBranchOptions=data||[];
+  $("newPartnerClaimBranches").innerHTML=claimBranchOptions.map(b=>`<label class="claim-option"><input class="newClaimBranch" type="checkbox" value="${esc(b.branch_code)}"><span>${esc(b.branch_name||b.branch_code)}</span></label>`).join("");
+  $("newStaffBranch").innerHTML='<option value="">Select branch</option>'+claimBranchOptions.map(b=>`<option value="${esc(b.id)}">${esc(b.branch_name||b.branch_code)}</option>`).join("");
+  syncNewPartnerClaimUI();return claimBranchOptions
+}
+function syncNewPartnerClaimUI(){
+  const all=$("newPartnerAllBranches").checked;document.querySelectorAll(".newClaimBranch").forEach(cb=>{cb.disabled=all;if(all)cb.checked=false});$("newPartnerClaimBranches").style.opacity=all?".45":"1"
+}
+async function getPartnerClaimAccess(id){const {data,error}=await db.rpc("admin_get_partner_claim_access",{p_partner_id:id});if(error)throw error;return data||{}}
+async function savePartnerClaimAccess(id,all,codes){const {data,error}=await db.rpc("admin_set_partner_claim_access",{p_partner_id:id,p_all_branches:!!all,p_branch_codes:codes||[]});if(error)throw error;return data}
 
-    html=html.replace("</head>",'<meta name="eo-admin-build" content="staff-limit-v3">\n</head>');
+async function loadPartners(){
+  msg($("partnerMsg"),"");
+  const {data,error}=await db.from("partners").select("id,partner_code,partner_name,voucher_limit,vouchers_issued,status,staff_limit,staff_access_enabled").order("partner_name");
+  if(error){msg($("partnerMsg"),"Unable to load Partners: "+error.message);return}
+  partners=(data||[]).filter(p=>partnerCode(p)!=="ADMIN");
+  const vp=$("voucherPartner"),current=vp.value||"ALL";
+  vp.innerHTML='<option value="ALL">All Partners</option>'+partners.map(p=>`<option value="${esc(p.id)}">${esc(p.partner_name)}</option>`).join("");
+  vp.value=[...vp.options].some(o=>o.value===current)?current:"ALL";
+  renderPartners();renderHiddenPartners();updateStats();renderPerformance()
+}
+function visiblePartners(){return partners.filter(p=>!isHiddenPartner(p))}
+function updateStats(){
+  const list=visiblePartners(),totalLimit=list.reduce((a,p)=>a+(Number(p.voucher_limit)||0),0),totalIssued=list.reduce((a,p)=>a+(Number(p.vouchers_issued)||0),0);
+  $("totalPartners").textContent=list.length;$("totalLimit").textContent=totalLimit;$("totalIssued").textContent=totalIssued;$("totalRemaining").textContent=Math.max(0,totalLimit-totalIssued)
+}
+function renderHiddenPartners(){
+  const list=partners.filter(isHiddenPartner);$("hiddenCount").textContent=list.length;
+  $("hiddenPartners").innerHTML=list.length?list.map(p=>`<div class="hidden-row"><div><b>${esc(p.partner_name)}</b><small>${esc(p.partner_code)}</small></div><button class="btn small green" onclick="showPartner('${esc(partnerCode(p))}')">Show</button></div>`).join(""):`<div class="sub">No hidden partners.</div>`
+}
+function toggleManage(id){const k=String(id);openManage.has(k)?openManage.delete(k):openManage.add(k);renderPartners()}
+function hidePartnerById(id){const p=partners.find(x=>String(x.id)===String(id));if(!p)return;if(!confirm(`Hide ${p.partner_name}?`))return;hiddenCodes.add(partnerCode(p));saveHidden();renderPartners();renderHiddenPartners();updateStats();renderPerformance()}
+function showPartner(code){hiddenCodes.delete(String(code).toUpperCase());saveHidden();renderPartners();renderHiddenPartners();updateStats();renderPerformance()}
+function renderPartners(){
+  const q=$("search").value.trim().toLowerCase(),list=visiblePartners().filter(p=>!q||`${p.partner_name} ${p.partner_code}`.toLowerCase().includes(q));
+  $("partners").innerHTML=list.length?list.map(p=>{
+    const lim=Number(p.voucher_limit)||0,issued=Number(p.vouchers_issued)||0,rem=Math.max(0,lim-issued),active=String(p.status).toLowerCase()==="active",open=openManage.has(String(p.id));
+    return `<div class="partner ${open?'manage-open':''}">
+      <div class="prow"><div class="pinfo"><div class="pname">${esc(p.partner_name)}</div><div class="pcode">${esc(p.partner_code)}</div></div><span class="badge ${active?'':'suspended'}">${esc(p.status||'unknown').toUpperCase()}</span></div>
+      <div class="nums"><div class="num"><span>Limit</span><b>${lim}</b></div><div class="num"><span>Issued</span><b>${issued}</b></div><div class="num"><span>Remaining</span><b>${rem}</b></div></div>
+      <button class="partner-manage-toggle" onclick="toggleManage('${p.id}')">Manage</button>
+      <div class="partner-extra">
+        <div class="claim-summary"><b>Partner Staff:</b> Limit ${Number(p.staff_limit||0)} · Staff Access ${p.staff_access_enabled?"ON":"OFF"}</div>
+        <div class="actions">
+          <input id="qty-${p.id}" type="number" min="0" step="1" placeholder="Voucher quantity">
+          <button class="btn small blue" onclick="setLimit('${p.id}')">Set Total</button><button class="btn small green" onclick="addLimit('${p.id}')">+ Add</button>
+          <input id="staff-limit-${p.id}" type="number" min="0" max="1000" step="1" value="${Number(p.staff_limit||0)}" placeholder="Partner Staff Limit">
+          <button class="btn small green wide" onclick="setPartnerStaffLimit('${p.id}')">Set Staff Limit</button>
+          <button class="btn small blue" onclick="toggleClaimEditor('${p.id}')">Claim Branches</button><button class="btn small blue" onclick="resetPartnerPassword('${p.id}')">Reset Password</button>
+          <button class="btn small ${active?'red':'green'}" onclick="togglePartnerStatus('${p.id}')">${active?'Suspend':'Reactivate'}</button><button class="btn small light" onclick="hidePartnerById('${p.id}')">Hide Partner</button>
+        </div>
+        <div id="staff-limit-msg-${p.id}"></div><div id="claim-summary-${p.id}" class="claim-summary">Claim: loading…</div><div id="claim-panel-${p.id}" class="claim-panel hidden"></div>
+      </div>
+    </div>`
+  }).join(""):`<p class="sub">No Partner found.</p>`;
+  ensureClaimBranchOptions().then(()=>list.forEach(p=>refreshClaimSummary(p.id))).catch(()=>{})
+}
+async function setPartnerStaffLimit(id){
+  const p=partners.find(x=>String(x.id)===String(id)),input=$("staff-limit-"+id),out=$("staff-limit-msg-"+id);if(!p||!input)return;
+  const n=Number(input.value);if(!Number.isInteger(n)||n<0||n>1000){msg(out,"Staff Limit must be a whole number from 0 to 1000.");return}
+  if(!confirm(`Set ${p.partner_name} Partner Staff Limit to ${n}?`))return;
+  const {data,error}=await db.functions.invoke("admin-set-partner-staff-limit",{body:{partner_id:p.id,staff_limit:n}});
+  if(error||data?.success===false){msg(out,data?.error||error?.message||"Staff Limit update failed.");return}
+  msg(out,`Partner Staff Limit updated to ${n}.`,true);await loadPartners()
+}
+async function toggleClaimEditor(id){
+  const panel=$("claim-panel-"+id);if(!panel)return;if(!panel.classList.contains("hidden")){panel.classList.add("hidden");return}
+  try{
+    await ensureClaimBranchOptions();const a=await getPartnerClaimAccess(id),selected=new Set(a.branch_codes||[]);
+    panel.innerHTML=`<label class="claim-option"><input id="claim-all-${id}" type="checkbox" ${a.all_branches?'checked':''}><span><b>All Evolution Optical branches</b></span></label>
+      <div id="claim-grid-${id}" class="claim-grid">${claimBranchOptions.map(b=>`<label class="claim-option"><input class="claim-edit-${id}" type="checkbox" value="${esc(b.branch_code)}" ${selected.has(b.branch_code)?'checked':''}><span>${esc(b.branch_name||b.branch_code)}</span></label>`).join("")}</div>
+      <div class="claim-actions"><button class="btn small green" onclick="saveClaimEditor('${id}')">Save</button><button class="btn small" onclick="toggleClaimEditor('${id}')">Close</button></div><div id="claim-msg-${id}"></div>`;
+    panel.classList.remove("hidden");const all=$("claim-all-"+id),sync=()=>{panel.querySelectorAll(".claim-edit-"+id).forEach(x=>x.disabled=all.checked);$("claim-grid-"+id).style.opacity=all.checked?".45":"1"};all.onchange=sync;sync()
+  }catch(e){msg($("partnerMsg"),e.message)}
+}
+async function saveClaimEditor(id){
+  const all=$("claim-all-"+id).checked,codes=[...document.querySelectorAll(".claim-edit-"+id+":checked")].map(x=>x.value);
+  if(!all&&!codes.length){msg($("claim-msg-"+id),"Select at least one claim branch.");return}
+  try{await savePartnerClaimAccess(id,all,codes);msg($("claim-msg-"+id),"Claim branch permission updated.",true);await refreshClaimSummary(id)}catch(e){msg($("claim-msg-"+id),e.message)}
+}
+async function refreshClaimSummary(id){
+  const node=$("claim-summary-"+id);if(!node)return;
+  try{const a=await getPartnerClaimAccess(id);if(a.all_branches)node.textContent="Claim: All Evolution Optical branches";else{const names=claimBranchOptions.filter(b=>(a.branch_codes||[]).includes(b.branch_code)).map(b=>b.branch_name||b.branch_code);node.textContent="Claim: "+(names.join(", ")||"No branch assigned")}}catch(_){node.textContent="Claim permission unavailable"}
+}
 
-    document.open();
-    document.write(html);
-    document.close();
-  }catch(e){
-    console.error(e);
-    if(boot)boot.innerHTML='<div class="box"><h2>Admin update could not load</h2><p>'+String(e.message||e)+'</p><p>Please send this screen to 小E.</p></div>';
-  }
-})();
+async function createPartner(){
+  const btn=$("createPartnerBtn"),out=$("createPartnerMsg");msg(out,"");
+  const partner_code=$("newPartnerCode").value.trim().toUpperCase(),partner_name=$("newPartnerName").value.trim(),email=$("newPartnerEmail").value.trim().toLowerCase(),password=$("newPartnerPassword").value;
+  const voucher_limit=Number($("newPartnerLimit").value),staff_limit=Number($("newPartnerStaffLimit").value),claim_all=$("newPartnerAllBranches").checked,claim_codes=[...document.querySelectorAll(".newClaimBranch:checked")].map(x=>x.value);
+  if(!partner_code||!partner_name||!email||!password){msg(out,"Please complete Partner Code, Company Name, Email and Password.");return}
+  if(password.length<6){msg(out,"Password must be at least 6 characters.");return}
+  if(!Number.isInteger(voucher_limit)||voucher_limit<0){msg(out,"Voucher Limit must be 0 or more.");return}
+  if(!Number.isInteger(staff_limit)||staff_limit<0||staff_limit>1000){msg(out,"Partner Staff Limit must be 0 to 1000.");return}
+  if(!claim_all&&!claim_codes.length){msg(out,"Select at least one claim branch.");return}
+  if(!confirm(`Create ${partner_name} with voucher limit ${voucher_limit} and staff limit ${staff_limit}?`))return;
+  btn.disabled=true;btn.textContent="Creating...";
+  try{
+    const {data,error}=await db.functions.invoke("create-partner",{body:{partner_code,partner_name,email,password,voucher_limit}});
+    if(error)throw new Error(error.message||"Create Partner failed.");if(!data?.success)throw new Error(data?.error||"Create Partner failed.");
+    let createdId=data.partner?.id;if(!createdId){const r=await db.from("partners").select("id").eq("partner_code",partner_code).maybeSingle();if(r.error)throw r.error;createdId=r.data?.id}
+    if(createdId){
+      await savePartnerClaimAccess(createdId,claim_all,claim_codes);
+      const {data:slData,error:slError}=await db.functions.invoke("admin-set-partner-staff-limit",{body:{partner_id:createdId,staff_limit}});
+      if(slError||slData?.success===false)throw new Error(slData?.error||slError?.message||"Partner created, but Staff Limit could not be saved.")
+    }
+    msg(out,`${partner_name} created successfully.`,true);
+    $("newPartnerCode").value="";$("newPartnerName").value="";$("newPartnerEmail").value="";$("newPartnerPassword").value="";$("newPartnerLimit").value="100";$("newPartnerStaffLimit").value="0";$("newPartnerAllBranches").checked=true;syncNewPartnerClaimUI();
+    await loadPartners();setTimeout(()=>{$("partnerModal").classList.remove("open");document.body.style.overflow="";openShareModal("partner",partner_name,email)},250)
+  }catch(e){msg(out,e.message)}finally{btn.disabled=false;btn.textContent="Create Partner"}
+}
 
+async function createStaff(){
+  const btn=$("createStaffBtn"),out=$("createStaffMsg");msg(out,"");
+  const staff_name=$("newStaffName").value.trim(),email=$("newStaffEmail").value.trim().toLowerCase(),password=$("newStaffPassword").value,role=$("newStaffRole").value,branch_id=$("newStaffBranch").value;
+  if(!staff_name||!email||!password||!branch_id){msg(out,"Please complete all Staff fields.");return}
+  if(password.length<6){msg(out,"Password must be at least 6 characters.");return}
+  btn.disabled=true;btn.textContent="Creating...";
+  try{
+    const {data,error}=await db.functions.invoke("create-staff",{body:{staff_name,email,password,branch_id,role}});
+    if(error)throw new Error(error.message||"Create Staff failed.");if(!data?.success)throw new Error(data?.error||"Create Staff failed.");
+    msg(out,`${staff_name} created successfully.`,true);$("staffModal").classList.remove("open");document.body.style.overflow="";
+    $("newStaffName").value="";$("newStaffEmail").value="";$("newStaffPassword").value="";$("newStaffRole").value="staff";$("newStaffBranch").value="";
+    openShareModal("staff",staff_name,email)
+  }catch(e){msg(out,e.message)}finally{btn.disabled=false;btn.textContent="Create Staff"}
+}
+
+async function togglePartnerStatus(id){
+  const p=partners.find(x=>String(x.id)===String(id));if(!p)return;const active=String(p.status).toLowerCase()==="active",next=active?"suspended":"active";
+  if(!confirm(`${active?"Suspend":"Reactivate"} ${p.partner_name}?`))return;
+  const r=await db.from("partners").update({status:next}).eq("id",p.id);if(r.error){msg($("partnerMsg"),r.error.message);return}
+  await db.from("partner_users").update({status:next==="active"?"active":"suspended"}).eq("partner_id",p.id).neq("role","admin");await loadPartners()
+}
+async function resetPartnerPassword(id){
+  const p=partners.find(x=>String(x.id)===String(id));if(!p)return;const np=prompt(`Enter new password for ${p.partner_name}`);if(np===null)return;if(np.length<6){msg($("partnerMsg"),"Minimum 6 characters.");return}
+  const {data,error}=await db.functions.invoke("reset-partner-password",{body:{partner_id:p.id,new_password:np}});if(error||!data?.success){msg($("partnerMsg"),data?.error||error?.message||"Password reset failed.");return}msg($("partnerMsg"),"Password reset successfully.",true)
+}
+async function setLimit(id){
+  const p=partners.find(x=>String(x.id)===String(id)),n=Number($("qty-"+id).value);if(!Number.isInteger(n)||n<0){msg($("partnerMsg"),"Enter a valid whole number.");return}
+  if(n<(Number(p.vouchers_issued)||0)){msg($("partnerMsg"),"Cannot set below vouchers already issued.");return}
+  if(!confirm(`Set ${p.partner_name} total voucher limit to ${n}?`))return;await updateLimit(p,n)
+}
+async function addLimit(id){
+  const p=partners.find(x=>String(x.id)===String(id)),add=Number($("qty-"+id).value);if(!Number.isInteger(add)||add<=0){msg($("partnerMsg"),"Enter a positive whole number.");return}
+  await updateLimit(p,(Number(p.voucher_limit)||0)+add)
+}
+async function updateLimit(p,n){const {error}=await db.from("partners").update({voucher_limit:n}).eq("id",p.id);if(error){msg($("partnerMsg"),error.message);return}await loadPartners()}
+
+function voucherEffectiveStatus(v){
+  const raw=String(v.status||"VALID").toUpperCase();if(raw==="REDEEMED"||raw==="USED"||v.redeemed_at)return"REDEEMED";if(raw==="EXPIRED")return"EXPIRED";
+  if(v.expiry_date){const today=new Date();today.setHours(0,0,0,0);if(new Date(v.expiry_date+"T23:59:59")<today)return"EXPIRED"}return"VALID"
+}
+function isExpiredUnclaimed(v){return voucherEffectiveStatus(v)==="EXPIRED"&&!v.redeemed_at&&String(v.status||"").toUpperCase()!=="REDEEMED"}
+async function loadVouchers(){
+  const [vr,vbr,br,rr]=await Promise.all([db.from("vouchers").select("*").order("issued_at",{ascending:false}).limit(500),db.from("voucher_branches").select("voucher_id,branch_id"),db.from("branches").select("*"),db.from("redemptions").select("*")]);
+  if(vr.error){msg($("voucherMsg"),vr.error.message);return}vouchers=vr.data||[];voucherBranches=vbr.data||[];branches=br.data||[];redemptions=rr.data||[];updateVoucherStats();renderVouchers();renderPerformance();renderBranchAdminList()
+}
+function partnerNameFor(v){const p=partners.find(x=>String(x.id)===String(v.partner_id||v.issued_by_partner_id));return p?.partner_name||v.partner_name||v.issued_by||"—"}
+function branchLabel(v){if(v.all_branches===true)return"All Evolution Optical branches";const ids=voucherBranches.filter(x=>x.voucher_id===v.id).map(x=>x.branch_id);const names=ids.map(id=>branches.find(b=>b.id===id)).filter(Boolean).map(b=>b.branch_name||b.branch_code);return names.length?names.join(", "):"Specific branch(es)"}
+function visibleVoucherRecords(){return vouchers.filter(v=>!isExpiredUnclaimed(v))}
+function updateVoucherStats(){const list=visibleVoucherRecords(),c={VALID:0,REDEEMED:0,EXPIRED:0};list.forEach(v=>c[voucherEffectiveStatus(v)]++);$("vTotal").textContent=list.length;$("vValid").textContent=c.VALID;$("vRedeemed").textContent=c.REDEEMED;$("vExpired").textContent=c.EXPIRED}
+function filteredVouchers(){
+  const q=$("voucherSearch").value.toLowerCase(),sf=$("voucherStatus").value,pf=$("voucherPartner").value,df=$("voucherDateFrom").value,dt=$("voucherDateTo").value;
+  return visibleVoucherRecords().filter(v=>{const st=voucherEffectiveStatus(v),hay=[v.voucher_code,v.customer_name,v.customer_phone,partnerNameFor(v),v.voucher_type].join(" ").toLowerCase(),pid=String(v.partner_id||v.issued_by_partner_id||""),d=v.issued_at?new Date(v.issued_at):null;return(!q||hay.includes(q))&&(sf==="ALL"||st===sf)&&(pf==="ALL"||pid===pf)&&(!df||(d&&d>=new Date(df+"T00:00:00")))&&(!dt||(d&&d<=new Date(dt+"T23:59:59")))})
+}
+function renderVouchers(){
+  const list=filteredVouchers();$("voucherRecords").innerHTML=list.length?list.map(v=>{const st=voucherEffectiveStatus(v);return `<div class="vrecord"><div class="vtop"><div style="flex:1"><div class="vcode">${esc(v.voucher_code||v.id)}</div><div class="pcode">${esc(v.voucher_type||"Voucher")}</div></div><span class="vstatus ${st.toLowerCase()}">${st}</span></div><div class="vmeta"><b>Customer:</b> ${esc(v.customer_name||"—")}<br><b>Partner:</b> ${esc(partnerNameFor(v))}<br><b>Type:</b> ${esc(v.voucher_type||"—")}<br><b>Valid Until:</b> ${esc(v.expiry_date||"—")}<br><b>Redeem at:</b> ${esc(branchLabel(v))}</div></div>`}).join(""):`<p class="sub">No voucher records found.</p>`
+}
+function clearVoucherFilters(){$("voucherSearch").value="";$("voucherStatus").value="ALL";$("voucherPartner").value="ALL";$("voucherDateFrom").value="";$("voucherDateTo").value="";renderVouchers()}
+function exportVoucherExcel(){
+  const list=filteredVouchers();if(!list.length){msg($("voucherMsg"),"No records to export.");return}if(typeof XLSX==="undefined"){msg($("voucherMsg"),"Excel exporter failed to load.");return}
+  const rows=list.map(v=>({"Voucher Code":v.voucher_code||"","Status":voucherEffectiveStatus(v),"Customer":v.customer_name||"","Phone":v.customer_phone||"","Partner":partnerNameFor(v),"Voucher Type":v.voucher_type||"","Valid Until":v.expiry_date||"","Redeem At":branchLabel(v),"Issued At":v.issued_at||"","Redeemed At":v.redeemed_at||""}));
+  const ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Voucher Records");XLSX.writeFile(wb,`evolution-vouchers-${new Date().toISOString().slice(0,10)}.xlsx`)
+}
+function partnerVouchers(id){return visibleVoucherRecords().filter(v=>String(v.partner_id||v.issued_by_partner_id)===String(id))}
+function togglePartnerVouchers(id){const k=String(id);openVouchers.has(k)?openVouchers.delete(k):openVouchers.add(k);renderPerformance()}
+function renderPerformance(){
+  const box=$("performance"),list=visiblePartners();box.innerHTML=list.length?'<div class="perf-grid">'+list.map(p=>{const pv=partnerVouchers(p.id),redeemed=pv.filter(v=>voucherEffectiveStatus(v)==="REDEEMED").length,valid=pv.filter(v=>voucherEffectiveStatus(v)==="VALID").length,expired=pv.filter(v=>voucherEffectiveStatus(v)==="EXPIRED").length,issued=Number(p.vouchers_issued)||pv.length,limit=Number(p.voucher_limit)||0,rem=Math.max(0,limit-issued),rate=issued?((redeemed/issued)*100).toFixed(1):"0.0",open=openVouchers.has(String(p.id));return `<div class="perf-card ${open?'vouchers-open':''}"><div class="prow"><div class="pinfo"><h4>${esc(p.partner_name)}</h4><div class="perf-code">${esc(p.partner_code)}</div></div></div><div class="perf-metrics"><div class="pm"><span>Limit</span><b>${limit}</b></div><div class="pm"><span>Issued</span><b>${issued}</b></div><div class="pm"><span>Remaining</span><b>${rem}</b></div><div class="pm"><span>Redeemed</span><b>${redeemed}</b></div><div class="pm"><span>Valid</span><b>${valid}</b></div><div class="pm"><span>Expired</span><b>${expired}</b></div></div><div class="rate">Redemption Rate: <b>${rate}%</b></div><button class="partner-vouchers-toggle" onclick="togglePartnerVouchers('${p.id}')">Vouchers (${pv.length})</button><div class="partner-vouchers-wrap">${pv.length?pv.map(v=>`<div class="partner-voucher-item"><b>${esc(v.voucher_code||v.id)}</b> · ${esc(voucherEffectiveStatus(v))}<br>${esc(v.customer_name||"—")}</div>`).join(""):'<div class="partner-voucher-empty">No vouchers.</div>'}</div></div>`}).join("")+'</div>':`<p class="sub">No Partner data found.</p>`
+}
+function renderBranchAdminList(){const list=(branches.length?branches:claimBranchOptions).filter(b=>String(b.status||"active").toLowerCase()==="active");$("branchAdminList").innerHTML=list.map(b=>`<div class="branch-admin-row"><div><b>${esc(b.branch_name||b.branch_code)}</b><small>${esc(b.branch_code||"")}</small></div></div>`).join("")}
+
+function setView(name){document.querySelectorAll(".app-view").forEach(v=>v.classList.remove("active"));$("view-"+name)?.classList.add("active");document.querySelectorAll("#bottomNav button").forEach(b=>b.classList.toggle("active",b.dataset.view===name));window.scrollTo({top:0,behavior:"smooth"})}
+async function refreshAllData(){claimBranchOptions=[];await ensureClaimBranchOptions();await loadPartners();await loadVouchers()}
+
+$("login").onclick=signIn;$("password").addEventListener("keydown",e=>{if(e.key==="Enter")signIn()});$("logout").onclick=async()=>{await db.auth.signOut();showLogin()};
+$("refresh").onclick=loadPartners;$("search").addEventListener("input",renderPartners);$("hiddenToggle").onclick=()=>$("hiddenBox").classList.toggle("hidden");
+$("openPartnerModal").onclick=()=>{$("partnerModal").classList.add("open");document.body.style.overflow="hidden"};$("closePartnerModal").onclick=()=>{$("partnerModal").classList.remove("open");document.body.style.overflow=""};
+$("openStaffModal").onclick=async()=>{await ensureClaimBranchOptions();$("staffModal").classList.add("open");document.body.style.overflow="hidden"};$("closeStaffModal").onclick=()=>{$("staffModal").classList.remove("open");document.body.style.overflow=""};
+$("createPartnerBtn").onclick=createPartner;$("newPartnerAllBranches").onchange=syncNewPartnerClaimUI;$("createStaffBtn").onclick=createStaff;
+$("closeShareModal").onclick=closeShareModal;$("doneShareLink").onclick=closeShareModal;$("copyShareLink").onclick=copyCurrentShareLink;$("whatsappShareLink").onclick=whatsappCurrentShareLink;
+$("voucherRefresh").onclick=loadVouchers;$("voucherSearch").oninput=renderVouchers;$("voucherStatus").onchange=renderVouchers;$("voucherPartner").onchange=renderVouchers;$("voucherDateFrom").onchange=renderVouchers;$("voucherDateTo").onchange=renderVouchers;$("clearVoucherFilters").onclick=clearVoucherFilters;$("exportVoucherExcel").onclick=exportVoucherExcel;$("perfRefresh").onclick=renderPerformance;
+$("branchRefresh").onclick=refreshAllData;$("settingsRefreshAll").onclick=refreshAllData;$("settingsHiddenBtn").onclick=()=>{setView("partners");$("hiddenBox").classList.remove("hidden")};
+document.querySelectorAll("#bottomNav button").forEach(btn=>btn.onclick=()=>setView(btn.dataset.view));
+document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m){m.classList.remove("open");document.body.style.overflow=""}}));
+
+(async()=>{try{await ensureClaimBranchOptions()}catch(e){}const {data}=await db.auth.getSession();if(data.session)await authorize()})();
 </script>
 </body>
 </html>
