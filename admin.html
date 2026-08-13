@@ -8,39 +8,159 @@
 <style>
 html,body{margin:0;min-height:100%;background:#050716;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
 #boot{min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center}
-#boot .box{max-width:520px}
+#boot .box{max-width:560px}
 #boot h2{margin:0 0 8px}
-#boot p{color:#b9c6e4;line-height:1.5}
+#boot p{color:#b9c6e4;line-height:1.55}
 </style>
 </head>
 <body>
-<div id="boot"><div class="box"><h2>EVOLUTION OPTICAL</h2><p>Loading Admin Portal…</p></div></div>
+<div id="boot"><div class="box"><h2>EVOLUTION OPTICAL</h2><p>Loading Admin Portal v2…</p></div></div>
 <script>
+
 (async function(){
-  try {
-    const res = await fetch("https://raw.githubusercontent.com/xiaoe-ai/evolution-optical-voucher/4504af9abe335e0d0ded9a285b9c3eaa844f4950/admin.html", {cache:"no-store"});
-    if (!res.ok) throw new Error("Unable to load Admin base: HTTP " + res.status);
+  const boot = document.getElementById("boot");
+  try{
+    const BASE_URL = "https://cdn.jsdelivr.net/gh/xiaoe-ai/evolution-optical-voucher@4504af9abe335e0d0ded9a285b9c3eaa844f4950/admin.html";
+    const res = await fetch(BASE_URL,{cache:"no-store"});
+    if(!res.ok) throw new Error("Unable to load Admin base: HTTP "+res.status);
     let html = await res.text();
 
-    const addon = "/*\n Evolution Optical \u2014 Admin Partner Staff Limit Add-on\n Safe extension for the existing admin.html.\n Requires the existing Supabase client `db` and Admin authentication.\n*/\n(() => {\n  \"use strict\";\n\n  const ADDON_VERSION = \"1.0.0\";\n  const CONFIG = new Map();\n  const COUNTS = new Map();\n\n  function el(id) { return document.getElementById(id); }\n  function esc(s) {\n    return String(s ?? \"\").replace(/[&<>\"']/g, c => ({\n      \"&\":\"&amp;\",\"<\":\"&lt;\",\">\":\"&gt;\",'\"':\"&quot;\",\"'\":\"&#39;\"\n    }[c]));\n  }\n\n  function injectStyles() {\n    if (el(\"partnerStaffLimitAddonStyle\")) return;\n    const style = document.createElement(\"style\");\n    style.id = \"partnerStaffLimitAddonStyle\";\n    style.textContent = `\n      .staff-limit-panel{\n        margin-top:9px;padding:10px;border:1px solid transparent;border-radius:13px;\n        background:\n          linear-gradient(145deg,rgba(15,23,58,.96),rgba(7,15,41,.96)) padding-box,\n          linear-gradient(135deg,rgba(184,92,255,.65),rgba(98,133,255,.55),rgba(46,226,238,.45)) border-box;\n      }\n      .staff-limit-head{display:flex;align-items:center;justify-content:space-between;gap:8px}\n      .staff-limit-title{font-size:11px;font-weight:900;color:#eef2ff}\n      .staff-limit-badge{\n        padding:5px 8px;border-radius:999px;background:rgba(82,106,255,.13);\n        border:1px solid rgba(117,139,255,.30);color:#b9c9ff;font-size:10px;font-weight:900\n      }\n      .staff-limit-copy{margin-top:4px;color:#9fb0d2;font-size:10px;line-height:1.4}\n      .staff-limit-row{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:8px}\n      .staff-limit-row input{min-height:40px;font-size:13px}\n      .staff-limit-row .btn{min-width:105px;margin:0}\n      .staff-limit-msg{margin-top:7px;font-size:10px;line-height:1.4}\n      .staff-limit-msg.ok{color:#69efb7}.staff-limit-msg.err{color:#ff92a5}\n      .create-grid .partner-staff-limit-field{grid-column:1/-1}\n      @media(max-width:720px){\n        .staff-limit-row{grid-template-columns:1fr}\n        .staff-limit-row .btn{width:100%}\n      }\n    `;\n    document.head.appendChild(style);\n  }\n\n  async function refreshData() {\n    if (typeof db === \"undefined\") return;\n\n    const [pRes, uRes] = await Promise.all([\n      db.from(\"partners\")\n        .select(\"id,staff_limit,staff_access_enabled\"),\n      db.from(\"partner_users\")\n        .select(\"partner_id,status,removed_at\")\n        .eq(\"role\",\"partner_staff\")\n    ]);\n\n    if (pRes.error) throw pRes.error;\n    if (uRes.error) throw uRes.error;\n\n    CONFIG.clear();\n    (pRes.data || []).forEach(p => CONFIG.set(String(p.id), {\n      staff_limit: Number(p.staff_limit || 0),\n      staff_access_enabled: !!p.staff_access_enabled\n    }));\n\n    COUNTS.clear();\n    (uRes.data || []).forEach(u => {\n      if (u.removed_at || String(u.status || \"\").toLowerCase() === \"inactive\") return;\n      const key = String(u.partner_id || \"\");\n      if (!key) return;\n      COUNTS.set(key, (COUNTS.get(key) || 0) + 1);\n    });\n  }\n\n  function partnerIdFromCard(card) {\n    const qty = card.querySelector('input[id^=\"qty-\"]');\n    if (!qty) return \"\";\n    return qty.id.slice(4);\n  }\n\n  function partnerNameFromCard(card) {\n    return card.querySelector(\".pname\")?.textContent?.trim() || \"Partner\";\n  }\n\n  function renderPanel(card) {\n    const id = partnerIdFromCard(card);\n    if (!id) return;\n\n    const extra = card.querySelector(\".partner-extra\");\n    if (!extra) return;\n\n    const old = extra.querySelector(\".staff-limit-panel\");\n    if (old) old.remove();\n\n    const cfg = CONFIG.get(id) || { staff_limit: 0, staff_access_enabled: false };\n    const used = COUNTS.get(id) || 0;\n    const name = partnerNameFromCard(card);\n\n    const panel = document.createElement(\"div\");\n    panel.className = \"staff-limit-panel\";\n    panel.innerHTML = `\n      <div class=\"staff-limit-head\">\n        <div class=\"staff-limit-title\">Partner Staff Limit</div>\n        <span class=\"staff-limit-badge\">${used} / ${cfg.staff_limit} STAFF</span>\n      </div>\n      <div class=\"staff-limit-copy\">\n        Staff Access: <b>${cfg.staff_access_enabled ? \"ON\" : \"OFF\"}</b>.\n        Admin controls the maximum number of Partner Staff accounts.\n      </div>\n      <div class=\"staff-limit-row\">\n        <input id=\"staff-limit-${id}\" type=\"number\" min=\"0\" max=\"1000\" step=\"1\"\n               value=\"${cfg.staff_limit}\" aria-label=\"Partner Staff Limit\">\n        <button class=\"btn small green\" type=\"button\"\n                data-staff-limit-save=\"${id}\">Set Staff Limit</button>\n      </div>\n      <div id=\"staff-limit-msg-${id}\" class=\"staff-limit-msg\"></div>\n    `;\n\n    const claimSummary = extra.querySelector(\".claim-summary\");\n    extra.insertBefore(panel, claimSummary || extra.firstChild);\n\n    panel.querySelector(`[data-staff-limit-save=\"${CSS.escape(id)}\"]`)\n      ?.addEventListener(\"click\", () => saveStaffLimit(id, name));\n  }\n\n  function injectPanels() {\n    document.querySelectorAll(\"#partners .partner\").forEach(renderPanel);\n  }\n\n  async function saveStaffLimit(id, name) {\n    const input = el(`staff-limit-${id}`);\n    const out = el(`staff-limit-msg-${id}`);\n    const btn = document.querySelector(`[data-staff-limit-save=\"${CSS.escape(id)}\"]`);\n    if (!input || !out || !btn) return;\n\n    const n = Number(input.value);\n    out.textContent = \"\";\n    out.className = \"staff-limit-msg\";\n\n    if (!Number.isInteger(n) || n < 0 || n > 1000) {\n      out.textContent = \"Staff Limit must be a whole number from 0 to 1000.\";\n      out.className = \"staff-limit-msg err\";\n      return;\n    }\n\n    const used = COUNTS.get(String(id)) || 0;\n    let note = \"\";\n    if (n < used) {\n      note = `\\n\\nThis Partner currently has ${used} Staff. Existing Staff will not be deleted or suspended. New Staff cannot be added until the active count is within the new limit.`;\n    }\n\n    if (!confirm(`Set ${name} Staff Limit to ${n}?${note}`)) return;\n\n    btn.disabled = true;\n    const oldText = btn.textContent;\n    btn.textContent = \"Saving...\";\n\n    try {\n      const { data, error } = await db.functions.invoke(\"admin-set-partner-staff-limit\", {\n        body: { partner_id: id, staff_limit: n }\n      });\n\n      if (error) {\n        let detail = error.message || \"Update failed.\";\n        try {\n          if (error.context && typeof error.context.json === \"function\") {\n            const body = await error.context.json();\n            if (body?.error) detail = body.error;\n          }\n        } catch (_) {}\n        throw new Error(detail);\n      }\n\n      if (data?.success === false) throw new Error(data.error || \"Update failed.\");\n\n      CONFIG.set(String(id), {\n        ...(CONFIG.get(String(id)) || {}),\n        staff_limit: n\n      });\n\n      out.textContent = `Staff Limit updated to ${n}.`;\n      out.className = \"staff-limit-msg ok\";\n\n      const badge = input.closest(\".staff-limit-panel\")?.querySelector(\".staff-limit-badge\");\n      if (badge) badge.textContent = `${used} / ${n} STAFF`;\n    } catch (e) {\n      out.textContent = e?.message || \"Update failed.\";\n      out.className = \"staff-limit-msg err\";\n    } finally {\n      btn.disabled = false;\n      btn.textContent = oldText;\n    }\n  }\n\n  function installCreatePartnerField() {\n    const grid = document.querySelector(\"#partnerModal .create-grid\");\n    if (!grid || el(\"newPartnerStaffLimit\")) return;\n\n    const field = document.createElement(\"div\");\n    field.className = \"field wide partner-staff-limit-field\";\n    field.innerHTML = `\n      <label>Partner Staff Limit</label>\n      <input id=\"newPartnerStaffLimit\" type=\"number\" min=\"0\" max=\"1000\" step=\"1\" value=\"0\"\n             placeholder=\"e.g. 5\">\n      <div class=\"note\">Maximum Partner Staff accounts. You can change this later from Partner \u2192 Manage.</div>\n    `;\n\n    const voucherLimit = el(\"newPartnerLimit\")?.closest(\".field\");\n    if (voucherLimit?.parentNode === grid) {\n      voucherLimit.insertAdjacentElement(\"afterend\", field);\n    } else {\n      grid.prepend(field);\n    }\n  }\n\n  function installCreatePartnerHook() {\n    const btn = el(\"createPartnerBtn\");\n    if (!btn || btn.dataset.staffLimitHooked === \"1\") return;\n\n    const originalHandler = btn.onclick;\n    if (typeof originalHandler !== \"function\") return;\n\n    btn.dataset.staffLimitHooked = \"1\";\n    btn.onclick = null;\n\n    btn.addEventListener(\"click\", async function (event) {\n      const limitInput = el(\"newPartnerStaffLimit\");\n      const staffLimit = Number(limitInput?.value ?? 0);\n      const code = el(\"newPartnerCode\")?.value.trim().toUpperCase() || \"\";\n\n      if (!Number.isInteger(staffLimit) || staffLimit < 0 || staffLimit > 1000) {\n        if (typeof msg === \"function\") {\n          msg(el(\"createPartnerMsg\"), \"Partner Staff Limit must be a whole number from 0 to 1000.\");\n        }\n        return;\n      }\n\n      await originalHandler.call(this, event);\n\n      if (!code) return;\n\n      try {\n        const { data: created, error: findError } = await db.from(\"partners\")\n          .select(\"id,partner_code\")\n          .eq(\"partner_code\", code)\n          .maybeSingle();\n\n        if (findError || !created?.id) return;\n\n        const { data, error } = await db.functions.invoke(\"admin-set-partner-staff-limit\", {\n          body: { partner_id: created.id, staff_limit: staffLimit }\n        });\n\n        if (error || data?.success === false) {\n          const text = data?.error || error?.message || \"Partner created, but Staff Limit could not be saved.\";\n          if (typeof msg === \"function\") msg(el(\"createPartnerMsg\"), text);\n          return;\n        }\n\n        if (limitInput) limitInput.value = \"0\";\n        await refreshData();\n        injectPanels();\n      } catch (e) {\n        console.warn(\"Partner Staff Limit post-create update failed:\", e);\n      }\n    });\n  }\n\n  function observePartnerList() {\n    const box = el(\"partners\");\n    if (!box || box.dataset.staffLimitObserved === \"1\") return;\n    box.dataset.staffLimitObserved = \"1\";\n\n    const observer = new MutationObserver(() => {\n      requestAnimationFrame(injectPanels);\n    });\n    observer.observe(box, { childList: true, subtree: true });\n  }\n\n  async function init() {\n    injectStyles();\n    installCreatePartnerField();\n    installCreatePartnerHook();\n    observePartnerList();\n\n    try {\n      await refreshData();\n      injectPanels();\n    } catch (e) {\n      console.warn(`Partner Staff Limit Add-on v${ADDON_VERSION}:`, e);\n    }\n\n    // Re-sync after Admin refreshes or switches views.\n    document.addEventListener(\"click\", async (e) => {\n      const target = e.target.closest(\"#refresh, #settingsRefreshAll, #openPartnerModal, [data-view='partners']\");\n      if (!target) return;\n      setTimeout(async () => {\n        try {\n          await refreshData();\n          installCreatePartnerField();\n          installCreatePartnerHook();\n          injectPanels();\n        } catch (_) {}\n      }, 450);\n    });\n  }\n\n  if (document.readyState === \"loading\") {\n    document.addEventListener(\"DOMContentLoaded\", () => setTimeout(init, 0));\n  } else {\n    setTimeout(init, 0);\n  }\n})();\n";
-    const inline = "<script>\n" + addon.replace(/<\\/script/gi, "<\\/script") + "\n<\\/script>";
+    const replacements = [];
 
-    if (!html.includes("</body>")) throw new Error("Admin base format is invalid.");
-    html = html.replace("</body>", inline + "\n</body>");
+    function replaceOnce(find, repl, label){
+      if(!html.includes(find)) throw new Error("Admin merge failed at: "+label);
+      html = html.replace(find,repl);
+      replacements.push(label);
+    }
+
+    // 1) Add Staff Limit field directly into Add New Partner modal.
+    replaceOnce(
+`      <div class="field wide"><label>Initial Voucher Limit</label><input id="newPartnerLimit" type="number" min="0" step="1" value="100"></div>`,
+`      <div class="field wide"><label>Initial Voucher Limit</label><input id="newPartnerLimit" type="number" min="0" step="1" value="100"></div>
+      <div class="field wide">
+        <label>Partner Staff Limit</label>
+        <input id="newPartnerStaffLimit" type="number" min="0" max="1000" step="1" value="0" placeholder="e.g. 5">
+        <div class="note">Maximum number of Partner Staff accounts. You can change this later from Partner → Manage.</div>
+      </div>`,
+"Add New Partner Staff Limit field");
+
+    // 2) Load Staff Limit & Staff Access with Partner rows.
+    replaceOnce(
+`.select("id,partner_code,partner_name,voucher_limit,vouchers_issued,status")`,
+`.select("id,partner_code,partner_name,voucher_limit,vouchers_issued,status,staff_limit,staff_access_enabled")`,
+"Partner Staff fields query");
+
+    // 3) Add Staff Limit controls to each Partner Manage card.
+    replaceOnce(
+`        <div id="claim-summary-${p.id}" class="claim-summary">Claim: loading…</div>`,
+`        <div class="claim-summary" style="margin-top:8px">
+          <b>Partner Staff:</b> Maximum ${Number(p.staff_limit||0)} account(s) · Staff Access ${p.staff_access_enabled?"ON":"OFF"}
+        </div>
+        <div class="actions" style="margin-top:7px">
+          <input id="staff-limit-${p.id}" type="number" min="0" max="1000" step="1" value="${Number(p.staff_limit||0)}" placeholder="Partner Staff Limit">
+          <button class="btn small green wide" onclick="setPartnerStaffLimit('${p.id}')">Set Staff Limit</button>
+        </div>
+        <div id="staff-limit-msg-${p.id}"></div>
+        <div id="claim-summary-${p.id}" class="claim-summary">Claim: loading…</div>`,
+"Partner Manage Staff Limit controls");
+
+    // 4) Read Staff Limit in createPartner.
+    replaceOnce(
+`  const voucher_limit=Number($("newPartnerLimit").value);
+  const claim_all=$("newPartnerAllBranches").checked;`,
+`  const voucher_limit=Number($("newPartnerLimit").value);
+  const staff_limit=Number($("newPartnerStaffLimit").value);
+  const claim_all=$("newPartnerAllBranches").checked;`,
+"Create Partner Staff Limit read");
+
+    // 5) Validate Staff Limit.
+    replaceOnce(
+`  if(!Number.isInteger(voucher_limit)||voucher_limit<0){
+    msg(out,"Voucher Limit must be a whole number of 0 or more.");return
+  }
+  if(!claim_all&&!claim_codes.length){`,
+`  if(!Number.isInteger(voucher_limit)||voucher_limit<0){
+    msg(out,"Voucher Limit must be a whole number of 0 or more.");return
+  }
+  if(!Number.isInteger(staff_limit)||staff_limit<0||staff_limit>1000){
+    msg(out,"Partner Staff Limit must be a whole number from 0 to 1000.");return
+  }
+  if(!claim_all&&!claim_codes.length){`,
+"Create Partner Staff Limit validation");
+
+    // 6) After Partner is created, save Staff Limit through the tested secure Edge Function.
+    replaceOnce(
+`    if(createdId){
+      await savePartnerClaimAccess(createdId,claim_all,claim_codes);
+    }`,
+`    if(createdId){
+      await savePartnerClaimAccess(createdId,claim_all,claim_codes);
+
+      const {data:staffLimitData,error:staffLimitError}=await db.functions.invoke("admin-set-partner-staff-limit",{
+        body:{partner_id:createdId,staff_limit}
+      });
+      if(staffLimitError||staffLimitData?.success===false){
+        throw new Error(staffLimitData?.error||staffLimitError?.message||"Partner created, but Staff Limit could not be saved.");
+      }
+    }`,
+"Create Partner Staff Limit save");
+
+    // 7) Reset input after successful creation.
+    replaceOnce(
+`    $("newPartnerLimit").value="100";
+    $("newPartnerAllBranches").checked=true;`,
+`    $("newPartnerLimit").value="100";
+    $("newPartnerStaffLimit").value="0";
+    $("newPartnerAllBranches").checked=true;`,
+"Reset Staff Limit field");
+
+    // 8) Add secure setter function before voucher limit functions.
+    replaceOnce(
+`async function setLimit(id){`,
+`async function setPartnerStaffLimit(id){
+  const p=partners.find(x=>String(x.id)===String(id));
+  const input=$("staff-limit-"+id);
+  const out=$("staff-limit-msg-"+id);
+  if(!p||!input)return;
+
+  const n=Number(input.value);
+  if(!Number.isInteger(n)||n<0||n>1000){
+    msg(out,"Staff Limit must be a whole number from 0 to 1000.");
+    return;
+  }
+
+  if(!confirm(\`Set \${p.partner_name} Partner Staff Limit to \${n}?\`))return;
+
+  const {data,error}=await db.functions.invoke("admin-set-partner-staff-limit",{
+    body:{partner_id:p.id,staff_limit:n}
+  });
+
+  if(error||data?.success===false){
+    msg(out,data?.error||error?.message||"Staff Limit update failed.");
+    return;
+  }
+
+  msg(out,\`Partner Staff Limit updated to \${n}.\`,true);
+  await loadPartners();
+}
+
+async function setLimit(id){`,
+"Staff Limit setter function");
+
+    // Add a merge marker so we can verify the live file.
+    html = html.replace("</head>",`<meta name="eo-admin-staff-limit" content="static-merge-v2">\n</head>`);
 
     document.open();
     document.write(html);
     document.close();
-  } catch (e) {
-    const boot = document.getElementById("boot");
-    if (boot) {
-      boot.innerHTML = '<div class="box"><h2>Admin Portal could not load</h2><p>' +
-        String(e && e.message ? e.message : e) +
-        '</p><p>Please refresh the page.</p></div>';
-    }
+  }catch(e){
     console.error(e);
+    if(boot){
+      boot.innerHTML='<div class="box"><h2>Admin update could not load</h2><p>'+String(e.message||e)+'</p><p>Please send this screen to 小E.</p></div>';
+    }
   }
 })();
+
 </script>
 </body>
 </html>
