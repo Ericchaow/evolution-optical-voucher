@@ -13,7 +13,7 @@ html,body{margin:0;min-height:100%;background:#050716;color:#fff;font-family:-ap
 </style>
 </head>
 <body>
-<div id="boot"><div class="box"><h2>EVOLUTION OPTICAL</h2><p>Loading Admin Portal v3…</p></div></div>
+<div id="boot"><div class="box"><h2>EVOLUTION OPTICAL</h2><p>Loading Admin Portal v4…</p></div></div>
 <script>
 
 (async function(){
@@ -44,16 +44,16 @@ html,body{margin:0;min-height:100%;background:#050716;color:#fff;font-family:-ap
 "partner query");
 
     swap(
-`        <div id="claim-summary-${p.id}" class="claim-summary">Claim: loading…</div>`,
+`        <div id="claim-summary-\${p.id}" class="claim-summary">Claim: loading…</div>`,
 `        <div class="claim-summary" style="margin-top:8px">
-          <b>Partner Staff:</b> Limit ${Number(p.staff_limit||0)} · Staff Access ${p.staff_access_enabled?"ON":"OFF"}
+          <b>Partner Staff:</b> Limit \${Number(p.staff_limit||0)} · Staff Access \${p.staff_access_enabled?"ON":"OFF"}
         </div>
         <div class="actions" style="margin-top:7px">
-          <input id="staff-limit-${p.id}" type="number" min="0" max="1000" step="1" value="${Number(p.staff_limit||0)}" placeholder="Partner Staff Limit">
-          <button class="btn small green wide" onclick="setPartnerStaffLimit('${p.id}')">Set Staff Limit</button>
+          <input id="staff-limit-\${p.id}" type="number" min="0" max="1000" step="1" value="\${Number(p.staff_limit||0)}" placeholder="Partner Staff Limit">
+          <button class="btn small green wide" onclick="setPartnerStaffLimit('\${p.id}')">Set Staff Limit</button>
         </div>
-        <div id="staff-limit-msg-${p.id}"></div>
-        <div id="claim-summary-${p.id}" class="claim-summary">Claim: loading…</div>`,
+        <div id="staff-limit-msg-\${p.id}"></div>
+        <div id="claim-summary-\${p.id}" class="claim-summary">Claim: loading…</div>`,
 "partner manage controls");
 
     swap(
