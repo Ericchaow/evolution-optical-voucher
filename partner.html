@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0f172a" />
-  <meta name="eo-partner-build" content="multi-voucher-full-integration-v1.1" />
+  <meta name="eo-partner-build" content="multi-voucher-full-integration-v1.2" />
   <title>Evolution Optical • Partner Portal</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -133,6 +133,7 @@ function renderSelectedVoucherMeta(){
   const o=selectedOption();renderVoucherDesign(o);
   if(!o){$("validityTitle").textContent="No active Voucher Type";$("validityText").textContent="Contact Evolution Optical Admin for allocation.";$("assignedClaimBranches").innerHTML='<div><b>No redemption location available</b></div>';syncCreateButton();return}
   if(o.template_code==="EVO-FREE-GLASSES"){$("validityTitle").textContent="Validity: 3 calendar months from issue";$("validityText").textContent="RM60 Free Glasses Voucher keeps the original Evolution Optical 3-calendar-month validity rule."}
+  else if((o.validity_mode_v2||o.validity_type)==="calendar_months_after_issue"){$("validityTitle").textContent=`Validity: ${Number(o.valid_months||0)} calendar month${Number(o.valid_months||0)===1?"":"s"} from issue`;$("validityText").textContent="Expiry is calculated by true calendar months from the issue date."}
   else if(o.validity_type==="fixed"){$("validityTitle").textContent=`Validity: until ${o.valid_until||"configured end date"}`;$("validityText").textContent=o.valid_from?`Campaign period ${o.valid_from} to ${o.valid_until||"—"}.`:"Fixed campaign validity."}
   else{$("validityTitle").textContent=`Validity: ${Number(o.valid_days||0)} days from issue`;$("validityText").textContent="Expiry is calculated automatically from this Voucher Version."}
   let label="";
@@ -154,7 +155,7 @@ async function loadVoucherOptions(){
   if(!activeAllocs.length){renderVoucherBalances();$("voucherType").innerHTML='<option value="">No active Voucher allocation</option>';renderSelectedVoucherMeta();return}
   const versionIds=[...new Set(activeAllocs.map(a=>a.version_id).filter(Boolean))];
   const[{data:versions,error:verr},{data:issued,error:ierr},{data:links,error:lerr}]=await Promise.all([
-    db.from("voucher_versions").select("id,template_id,version_no,version_name,face_value,discount_percent,validity_type,valid_days,valid_from,valid_until,all_branches,status").in("id",versionIds).eq("status","active"),
+    db.from("voucher_versions").select("id,template_id,version_no,version_name,face_value,discount_percent,validity_type,validity_mode_v2,valid_days,valid_months,valid_from,valid_until,all_branches,status").in("id",versionIds).eq("status","active"),
     db.from("vouchers").select("id,allocation_id,status").in("allocation_id",activeAllocs.map(a=>a.id)),
     db.from("voucher_version_branches").select("version_id,branch_id").in("version_id",versionIds)
   ]);
