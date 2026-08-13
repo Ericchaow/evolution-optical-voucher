@@ -3,32 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07152f">
-<title>Evolution Optical • Admin Portal</title>
+<title>Evolution Admin Static Builder</title>
 <style>
-html,body{margin:0;min-height:100%;background:#050716;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
-#boot{min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center}
-#boot .box{max-width:560px}
-#boot h2{margin:0 0 8px}#boot p{color:#b9c6e4;line-height:1.55}
+body{margin:0;background:#07152f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:28px 18px}
+.card{background:#0d1d3a;border:1px solid #28466e;border-radius:20px;padding:20px}
+h1{font-size:24px;margin:0 0 10px}p{color:#c4d3ea;line-height:1.55}
+button{width:100%;margin-top:12px;padding:14px;border:0;border-radius:14px;font-weight:800;background:#2f75ff;color:white}
+#msg{white-space:pre-wrap;margin-top:14px;font-size:13px;color:#cfe2ff}
+textarea{width:100%;height:220px;margin-top:14px;border-radius:14px;padding:12px;background:#061229;color:#dfeaff;border:1px solid #294b78;box-sizing:border-box}
 </style>
 </head>
 <body>
-<div id="boot"><div class="box"><h2>EVOLUTION OPTICAL</h2><p>Loading Admin Portal v4…</p></div></div>
-<script>
+<div class="wrap">
+  <div class="card">
+    <h1>Evolution Admin Static Builder</h1>
+    <p>Builds the verified static Admin portal with Partner Staff Limit. The generated admin.html does not fetch a historical Admin file at runtime.</p>
+    <button id="build">Build Static admin.html</button>
+    <button id="save" disabled>Save admin.html</button>
+    <div id="msg"></div>
+    <textarea id="out" placeholder="Generated HTML will appear here after Build."></textarea>
+  </div>
+</div>
 
-(async function(){
-  const boot=document.getElementById("boot");
+<script>
+const BASE_URL="https://raw.githubusercontent.com/xiaoe-ai/evolution-optical-voucher/7413a17d2133a16b566c5e4eaddade32b0b73145/admin.html";
+let built="";
+
+function swap(html,find,repl,label){
+  if(!html.includes(find)) throw new Error("Merge point not found: "+label);
+  return html.replace(find,repl);
+}
+
+async function build(){
+  const msg=document.getElementById("msg");
+  const out=document.getElementById("out");
+  msg.textContent="Loading verified Admin base…";
+  document.getElementById("build").disabled=true;
+  document.getElementById("save").disabled=true;
   try{
-    const res=await fetch("https://raw.githubusercontent.com/xiaoe-ai/evolution-optical-voucher/7413a17d2133a16b566c5e4eaddade32b0b73145/admin.html",{cache:"no-store"});
-    if(!res.ok)throw new Error("Unable to load Admin base: HTTP "+res.status);
+    const res=await fetch(BASE_URL,{cache:"no-store"});
+    if(!res.ok) throw new Error("Unable to load verified Admin base: HTTP "+res.status);
     let html=await res.text();
 
-    function swap(find,repl,label){
-      if(!html.includes(find))throw new Error("Merge point not found: "+label);
-      html=html.replace(find,repl);
-    }
-
-    swap(
+    html=swap(html,
 `      <div class="field wide"><label>Initial Voucher Limit</label><input id="newPartnerLimit" type="number" min="0" step="1" value="100"></div>`,
 `      <div class="field wide"><label>Initial Voucher Limit</label><input id="newPartnerLimit" type="number" min="0" step="1" value="100"></div>
       <div class="field wide">
@@ -36,35 +54,35 @@ html,body{margin:0;min-height:100%;background:#050716;color:#fff;font-family:-ap
         <input id="newPartnerStaffLimit" type="number" min="0" max="1000" step="1" value="0" placeholder="e.g. 5">
         <div class="note">Maximum Partner Staff accounts allowed for this Partner.</div>
       </div>`,
-"new partner field");
+"new partner staff-limit field");
 
-    swap(
+    html=swap(html,
 `.select("id,partner_code,partner_name,voucher_limit,vouchers_issued,status")`,
 `.select("id,partner_code,partner_name,voucher_limit,vouchers_issued,status,staff_limit,staff_access_enabled")`,
 "partner query");
 
-    swap(
-`        <div id="claim-summary-\${p.id}" class="claim-summary">Claim: loading…</div>`,
+    html=swap(html,
+`        <div id="claim-summary-${p.id}" class="claim-summary">Claim: loading…</div>`,
 `        <div class="claim-summary" style="margin-top:8px">
-          <b>Partner Staff:</b> Limit \${Number(p.staff_limit||0)} · Staff Access \${p.staff_access_enabled?"ON":"OFF"}
+          <b>Partner Staff:</b> Limit ${Number(p.staff_limit||0)} · Staff Access ${p.staff_access_enabled?"ON":"OFF"}
         </div>
         <div class="actions" style="margin-top:7px">
-          <input id="staff-limit-\${p.id}" type="number" min="0" max="1000" step="1" value="\${Number(p.staff_limit||0)}" placeholder="Partner Staff Limit">
-          <button class="btn small green wide" onclick="setPartnerStaffLimit('\${p.id}')">Set Staff Limit</button>
+          <input id="staff-limit-${p.id}" type="number" min="0" max="1000" step="1" value="${Number(p.staff_limit||0)}" placeholder="Partner Staff Limit">
+          <button class="btn small green wide" onclick="setPartnerStaffLimit('${p.id}')">Set Staff Limit</button>
         </div>
-        <div id="staff-limit-msg-\${p.id}"></div>
-        <div id="claim-summary-\${p.id}" class="claim-summary">Claim: loading…</div>`,
-"partner manage controls");
+        <div id="staff-limit-msg-${p.id}"></div>
+        <div id="claim-summary-${p.id}" class="claim-summary">Claim: loading…</div>`,
+"partner manage staff-limit controls");
 
-    swap(
+    html=swap(html,
 `  const voucher_limit=Number($("newPartnerLimit").value);
   const claim_all=$("newPartnerAllBranches").checked;`,
 `  const voucher_limit=Number($("newPartnerLimit").value);
   const staff_limit=Number($("newPartnerStaffLimit").value);
   const claim_all=$("newPartnerAllBranches").checked;`,
-"create read");
+"create partner staff-limit read");
 
-    swap(
+    html=swap(html,
 `  if(!Number.isInteger(voucher_limit)||voucher_limit<0){
     msg(out,"Voucher Limit must be a whole number of 0 or more.");return
   }
@@ -76,9 +94,9 @@ html,body{margin:0;min-height:100%;background:#050716;color:#fff;font-family:-ap
     msg(out,"Partner Staff Limit must be a whole number from 0 to 1000.");return
   }
   if(!claim_all&&!claim_codes.length){`,
-"create validation");
+"staff-limit validation");
 
-    swap(
+    html=swap(html,
 `    if(createdId){
       await savePartnerClaimAccess(createdId,claim_all,claim_codes);
     }`,
@@ -91,17 +109,17 @@ html,body{margin:0;min-height:100%;background:#050716;color:#fff;font-family:-ap
         throw new Error(slData?.error||slError?.message||"Partner created, but Staff Limit could not be saved.");
       }
     }`,
-"create save");
+"save staff-limit");
 
-    swap(
+    html=swap(html,
 `    $("newPartnerLimit").value="100";
     $("newPartnerAllBranches").checked=true;`,
 `    $("newPartnerLimit").value="100";
     $("newPartnerStaffLimit").value="0";
     $("newPartnerAllBranches").checked=true;`,
-"reset field");
+"reset staff-limit field");
 
-    swap(
+    html=swap(html,
 `async function setLimit(id){`,
 `async function setPartnerStaffLimit(id){
   const p=partners.find(x=>String(x.id)===String(id));
@@ -115,7 +133,7 @@ html,body{margin:0;min-height:100%;background:#050716;color:#fff;font-family:-ap
     return;
   }
 
-  if(!confirm(\`Set \${p.partner_name} Partner Staff Limit to \${n}?\`))return;
+  if(!confirm(\`Set ${p.partner_name} Partner Staff Limit to ${n}?\`))return;
 
   const {data,error}=await db.functions.invoke("admin-set-partner-staff-limit",{
     body:{partner_id:p.id,staff_limit:n}
@@ -126,24 +144,45 @@ html,body{margin:0;min-height:100%;background:#050716;color:#fff;font-family:-ap
     return;
   }
 
-  msg(out,\`Partner Staff Limit updated to \${n}.\`,true);
+  msg(out,\`Partner Staff Limit updated to ${n}.\`,true);
   await loadPartners();
 }
 
 async function setLimit(id){`,
-"setter");
+"staff-limit setter");
 
-    html=html.replace("</head>",'<meta name="eo-admin-build" content="staff-limit-v3">\n</head>');
+    html=html.replace("</head>",'<meta name="eo-admin-build" content="static-staff-limit-v1">\\n</head>');
 
-    document.open();
-    document.write(html);
-    document.close();
+    if(/raw\.githubusercontent\.com\/xiaoe-ai\/evolution-optical-voucher\/7413a17/i.test(html)){
+      throw new Error("Static validation failed: historical runtime dependency still found.");
+    }
+    if(!html.includes('id="newPartnerStaffLimit"')) throw new Error("Static validation failed: Staff Limit field missing.");
+    if(!html.includes("setPartnerStaffLimit")) throw new Error("Static validation failed: Staff Limit setter missing.");
+
+    built=html;
+    out.value=html;
+    document.getElementById("save").disabled=false;
+    msg.textContent="PASS — Static Admin generated. Loader dependency removed. Staff Limit merged.";
   }catch(e){
-    console.error(e);
-    if(boot)boot.innerHTML='<div class="box"><h2>Admin update could not load</h2><p>'+String(e.message||e)+'</p><p>Please send this screen to 小E.</p></div>';
+    msg.textContent="FAILED — "+(e.message||e);
+  }finally{
+    document.getElementById("build").disabled=false;
   }
-})();
+}
 
+function save(){
+  if(!built)return;
+  const blob=new Blob([built],{type:"text/html;charset=utf-8"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="admin.html";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+}
+
+document.getElementById("build").onclick=build;
+document.getElementById("save").onclick=save;
 </script>
 </body>
 </html>
